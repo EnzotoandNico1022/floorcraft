@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floorcraft — Event Layout Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Karla:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">Floor<em>craft</em></div>
+  <div class="tsep"></div>
+  <button class="tbtn" id="btn-upload" onclick="showUpload()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3.5 3.5l2.5-2.5 2.5 2.5M1 10v.5a.5.5 0 00.5.5h9a.5.5 0 00.5-.5V10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Import
+  </button>
+  <button class="tbtn" onclick="openScalePanel()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="4" height="4" stroke="currentColor" stroke-width="1.2" rx=".5"/><path d="M1 6h3M8 6h3M6 1v3M6 8v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Scale
+  </button>
+  <div class="tsep"></div>
+  <button class="tbtn" id="btn-select" onclick="setTool('select')" title="Select (V)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l3 8 1.8-3.5L10.5 5z" fill="currentColor" opacity=".85"/></svg>Select
+  </button>
+  <button class="tbtn" id="btn-pan" onclick="setTool('pan')" title="Pan (H)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1.5v3.5M4.5 3V2M3 3.5V3M7.5 3V2M9 3.5V3M3 3.5c0 .5 0 5.5 3 5.5s3-5 3-5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Pan
+  </button>
+  <button class="tbtn" id="btn-measure" onclick="setTool('measure')" title="Measure distance (M)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="1" y1="11" x2="11" y2="1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="1" y1="9" x2="1" y2="11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="3" y1="11" x2="3" y2="9.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="9.5" y1="3" x2="11" y2="3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="11" y1="1" x2="11" y2="3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Measure
+  </button>
+  <div style="position:relative;display:inline-flex">
+    <button class="tbtn" id="btn-shape" onclick="toggleShapePicker()" title="Draw shapes (S)">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="4" width="5" height="5" rx=".5" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="4" r="2.2" stroke="currentColor" stroke-width="1.1"/><line x1="1" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Shapes
+    </button>
+    <div id="shape-picker" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#2a2520;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px;z-index:1000;min-width:130px;box-shadow:0 4px 14px rgba(0,0,0,.4)">
+      <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:2px 6px 5px">Draw shape</div>
+      <button class="shape-pick-btn active" id="spick-rect"     onclick="activateShape('shape-rect')">▭ Rectangle</button>
+      <button class="shape-pick-btn"        id="spick-ellipse"  onclick="activateShape('shape-ellipse')">⬭ Ellipse</button>
+      <button class="shape-pick-btn"        id="spick-triangle" onclick="activateShape('shape-triangle')">△ Triangle</button>
+      <button class="shape-pick-btn"        id="spick-line"     onclick="activateShape('shape-line')">— Line</button>
+      <button class="shape-pick-btn"        id="spick-arrow"    onclick="activateShape('shape-arrow')">→ Arrow</button>
+    </div>
+  </div>
+  <div class="tsep"></div>
+  <button class="tbtn" id="btn-grid" onclick="toggleGrid()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M1 8h10M4 1v10M8 1v10" stroke="currentColor" stroke-width="1.1"/></svg>Grid
+  </button>
+  <button class="tbtn" id="btn-snap" onclick="toggleSnap()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="6" cy="6" r=".7" fill="currentColor"/><path d="M6 1v2.5M6 8.5V11M1 6h2.5M8.5 6H11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Snap
+  </button>
+  <button class="tbtn" id="btn-labels" onclick="toggleLabels()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="3" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><line x1="3.5" y1="6" x2="8.5" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Labels
+  </button>
+  <button class="tbtn" id="btn-bg" onclick="openBgPicker()" title="Canvas background color">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 1l10 10" stroke="currentColor" stroke-width="1" opacity=".3"/></svg>BG
+  </button>
+  <button class="tbtn" onclick="openCanvasSearch()" title="Search items on canvas (Ctrl+F)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 8l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Find
+  </button>
+  <div class="tsep"></div>
+  <button class="tbtn" onclick="groupSelected()" title="Group (Ctrl+G)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="1" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="7" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Group
+  </button>
+  <button class="tbtn" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2" y="2" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2.5,1.5"/><line x1="6" y1="4" x2="6" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4" y1="6" x2="8" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Ungroup
+  </button>
+  <button class="tbtn" id="btn-lock" onclick="toggleLockSelected()" title="Lock/Unlock selected items (L)">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2.5" y="5.5" width="7" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M4 5.5V3.5a2 2 0 114 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Lock
+  </button>
+  <button class="tbtn" onclick="openRepeatModal()" title="Repeat/Array selected item">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="1" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2" opacity=".5"/><rect x="1" y="7" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2" opacity=".5"/><rect x="7" y="7" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2" opacity=".3"/><path d="M5 3h2M3 5v2" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/></svg>Repeat
+  </button>
+  <button class="tbtn" onclick="undo()" title="Undo (Ctrl+Z)" id="btn-undo" style="position:relative">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4.5H6.5a3.5 3.5 0 010 7H2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M2 2L1 4.5l2.5 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Undo <span id="undo-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;opacity:.5;display:none"></span>
+  </button>
+  <div id="undo-slider-wrap">
+    <input type="range" id="undo-slider" min="0" value="0" oninput="undoToStep(this.value)">
+    <span id="undo-slider-label" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--faint)">0 steps</span>
+  </div>
+  <div class="tsep"></div>
+  <button class="tbtn" onclick="newProject()" title="Clear canvas and start a new project">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5L10 3.5V11H2V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 1v3h3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M4.5 6.5h3M6 5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>New
+  </button>
+  <button class="tbtn" onclick="openModal('save-modal')" title="Save / Load layouts (Ctrl+S)" style="color:#ede8df;position:relative">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h6.5L10 2.5V11H2V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="3.5" y="1" width="4" height="3" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="6.5" width="6" height="3.5" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>
+    Layouts
+    <div id="unsaved-dot"></div>
+  </button>
+  <div class="tsep"></div>
+  <button class="tbtn tbtn-ai" onclick="openAiItemModal()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.2 4.5H11L8.1 6.6l1.1 3.5L6 8l-3.2 2.1 1.1-3.5L1 4.5h3.8z" fill="currentColor" opacity=".9"/></svg>AI Piece
+  </button>
+  <button class="tbtn tbtn-ai" onclick="openAiLayoutModal()" style="border-color:rgba(95,122,94,.5);color:#8ab88a!important">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h4v4H7z" stroke="currentColor" stroke-width="1.2" rx="0.5"/></svg>AI Layout
+  </button>
+  <div class="spacer"></div>
+  <div id="scale-info">No scale set</div>
+  <div style="display:flex;align-items:center;gap:2px">
+    <button class="tbtn" style="padding:4px 7px;font-size:.68rem" onclick="zoomTo(zoom*0.75)" title="Zoom Out (-)">−</button>
+    <div id="zoom-display" style="cursor:pointer;min-width:42px;text-align:center" onclick="zoomFit()" title="Click to fit">100%</div>
+    <button class="tbtn" style="padding:4px 7px;font-size:.68rem" onclick="zoomTo(zoom*1.33)" title="Zoom In (+)">+</button>
+  </div>
+  <button class="tbtn" onclick="zoomFit()" title="Fit whole layout in view">Fit</button>
+  <button class="tbtn" onclick="zoomTo(1)" title="Reset to 100%">1:1</button>
+  <button class="tbtn" id="btn-zoom-sel" onclick="zoomToSelection()" title="Zoom to selected items (Z)" style="display:none">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 8l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3.5 5h3M5 3.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Zoom Sel
+  </button>
+  <div style="position:relative;display:inline-block">
+    <button class="tbtn-primary" onclick="openModal('export-modal')">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="margin-right:3px"><path d="M5.5 1v6M3 5l2.5 2.5L8 5M1 9h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Export
+    </button>
+  </div>
+</div>
+
+<div id="main">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div id="sidebar-search"><input type="text" id="search-input" placeholder="Search furniture…" oninput="filterPalette(this.value)"></div>
+    <button class="ai-create-btn" onclick="openAiItemModal()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.2 4.5H11L8.1 6.6l1.1 3.5L6 8l-3.2 2.1 1.1-3.5L1 4.5h3.8z" fill="currentColor"/></svg>
+      Create Custom Piece…
+    </button>
+    <div id="palette-scroll"></div>
+  </div>
+
+  <!-- CANVAS AREA -->
+  <div id="canvas-area">
+    <!-- Scale drawing instruction banner -->
+    <div id="scale-draw-banner">📐 Click first point on floor plan…</div>
+    <div id="upload-overlay" class="visible">
+      <div id="upload-box">
+        <h2>Import Floor Plan</h2>
+        <p>Upload your Vectorworks export (PNG, JPG). Set scale after import for accurate real-world dimensions.</p>
+        <label for="file-input">Choose File</label>
+        <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(this)">
+        <span class="skip" onclick="skipUpload()">Skip — start with blank canvas</span>
+      </div>
+    </div>
+    <div id="scale-panel">
+      <!-- Step 1: instruction overlay shown on canvas -->
+      <div id="scale-step1" style="text-align:center">
+        <div style="font-size:2rem;margin-bottom:10px">📐</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:8px">Set Drawing Scale</h2>
+        <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:18px">
+          You'll draw a line across a wall or distance you know the real length of.<br>
+          <strong>Click two points</strong> on the floor plan to measure it.
+        </p>
+        <button id="set-scale-btn" onclick="startScaleDraw()" style="background:var(--accent);color:white;border:none;border-radius:5px;font-family:'Karla',sans-serif;font-size:.88rem;font-weight:600;padding:10px 24px;cursor:pointer;width:100%;margin-bottom:8px">
+          Draw Scale Line on Canvas
+        </button>
+        <div style="font-size:.72rem;color:var(--faint);cursor:pointer" onclick="closeScalePanel()">Cancel</div>
+      </div>
+      <!-- Step 2: enter real length (shown after line drawn) -->
+      <div id="scale-step2" style="display:none;text-align:center">
+        <div style="font-size:2rem;margin-bottom:8px">✏️</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:6px">How long is that line?</h2>
+        <div id="scale-px-readout" style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);background:rgba(181,131,42,.1);padding:4px 10px;border-radius:4px;margin-bottom:14px;display:inline-block"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <input type="number" id="sp-feet" placeholder="e.g. 20" min="0.1" step="0.5"
+            style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:6px;font-family:'Karla',sans-serif;font-size:1.1rem;font-weight:600;outline:none;text-align:center"
+            onfocus="this.style.borderColor='var(--accent)'"
+            onblur="this.style.borderColor='var(--border)'"
+            onkeydown="if(event.key==='Enter')applyScale()">
+          <span style="font-size:.9rem;color:var(--muted);white-space:nowrap">feet</span>
+        </div>
+        <button onclick="applyScale()" style="background:var(--accent);color:white;border:none;border-radius:5px;font-family:'Karla',sans-serif;font-size:.9rem;font-weight:600;padding:10px 24px;cursor:pointer;width:100%;margin-bottom:8px">
+          Set Scale ✓
+        </button>
+        <div style="font-size:.72rem;color:var(--faint);cursor:pointer" onclick="resetScaleDraw()">← Draw line again</div>
+      </div>
+    </div>
+    <div id="viewport">
+      <div id="canvas-wrap">
+        <div id="floorplan-canvas" style="width:1200px;height:800px">
+          <div id="bg-layer"><img id="bg-img" alt=""></div>
+          <canvas id="grid-layer"></canvas>
+          <div id="items-layer">
+            <div id="marquee"></div>
+          </div>
+          <!-- Edge snap guides -->
+          <div class="align-guide align-guide-v" id="guide-v" style="position:absolute;top:0;bottom:0"></div>
+          <div class="align-guide align-guide-h" id="guide-h" style="position:absolute;left:0;right:0"></div>
+          <!-- Scale line overlay -->
+          <svg id="scale-line-layer" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:70;overflow:visible"></svg>
+          <!-- Measure tool overlay -->
+          <svg id="measure-layer" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:60;overflow:visible"></svg>
+          <!-- Spacing guides overlay -->
+          <svg id="spacing-guide-layer" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:65;overflow:visible"></svg>
+        </div>
+      </div>
+    </div>
+    <!-- Canvas legend overlay — lives at viewport level so it's always visible -->
+    <div id="canvas-legend">
+      <h5>Layout Key</h5>
+      <div id="canvas-legend-rows"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="rightpanel">
+
+    <!-- ALIGN TOOLBAR -->
+    <div id="align-bar">
+      <button class="align-btn" onclick="alignItems('left')" title="Align Left">&#8676;</button>
+      <button class="align-btn" onclick="alignItems('centerH')" title="Center Horizontal">&#8633;</button>
+      <button class="align-btn" onclick="alignItems('right')" title="Align Right">&#8677;</button>
+      <div class="align-sep"></div>
+      <button class="align-btn" onclick="alignItems('top')" title="Align Top">&#8679;</button>
+      <button class="align-btn" onclick="alignItems('centerV')" title="Center Vertical">&#8645;</button>
+      <button class="align-btn" onclick="alignItems('bottom')" title="Align Bottom">&#8681;</button>
+      <div class="align-sep"></div>
+      <button class="align-btn" onclick="distributeItems('h')" title="Distribute Horizontally" style="font-size:9px;font-family:'JetBrains Mono',monospace">⇔</button>
+      <button class="align-btn" onclick="distributeItems('v')" title="Distribute Vertically" style="font-size:9px;font-family:'JetBrains Mono',monospace">⇕</button>
+      <div class="align-sep"></div>
+      <button class="align-btn" onclick="tidyGrid()" title="Tidy to Grid" style="font-size:8px;font-weight:700;color:var(--accent);border-color:rgba(181,131,42,.3)">⊞</button>
+      <div class="align-sep"></div>
+      <button class="align-btn" onclick="distributeAlongAngle()" title="Distribute evenly along selection's angle — great for items along a diagonal rail or wall"
+        style="font-size:7.5px;font-weight:700;color:#7db4d4;border-color:rgba(125,180,212,.35);white-space:nowrap;padding:3px 6px">
+        ∠⇔
+      </button>
+      <button class="align-btn" onclick="alignToAngle()" title="Align items to selection's angle — centers them on the same axis"
+        style="font-size:7.5px;font-weight:700;color:#7db4d4;border-color:rgba(125,180,212,.35);white-space:nowrap;padding:3px 6px">
+        ∠⊟
+      </button>
+    </div>
+
+    <!-- LAYERS PANEL -->
+    <div id="layers-panel">
+      <div class="layers-header" onclick="toggleLayersPanel()" id="layers-header">
+        <h4>Layers <span id="layer-count" style="color:var(--faint);font-weight:400">(0)</span></h4>
+        <span class="toggle">▶</span>
+      </div>
+      <div id="layers-list"></div>
+    </div>
+
+    <div class="rpanel-head">
+      <h3>Properties</h3>
+      <div class="sub" id="rp-sub">Nothing selected</div>
+    </div>
+    <div class="rpanel-body" id="rp-body">
+      <div class="empty-state">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect x="3" y="3" width="28" height="28" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M11 17h12M17 11v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <p>Click an item to select it, or drag to multi-select. Use the align tools above.</p>
+      </div>
+    </div>
+    <div class="item-tally"><strong id="tally-num">0</strong>items on canvas</div>
+
+    <!-- LEGEND PANEL -->
+    <div id="legend-panel">
+      <div class="legend-header" id="legend-header" onclick="toggleLegend()">
+        <h4>
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x=".5" y=".5" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.1"/><rect x="6.5" y=".5" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.1"/><rect x=".5" y="6.5" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.1"/><rect x="6.5" y="6.5" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.1"/></svg>
+          Legend <span id="legend-type-count" style="color:var(--faint);font-weight:400">(0 types)</span>
+        </h4>
+        <span class="leg-toggle">▶</span>
+      </div>
+      <div id="legend-list">
+        <div id="legend-rows"></div>
+        <button id="legend-overlay-btn" onclick="toggleLegendOverlay()">Show on canvas</button>
+      </div>
+    </div>
+
+    <div class="rpanel-footer">
+      <button class="btn-block" onclick="openSeatEditorFromPanel()" id="adjust-seating-btn" style="display:none;background:rgba(95,122,94,.1);border-color:var(--sage);color:var(--sage)">🪑 Adjust Seating</button>
+      <button class="btn-block" onclick="duplicateSelected()">Duplicate <span style="float:right;font-size:.65rem;color:var(--faint)">Ctrl+D</span></button>
+      <button class="btn-block" onclick="groupSelected()">Group Selected <span style="float:right;font-size:.65rem;color:var(--faint)">Ctrl+G</span></button>
+      <button class="btn-block danger" onclick="deleteSelected()">Remove Selected <span style="float:right;font-size:.65rem;color:var(--faint)">Del</span></button>
+    </div>
+  </div>
+</div>
+
+<div id="statusbar">
+  <div class="status-item">X:<span id="st-x">—</span></div>
+  <div class="status-item">Y:<span id="st-y">—</span></div>
+  <div class="status-item">W:<span id="st-w">—</span></div>
+  <div class="status-item">H:<span id="st-h">—</span></div>
+  <div class="status-item">∠<span id="st-rot">—</span></div>
+  <div class="status-item">Sel:<span id="st-sel">0</span></div>
+  <div class="status-item" style="margin-left:auto">Tool:<span id="st-tool">Select</span></div>
+  <div class="status-item">Snap:<span id="st-snap">ON</span></div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="copySelected(false)">Copy <span class="kbadge">Ctrl+C</span></div>
+  <div class="ctx-item" onclick="copySelected(true)">Cut <span class="kbadge">Ctrl+X</span></div>
+  <div class="ctx-item" onclick="pasteClipboard()">Paste <span class="kbadge">Ctrl+V</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="addNoteToSelected()">📝 Add Note</div>
+  <div class="ctx-item" onclick="addLinkToSelected()">🔗 Add Link / Photo URL</div>
+  <div class="ctx-item" id="ctx-open-link" onclick="openSelectedLink()" style="display:none">↗ Open Link</div>
+  <div class="ctx-item" id="ctx-remove-link" onclick="removeLinkFromSelected()" style="display:none">✕ Remove Link</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="duplicateSelected()">Duplicate <span class="kbadge">Ctrl+D</span></div>
+  <div class="ctx-item" onclick="groupSelected()">Group <span class="kbadge">Ctrl+G</span></div>
+  <div class="ctx-item" onclick="ungroupSelected()">Ungroup</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="bringToFront()">Bring to Front <span class="kbadge">]</span></div>
+  <div class="ctx-item" onclick="bringForward()">Forward One</div>
+  <div class="ctx-item" onclick="sendBackward()">Back One</div>
+  <div class="ctx-item" onclick="sendToBack()">Send to Back <span class="kbadge">[</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="rotateSelected(-90)">Rotate 90° CCW</div>
+  <div class="ctx-item" onclick="rotateSelected(90)">Rotate 90° CW</div>
+  <div class="ctx-item" onclick="flipH()">Flip</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="deleteSelected()">Delete <span class="kbadge">Del</span></div>
+</div>
+
+<!-- AI PIECE MODAL -->
+<div class="modal-backdrop" id="ai-item-modal">
+  <div class="modal-box" style="width:520px;max-width:95vw">
+    <div class="modal-head">
+      <div><h2>✦ Create Custom Piece</h2><p>Describe any furniture or element — include vendor dimensions for accuracy.</p></div>
+      <button class="modal-close" onclick="closeModal('ai-item-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="ai-examples">
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">Velvet tufted ottoman, 36×36"</span>
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">Serpentine bar, 16ft × 30"</span>
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">Acrylic ghost table, 48" round</span>
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">Bamboo high-top, 24" round</span>
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">White lacquer credenza, 72×18"</span>
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">Neon sign arch, 8ft wide 6ft tall</span>
+        <span class="ai-ex-chip" onclick="setAiPrompt(this)">L-shaped buffet, 12ft × 10ft</span>
+      </div>
+      <div class="ai-prompt-row">
+        <textarea id="ai-prompt" placeholder="e.g. Round marble cocktail table, 30 inches diameter, matte finish…"></textarea>
+        <button class="ai-gen-btn" id="ai-generate-btn" onclick="generateAiPiece()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.2 4.5H11L8.1 6.6l1.1 3.5L6 8l-3.2 2.1 1.1-3.5L1 4.5h3.8z" fill="currentColor"/></svg>Generate
+        </button>
+      </div>
+      <div id="ai-status"><div class="ai-spinner" id="ai-spinner"></div><span id="ai-status-text"></span></div>
+      <div class="ai-error" id="ai-error"></div>
+      <div id="ai-preview-area">
+        <div id="ai-preview-header"><span id="ai-preview-name">—</span><span id="ai-preview-dims">—</span></div>
+        <div id="ai-preview-svg-wrap"></div>
+        <div id="ai-preview-footer">
+          <input class="prop-input" id="ai-label-input" placeholder="Label…">
+          <button id="ai-save-palette-btn" onclick="saveAiToPalette()">Save to Palette</button>
+          <button id="ai-add-btn" onclick="addAiToCanvas()">Add to Canvas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI LAYOUT MODAL -->
+<div class="modal-backdrop" id="ai-layout-modal">
+  <div class="modal-box" style="width:740px;max-width:97vw">
+    <div class="modal-head">
+      <div><h2>⊞ AI Layout Assistant</h2><p>Chat about your layout — or ask AI to actually move, arrange and optimize items on the canvas.</p></div>
+      <button class="modal-close" onclick="closeModal('ai-layout-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:0">
+
+      <!-- Quick prompts -->
+      <div class="layout-quick-prompts" id="layout-quick-prompts">
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Summarize my layout</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">How many guests fit?</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Fix table spacing to 36"</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Center everything on the canvas</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Arrange tables in a grid</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Move bar to back wall</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Create a lounge cluster</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Optimize traffic flow</span>
+        <span class="layout-qp" onclick="sendLayoutPrompt(this)">Space chairs evenly around tables</span>
+      </div>
+
+      <div class="layout-modal-split">
+        <!-- Chat -->
+        <div class="layout-chat">
+          <div class="layout-chat-messages" id="layout-messages">
+            <div class="chat-msg assistant">Hi! I can <strong>see and control</strong> your canvas. Ask me to move things, fix spacing, arrange tables — I'll show you a preview of changes before applying them. Or just ask for advice.<br><br>Try: <em>"Arrange the round tables in 2 rows with 4ft between them"</em> or <em>"Move the bar to the top wall"</em></div>
+          </div>
+          <div class="layout-chat-input">
+            <textarea id="layout-input" placeholder="Tell me what to do or ask for advice… (Enter to send)" rows="2"></textarea>
+            <button onclick="sendLayoutMessage()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Actions panel -->
+        <div class="layout-suggestions">
+          <h4>Pending Actions</h4>
+          <div id="layout-actions-list" style="flex:1;overflow-y:auto;padding:8px">
+            <div style="padding:12px 8px;font-size:.72rem;color:var(--faint);text-align:center;line-height:1.5">
+              Actions will appear here when AI suggests changes to your layout.
+            </div>
+          </div>
+          <div style="padding:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px">
+            <button id="apply-actions-btn" class="btn-block primary" style="margin:0;display:none" onclick="applyLayoutActions()">
+              ✓ Apply Changes to Canvas
+            </button>
+            <button id="discard-actions-btn" class="btn-block" style="margin:0;display:none;font-size:.72rem" onclick="discardLayoutActions()">
+              Discard
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="layout-modal-footer">
+        <div style="font-size:.7rem;color:var(--faint);flex:1">Changes are previewed before applying · Ctrl+Z to undo after applying</div>
+        <button class="btn-block" style="width:auto;margin:0" onclick="closeModal('ai-layout-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-backdrop" id="export-modal">
+  <div class="modal-box" style="width:380px;max-width:95vw">
+    <div class="modal-head">
+      <div><h2>Export Layout</h2><p>Pick a quality — higher = larger file, sharper image.</p></div>
+      <button class="modal-close" onclick="closeModal('export-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:18px 20px">
+
+      <div class="export-grid" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+        <div class="export-card" data-q="1" onclick="selectQuality(this,1)">
+          <h4>Draft</h4>
+          <p>Quick sharing, email</p>
+          <div class="export-dims">1× · ~200–400KB</div>
+        </div>
+        <div class="export-card selected" data-q="2" onclick="selectQuality(this,2)">
+          <h4>Standard</h4>
+          <p>Client presentations</p>
+          <div class="export-dims">2× · ~600KB–1.5MB</div>
+        </div>
+        <div class="export-card" data-q="3" onclick="selectQuality(this,3)">
+          <h4>High</h4>
+          <p>Print-ready, detailed review</p>
+          <div class="export-dims">3× · ~1.5–4MB</div>
+        </div>
+        <div class="export-card" data-q="4" onclick="selectQuality(this,4)">
+          <h4>Ultra</h4>
+          <p>Large format printing</p>
+          <div class="export-dims">4× · ~4–10MB</div>
+        </div>
+      </div>
+
+      <div class="export-options" style="margin-bottom:14px">
+        <div class="export-opt-row">
+          <label>Format</label>
+          <select id="exp-format" onchange="updateExportNote()">
+            <option value="png">PNG (best quality)</option>
+            <option value="jpg">JPG (smaller file)</option>
+            <option value="pdf">PDF (print ready)</option>
+          </select>
+        </div>
+        <div class="export-opt-row">
+          <label>White background</label>
+          <input type="checkbox" id="exp-bg" checked>
+        </div>
+        <div class="export-opt-row">
+          <label>Include legend</label>
+          <input type="checkbox" id="exp-legend">
+        </div>
+      </div>
+
+      <p class="export-preview-note" id="export-size-note" style="margin-bottom:14px">Standard · 2× · PNG</p>
+
+      <div class="export-actions">
+        <button class="btn-cancel" onclick="closeModal('export-modal')">Cancel</button>
+        <button class="btn-export" id="do-export-btn" onclick="doExport()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5.5l3 3 3-3M1 10h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="export-btn-label">Export PNG</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE / LOAD MODAL -->
+<div class="modal-backdrop" id="save-modal">
+  <div class="modal-box" style="width:500px;max-width:95vw">
+    <div class="modal-head">
+      <div>
+        <h2>My Layouts</h2>
+        <p>Saved locally in this browser. Your work persists between sessions.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('save-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:18px 20px">
+
+      <!-- Save current -->
+      <div class="saves-section-title" style="margin-bottom:6px">Save current layout</div>
+      <div class="save-input-row">
+        <input type="text" id="save-name-input" placeholder="Layout name e.g. Smith Wedding · Ballroom…" maxlength="80">
+        <button class="save-btn" onclick="saveLayout()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-right:4px"><path d="M2 1h6.5L10 2.5V11H2V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="3.5" y="1" width="4" height="3" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="6.5" width="6" height="3.5" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>Save
+        </button>
+      </div>
+
+      <!-- Saved list -->
+      <div class="saves-section-title">Saved layouts</div>
+      <div id="saves-list">
+        <!-- populated by JS -->
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- REPEAT / ARRAY MODAL -->
+<div class="modal-backdrop" id="repeat-modal">
+  <div class="modal-box" style="width:380px;max-width:95vw">
+    <div class="modal-head">
+      <div><h2>Repeat Item</h2><p>Place multiple copies in a row, column, or grid with exact spacing.</p></div>
+      <button class="modal-close" onclick="closeModal('repeat-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:18px 20px">
+
+      <!-- What to repeat — only shown when a group/table set is selected -->
+      <div id="rep-scope-row" style="display:none;margin-bottom:14px;background:var(--panel);border-radius:7px;padding:10px 12px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">What to repeat?</div>
+        <div style="display:flex;gap:8px">
+          <label style="flex:1;display:flex;align-items:center;gap:7px;cursor:pointer;padding:8px 10px;border:1.5px solid var(--border);border-radius:5px;font-size:.8rem;transition:all .12s"
+            id="rep-scope-set-label">
+            <input type="radio" name="rep-scope" id="rep-scope-set" value="set" checked onchange="updateRepeatPreview()" style="accent-color:var(--sage)">
+            <div>
+              <div style="font-weight:600;color:var(--text)">Whole set</div>
+              <div style="font-size:.68rem;color:var(--muted)">Table + all chairs</div>
+            </div>
+          </label>
+          <label style="flex:1;display:flex;align-items:center;gap:7px;cursor:pointer;padding:8px 10px;border:1.5px solid var(--border);border-radius:5px;font-size:.8rem;transition:all .12s"
+            id="rep-scope-item-label">
+            <input type="radio" name="rep-scope" id="rep-scope-item" value="item" onchange="updateRepeatPreview()" style="accent-color:var(--sage)">
+            <div>
+              <div style="font-weight:600;color:var(--text)">Table only</div>
+              <div style="font-size:.68rem;color:var(--muted)">Just the table</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="repeat-grid">
+        <div class="repeat-field">
+          <label>Columns</label>
+          <input type="number" id="rep-cols" value="3" min="1" max="20" oninput="updateRepeatPreview()">
+        </div>
+        <div class="repeat-field">
+          <label>Rows</label>
+          <input type="number" id="rep-rows" value="1" min="1" max="20" oninput="updateRepeatPreview()">
+        </div>
+        <div class="repeat-field">
+          <label>Gap between (ft)</label>
+          <input type="number" id="rep-gap-h" value="3" min="0" max="50" step="0.5" oninput="updateRepeatPreview()">
+        </div>
+        <div class="repeat-field">
+          <label>Row gap (ft)</label>
+          <input type="number" id="rep-gap-v" value="3" min="0" max="50" step="0.5" oninput="updateRepeatPreview()">
+        </div>
+      </div>
+      <div class="repeat-preview" id="repeat-preview">Select an item first, then configure the repeat.</div>
+      <div class="export-actions">
+        <button class="btn-cancel" onclick="closeModal('repeat-modal')">Cancel</button>
+        <button class="btn-export" onclick="applyRepeat()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.3"/><rect x="7" y="1" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="7" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.3"/><rect x="7" y="7" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.3"/></svg>
+          Create Array
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEAT COUNT EDITOR MODAL -->
+<div class="modal-backdrop" id="seat-editor-modal">
+  <div class="modal-box" style="width:380px;max-width:95vw">
+    <div class="modal-head">
+      <div><h2>🪑 Adjust Seating</h2><p>Change seat count or chair type. Chairs reposition automatically.</p></div>
+      <button class="modal-close" onclick="closeModal('seat-editor-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:18px 20px">
+
+      <div id="seat-editor-title" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;margin-bottom:14px;color:var(--text)">Table Set</div>
+
+      <div class="repeat-field" style="margin-bottom:14px">
+        <label>Number of Seats</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="range" min="1" max="20" id="seat-count-val" value="6"
+            style="flex:1;accent-color:var(--accent)"
+            oninput="updateSeatCountDisplay()">
+          <span id="seat-count-display" style="font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--accent);min-width:52px;text-align:right">6 seats</span>
+        </div>
+      </div>
+
+      <div class="repeat-field" style="margin-bottom:14px">
+        <label>Chair / Stool Type</label>
+        <select id="seat-chair-type" class="prop-input" style="font-size:.82rem"></select>
+      </div>
+
+      <!-- Rect table options -->
+      <div id="seat-rect-options" style="display:none;background:var(--panel);border-radius:7px;padding:12px;margin-bottom:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Chair Distribution</div>
+        <div class="repeat-grid" style="grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div class="repeat-field">
+            <label>Top row</label>
+            <input type="number" id="seat-top-val" min="0" max="12" value="3" class="prop-input">
+          </div>
+          <div class="repeat-field">
+            <label>Bottom row</label>
+            <input type="number" id="seat-bottom-val" min="0" max="12" value="3" class="prop-input">
+          </div>
+          <div class="repeat-field">
+            <label>Each end</label>
+            <input type="number" id="seat-side-val" min="0" max="4" value="1" class="prop-input">
+          </div>
+        </div>
+      </div>
+
+      <div class="export-actions">
+        <button class="btn-cancel" onclick="closeModal('seat-editor-modal')">Cancel</button>
+        <button class="btn-export" onclick="applySeatCount()">
+          🪑 Apply Seating
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
