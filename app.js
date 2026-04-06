@@ -3137,6 +3137,11 @@ function screenToCanvas(clientX, clientY){
   };
 }
 
+fpCanvas.addEventListener('touchstart',e=>{
+  if(e.target.closest('.fitem'))return;
+  if(multiSelectMode){ multiSelectMode=false; document.getElementById('btn-multiselect').classList.remove('active'); }
+  clearSelection();
+},{passive:true});
 fpCanvas.addEventListener('mousedown',e=>{
   if(currentTool!=='select')return;
   if(e.button!==0)return;
@@ -3248,6 +3253,13 @@ window.addEventListener('mouseup', e => {
   markDirty();
   shapeDrawStart = null;
 });
+
+let multiSelectMode = false;
+function toggleMultiSelect() {
+  multiSelectMode = !multiSelectMode;
+  document.getElementById('btn-multiselect').classList.toggle('active', multiSelectMode);
+  showToast(multiSelectMode ? 'Multi-select ON — tap items to add/remove' : 'Multi-select OFF');
+}
 
 function toggleShapePicker(){
   const p = document.getElementById('shape-picker');
@@ -6139,11 +6151,17 @@ itemsLayer.addEventListener('touchstart', e => {
   const touch = e.touches[0];
   const startX = touch.clientX, startY = touch.clientY;
 
-  // Immediately select on tap — whole group if grouped
-  clearSelection();
+  // Select on tap — whole group if grouped
   const members = liveItem.groupId && groups[liveItem.groupId]?.length > 0
     ? groups[liveItem.groupId] : [liveItem.id];
-  members.forEach(id => selectedIds.add(id));
+  if (multiSelectMode) {
+    // Toggle this item/group in or out of selection
+    const alreadySelected = selectedIds.has(liveItem.id);
+    members.forEach(id => alreadySelected ? selectedIds.delete(id) : selectedIds.add(id));
+  } else {
+    clearSelection();
+    members.forEach(id => selectedIds.add(id));
+  }
   _refreshSelClasses();
   updateRightPanel(); updateStatusBar();
 
