@@ -6124,50 +6124,62 @@ viewport.addEventListener('touchend', e => {
   if (e.touches.length < 2) { _pinchDist = null; _pinchMid = null; }
 }, {passive:false});
 
-// ── Item touch: tap select + drag move + long-press menu ──
+// ── Item touch: tap = select, drag = move, long-press = menu ──
 itemsLayer.addEventListener('touchstart', e => {
   if (_tdType) return;
   const fitem = e.target.closest('.fitem');
   if (!fitem) return;
   if (e.touches.length !== 1) return;
   e.preventDefault(); e.stopPropagation();
-  const itemId = +fitem.id.replace('fi-','');
+
+  const itemId = +fitem.id.replace('fi-', '');
   const liveItem = items.find(i => i.id === itemId);
   if (!liveItem || liveItem.locked) return;
+
   const touch = e.touches[0];
   const startX = touch.clientX, startY = touch.clientY;
-  let moveStarted = false;
-  const startPositions = new Map();
 
-  // Tap-select
-  if (!selectedIds.has(liveItem.id)) {
-    clearSelection();
-    const members = liveItem.groupId && groups[liveItem.groupId]?.length > 0 ? groups[liveItem.groupId] : null;
-    if (members) { members.forEach(id => selectedIds.add(id)); _refreshSelClasses(); }
-    else addToSelection(liveItem.id);
-  }
+  // Immediately select on tap — whole group if grouped
+  clearSelection();
+  const members = liveItem.groupId && groups[liveItem.groupId]?.length > 0
+    ? groups[liveItem.groupId] : [liveItem.id];
+  members.forEach(id => selectedIds.add(id));
+  _refreshSelClasses();
+  updateRightPanel(); updateStatusBar();
 
   // Long press → context menu
+  let moveStarted = false;
   const longPress = setTimeout(() => {
     if (!moveStarted) showCtxMenu(startX, startY);
   }, 600);
 
+  // Capture start positions for all selected items
+  const startPositions = new Map();
+  selectedIds.forEach(id => {
+    const it = items.find(i => i.id === id);
+    if (it && !it.locked) startPositions.set(id, {x: it.x, y: it.y});
+  });
+
   function onMove(ev) {
     ev.preventDefault();
     const t = ev.touches[0]; if (!t) return;
-    if (!moveStarted && (Math.abs(t.clientX-startX) > 6 || Math.abs(t.clientY-startY) > 6)) {
-      moveStarted = true;
+    if (!moveStarted) {
       clearTimeout(longPress);
-      if (liveItem.groupId && groups[liveItem.groupId]?.length > 0) addManyToSelection(groups[liveItem.groupId]);
+      moveStarted = true;
       pushHistory();
-      selectedIds.forEach(id => { const it=items.find(i=>i.id===id); if(it&&!it.locked) startPositions.set(id,{x:it.x,y:it.y}); });
     }
-    if (moveStarted) {
-      const cdx=(t.clientX-startX)/zoom, cdy=(t.clientY-startY)/zoom;
-      startPositions.forEach(({x,y},id)=>{ const it=items.find(i=>i.id===id); if(!it) return; it.x=Math.max(0,x+cdx); it.y=Math.max(0,y+cdy); const el=document.getElementById('fi-'+id); if(el){el.style.left=it.x+'px';el.style.top=it.y+'px';} });
-      updateSpacingGuides();
-    }
+    const cdx = (t.clientX - startX) / zoom;
+    const cdy = (t.clientY - startY) / zoom;
+    startPositions.forEach(({x, y}, id) => {
+      const it = items.find(i => i.id === id); if (!it) return;
+      it.x = Math.max(0, x + cdx);
+      it.y = Math.max(0, y + cdy);
+      const el = document.getElementById('fi-' + id);
+      if (el) { el.style.left = it.x + 'px'; el.style.top = it.y + 'px'; }
+    });
+    updateSpacingGuides();
   }
+
   function onEnd() {
     clearTimeout(longPress);
     window.removeEventListener('touchmove', onMove);
@@ -6175,9 +6187,10 @@ itemsLayer.addEventListener('touchstart', e => {
     clearSpacingGuides();
     if (moveStarted) { markDirty(); updateRightPanel(); }
   }
-  window.addEventListener('touchmove', onMove, {passive:false});
+
+  window.addEventListener('touchmove', onMove, {passive: false});
   window.addEventListener('touchend', onEnd);
-}, {passive:false});
+}, {passive: false});
 
 // ── New Project ─────────────────────────────────
 function newProject() {
