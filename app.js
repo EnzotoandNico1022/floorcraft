@@ -3263,7 +3263,15 @@ function toggleMultiSelect() {
 
 function toggleShapePicker(){
   const p = document.getElementById('shape-picker');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  if(p.style.display === 'none'){
+    const btn = document.getElementById('btn-shape');
+    const r = btn.getBoundingClientRect();
+    p.style.left = r.left + 'px';
+    p.style.top  = (r.bottom + 4) + 'px';
+    p.style.display = 'block';
+  } else {
+    p.style.display = 'none';
+  }
 }
 function activateShape(type){
   currentShapeType = type;
