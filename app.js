@@ -2915,6 +2915,7 @@ function buildPalette(filter=''){
       const setBadge=item.isTableSet?`<span style="font-size:.52rem;background:var(--sage);color:white;padding:1px 4px;border-radius:2px;margin-left:3px;vertical-align:middle">SET</span>`:item.isLoungeSet?`<span style="font-size:.52rem;background:#7a5c8a;color:white;padding:1px 4px;border-radius:2px;margin-left:3px;vertical-align:middle">LOUNGE</span>`:(item.cat==='Custom'?`<span class="ai-badge">AI</span>`:'');
       el.innerHTML=`<div class="pitem-icon"><svg width="${px}" height="${py}" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow:hidden">${item.draw(item.w,item.h,COLORS[0])}</svg></div><div class="pitem-name">${item.name}${setBadge}</div><div class="pitem-size">${sizeLabel}</div>`;
       el.addEventListener('dragstart',e=>{e.dataTransfer.setData('item-id',item.id);e.dataTransfer.effectAllowed='copy';});
+      el.addEventListener('touchstart',e=>{e.preventDefault();_startPaletteTouchDrag(item.id,e.touches[0]);},{passive:false});
       // Click to place in center of current viewport
       el.addEventListener('click',()=>{
         const vr=viewport.getBoundingClientRect();
@@ -6021,6 +6022,162 @@ function clearSpacingGuides() {
   const svg = document.getElementById('spacing-guide-layer');
   if (svg) svg.innerHTML = '';
 }
+
+// ═══════════════════════════════════════════════
+// TOUCH SUPPORT (iPad / touch devices)
+// ═══════════════════════════════════════════════
+
+// ── Palette touch drag ──────────────────────────
+let _tdType = null;
+let _tdGhost = null;
+
+function _startPaletteTouchDrag(itemId, touch) {
+  _tdType = itemId;
+  const def = CATALOG.find(c => c.id === itemId);
+  _tdGhost = document.createElement('div');
+  const px = Math.min(ftToPx(def?.w||4), 56), py = Math.min(ftToPx(def?.h||4), 56);
+  _tdGhost.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:.8;background:rgba(40,35,30,.9);border:1.5px solid rgba(181,131,42,.5);border-radius:7px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.5)';
+  _tdGhost.innerHTML = def ? `<svg width="${px}" height="${py}" viewBox="0 0 100 100" preserveAspectRatio="none">${def.draw(def.w,def.h,COLORS[0])}</svg>` : '';
+  document.body.appendChild(_tdGhost);
+  _movePalGhost(touch.clientX, touch.clientY);
+}
+function _movePalGhost(cx, cy) {
+  if (!_tdGhost) return;
+  _tdGhost.style.left = (cx - _tdGhost.offsetWidth/2) + 'px';
+  _tdGhost.style.top  = (cy - _tdGhost.offsetHeight/2) + 'px';
+}
+function _endPaletteTouchDrag(touch) {
+  if (_tdGhost) { _tdGhost.remove(); _tdGhost = null; }
+  if (!_tdType) return;
+  const type = _tdType; _tdType = null;
+  const rect = fpCanvas.getBoundingClientRect();
+  if (touch.clientX < rect.left || touch.clientX > rect.right || touch.clientY < rect.top || touch.clientY > rect.bottom) return;
+  let cx = (touch.clientX - rect.left) / zoom;
+  let cy = (touch.clientY - rect.top)  / zoom;
+  if (snapOn) { cx = Math.round(cx/ftToPx(SNAP_FT))*ftToPx(SNAP_FT); cy = Math.round(cy/ftToPx(SNAP_FT))*ftToPx(SNAP_FT); }
+  const def = CATALOG.find(c => c.id === type); if (!def) return;
+  if (def.isTableSet) dropTableSet(def, cx, cy);
+  else if (def.isLoungeSet) dropLoungeSet(def, cx, cy);
+  else addItem(type, Math.max(0, cx - ftToPx(def.w)/2), Math.max(0, cy - ftToPx(def.h)/2));
+}
+document.addEventListener('touchmove', e => {
+  if (!_tdType) return;
+  e.preventDefault();
+  _movePalGhost(e.touches[0].clientX, e.touches[0].clientY);
+}, {passive:false});
+document.addEventListener('touchend', e => {
+  if (!_tdType) return;
+  _endPaletteTouchDrag(e.changedTouches[0]);
+});
+document.addEventListener('touchcancel', () => {
+  if (_tdGhost) { _tdGhost.remove(); _tdGhost = null; }
+  _tdType = null;
+});
+
+// ── Viewport: two-finger pan + pinch zoom ────────
+let _pinchDist = null;
+let _pinchMid  = null;
+
+viewport.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    const [t1,t2] = [e.touches[0],e.touches[1]];
+    _pinchDist = Math.hypot(t2.clientX-t1.clientX, t2.clientY-t1.clientY);
+    _pinchMid  = {x:(t1.clientX+t2.clientX)/2, y:(t1.clientY+t2.clientY)/2};
+    e.preventDefault();
+  } else if (e.touches.length === 1 && (currentTool==='pan' || spaceDown)) {
+    _pinchMid = {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    e.preventDefault();
+  }
+}, {passive:false});
+
+viewport.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const [t1,t2] = [e.touches[0],e.touches[1]];
+    const dist = Math.hypot(t2.clientX-t1.clientX, t2.clientY-t1.clientY);
+    const mid  = {x:(t1.clientX+t2.clientX)/2, y:(t1.clientY+t2.clientY)/2};
+    if (_pinchDist) {
+      const scale = dist / _pinchDist;
+      const newZoom = Math.max(0.08, Math.min(8, zoom*scale));
+      const rect = viewport.getBoundingClientRect();
+      const mx = mid.x - rect.left, my = mid.y - rect.top;
+      const sc = newZoom / zoom;
+      viewport.scrollLeft = (viewport.scrollLeft + mx) * sc - mx;
+      viewport.scrollTop  = (viewport.scrollTop  + my) * sc - my;
+      zoom = newZoom; applyZoom();
+    }
+    if (_pinchMid) {
+      viewport.scrollLeft -= mid.x - _pinchMid.x;
+      viewport.scrollTop  -= mid.y - _pinchMid.y;
+    }
+    _pinchDist = dist; _pinchMid = mid;
+  } else if (e.touches.length === 1 && _pinchMid && (currentTool==='pan'||spaceDown)) {
+    e.preventDefault();
+    const t = e.touches[0];
+    viewport.scrollLeft -= t.clientX - _pinchMid.x;
+    viewport.scrollTop  -= t.clientY - _pinchMid.y;
+    _pinchMid = {x:t.clientX, y:t.clientY};
+  }
+}, {passive:false});
+
+viewport.addEventListener('touchend', e => {
+  if (e.touches.length < 2) { _pinchDist = null; _pinchMid = null; }
+}, {passive:false});
+
+// ── Item touch: tap select + drag move + long-press menu ──
+itemsLayer.addEventListener('touchstart', e => {
+  if (_tdType) return;
+  const fitem = e.target.closest('.fitem');
+  if (!fitem) return;
+  if (e.touches.length !== 1) return;
+  e.preventDefault(); e.stopPropagation();
+  const itemId = +fitem.id.replace('fi-','');
+  const liveItem = items.find(i => i.id === itemId);
+  if (!liveItem || liveItem.locked) return;
+  const touch = e.touches[0];
+  const startX = touch.clientX, startY = touch.clientY;
+  let moveStarted = false;
+  const startPositions = new Map();
+
+  // Tap-select
+  if (!selectedIds.has(liveItem.id)) {
+    clearSelection();
+    const members = liveItem.groupId && groups[liveItem.groupId]?.length > 0 ? groups[liveItem.groupId] : null;
+    if (members) { members.forEach(id => selectedIds.add(id)); _refreshSelClasses(); }
+    else addToSelection(liveItem.id);
+  }
+
+  // Long press → context menu
+  const longPress = setTimeout(() => {
+    if (!moveStarted) showCtxMenu(startX, startY);
+  }, 600);
+
+  function onMove(ev) {
+    const t = ev.touches[0]; if (!t) return;
+    if (!moveStarted && (Math.abs(t.clientX-startX) > 6 || Math.abs(t.clientY-startY) > 6)) {
+      moveStarted = true;
+      clearTimeout(longPress);
+      if (liveItem.groupId && groups[liveItem.groupId]?.length > 0) addManyToSelection(groups[liveItem.groupId]);
+      pushHistory();
+      selectedIds.forEach(id => { const it=items.find(i=>i.id===id); if(it&&!it.locked) startPositions.set(id,{x:it.x,y:it.y}); });
+    }
+    if (moveStarted) {
+      ev.preventDefault();
+      const cdx=(t.clientX-startX)/zoom, cdy=(t.clientY-startY)/zoom;
+      startPositions.forEach(({x,y},id)=>{ const it=items.find(i=>i.id===id); if(!it) return; it.x=Math.max(0,x+cdx); it.y=Math.max(0,y+cdy); const el=document.getElementById('fi-'+id); if(el){el.style.left=it.x+'px';el.style.top=it.y+'px';} });
+      updateSpacingGuides();
+    }
+  }
+  function onEnd() {
+    clearTimeout(longPress);
+    window.removeEventListener('touchmove', onMove);
+    window.removeEventListener('touchend', onEnd);
+    clearSpacingGuides();
+    if (moveStarted) { markDirty(); updateRightPanel(); }
+  }
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('touchend', onEnd);
+}, {passive:false});
 
 // ── New Project ─────────────────────────────────
 function newProject() {
