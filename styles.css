@@ -91,7 +91,8 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 #set-scale-btn:hover{background:var(--accent2)}
 
 /* Viewport */
-#viewport{flex:1;overflow:auto;position:relative;cursor:default;-webkit-overflow-scrolling:touch}
+#viewport{flex:1;overflow:auto;position:relative;cursor:default;-webkit-overflow-scrolling:touch;touch-action:none}
+#items-layer{touch-action:none}
 #viewport.panning{cursor:grab}
 #canvas-wrap{
   position:relative;display:inline-block;transform-origin:0 0;margin:60px;
