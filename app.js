@@ -6153,6 +6153,7 @@ itemsLayer.addEventListener('touchstart', e => {
   }, 600);
 
   function onMove(ev) {
+    ev.preventDefault();
     const t = ev.touches[0]; if (!t) return;
     if (!moveStarted && (Math.abs(t.clientX-startX) > 6 || Math.abs(t.clientY-startY) > 6)) {
       moveStarted = true;
@@ -6162,7 +6163,6 @@ itemsLayer.addEventListener('touchstart', e => {
       selectedIds.forEach(id => { const it=items.find(i=>i.id===id); if(it&&!it.locked) startPositions.set(id,{x:it.x,y:it.y}); });
     }
     if (moveStarted) {
-      ev.preventDefault();
       const cdx=(t.clientX-startX)/zoom, cdy=(t.clientY-startY)/zoom;
       startPositions.forEach(({x,y},id)=>{ const it=items.find(i=>i.id===id); if(!it) return; it.x=Math.max(0,x+cdx); it.y=Math.max(0,y+cdy); const el=document.getElementById('fi-'+id); if(el){el.style.left=it.x+'px';el.style.top=it.y+'px';} });
       updateSpacingGuides();
