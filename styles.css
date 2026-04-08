@@ -106,7 +106,7 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
   box-shadow:0 8px 40px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.08);
 }
 #bg-layer{position:absolute;inset:0;pointer-events:none;z-index:0;will-change:contents}
-#bg-img{width:100%;height:100%;object-fit:contain;display:none;opacity:.55}
+#bg-img{width:100%;height:100%;object-fit:contain;display:none;opacity:1}
 #grid-layer{position:absolute;inset:0;pointer-events:none;z-index:1}
 #items-layer{position:absolute;inset:0;z-index:2}
 

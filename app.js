@@ -3294,6 +3294,14 @@ document.addEventListener('click', e => {
 // ═══════════════════════════════════════════════
 function showUpload(){document.getElementById('upload-overlay').classList.add('visible');}
 function skipUpload(){document.getElementById('upload-overlay').classList.remove('visible');setCanvasSize(1200,800);}
+function setFloorplanOpacity(val){
+  document.getElementById('bg-img').style.opacity = val / 100;
+  document.getElementById('floorplan-opacity-label').textContent = val + '%';
+}
+function _showOpacitySlider(show){
+  const w = document.getElementById('floorplan-opacity-wrap');
+  if(w) w.style.display = show ? 'flex' : 'none';
+}
 function handleFile(input){
   const file=input.files[0];if(!file)return;
   input.value='';
@@ -3303,10 +3311,13 @@ function handleFile(input){
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=document.getElementById('bg-img');
-    img.src=ev.target.result;img.style.display='block';
+    img.src=ev.target.result;img.style.display='block';img.style.opacity=1;
     img.onload=()=>{
       setCanvasSize(Math.max(img.naturalWidth,800),Math.max(img.naturalHeight,600));
       document.getElementById('upload-overlay').classList.remove('visible');
+      const sl=document.getElementById('floorplan-opacity');if(sl){sl.value=100;}
+      document.getElementById('floorplan-opacity-label').textContent='100%';
+      _showOpacitySlider(true);
       setTimeout(zoomFit,100);
     };
   };
@@ -3343,14 +3354,15 @@ async function handlePDF(file){
     const img = document.getElementById('bg-img');
     img.src = dataURL;
     img.style.display = 'block';
+    img.style.opacity = 1;
     img.onload = () => {
       setCanvasSize(Math.max(img.naturalWidth, 800), Math.max(img.naturalHeight, 600));
       document.getElementById('upload-overlay').classList.remove('visible');
+      const sl=document.getElementById('floorplan-opacity');if(sl){sl.value=100;}
+      document.getElementById('floorplan-opacity-label').textContent='100%';
+      _showOpacitySlider(true);
       setTimeout(zoomFit, 100);
-      if(totalPages > 1)
-        showToast(`PDF page 1 of ${totalPages} loaded`);
-      else
-        showToast('PDF loaded');
+      showToast(totalPages > 1 ? `PDF page 1 of ${totalPages} loaded` : 'PDF loaded');
     };
   } catch(err) {
     showToast('PDF error: ' + err.message);
@@ -6301,6 +6313,8 @@ function _clearCanvas() {
   const bgImg = document.getElementById('bg-img');
   bgImg.src = '';
   bgImg.style.display = 'none';
+  bgImg.style.opacity = 1;
+  _showOpacitySlider(false);
   document.getElementById('scale-info').textContent = 'Scale: 1ft=20px';
   clearSelection();
   updateCount();
