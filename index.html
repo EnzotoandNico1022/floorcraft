@@ -6,6 +6,7 @@
 <title>Floorcraft — Event Layout Designer</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Karla:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 </head>
 <body>
 
@@ -126,9 +127,9 @@
     <div id="upload-overlay" class="visible">
       <div id="upload-box">
         <h2>Import Floor Plan</h2>
-        <p>Upload your Vectorworks export (PNG, JPG). Set scale after import for accurate real-world dimensions.</p>
+        <p>Upload your floor plan (PNG, JPG, or PDF). Set scale after import for accurate real-world dimensions.</p>
         <label for="file-input">Choose File</label>
-        <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(this)">
+        <input type="file" id="file-input" accept="image/*,.pdf,application/pdf" style="display:none" onchange="handleFile(this)">
         <span class="skip" onclick="skipUpload()">Skip — start with blank canvas</span>
       </div>
     </div>
@@ -639,5 +640,5 @@
   </div>
 </div>
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>

@@ -3296,6 +3296,10 @@ function showUpload(){document.getElementById('upload-overlay').classList.add('v
 function skipUpload(){document.getElementById('upload-overlay').classList.remove('visible');setCanvasSize(1200,800);}
 function handleFile(input){
   const file=input.files[0];if(!file)return;
+  input.value='';
+  if(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf')){
+    handlePDF(file); return;
+  }
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=document.getElementById('bg-img');
@@ -3306,7 +3310,52 @@ function handleFile(input){
       setTimeout(zoomFit,100);
     };
   };
-  reader.readAsDataURL(file);input.value='';
+  reader.readAsDataURL(file);
+}
+
+async function handlePDF(file){
+  showToast('Rendering PDF — please wait…');
+  try {
+    if(typeof pdfjsLib==='undefined') throw new Error('PDF.js not loaded');
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+    const totalPages = pdf.numPages;
+    const page = await pdf.getPage(1);
+
+    // Render at 2x for sharpness; cap width at 3000px to keep it manageable
+    const baseVP = page.getViewport({scale: 1});
+    const scale  = Math.min(2, 3000 / baseVP.width);
+    const vp     = page.getViewport({scale});
+
+    const canvas  = document.createElement('canvas');
+    canvas.width  = Math.round(vp.width);
+    canvas.height = Math.round(vp.height);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    await page.render({canvasContext: ctx, viewport: vp}).promise;
+
+    const dataURL = canvas.toDataURL('image/png');
+    const img = document.getElementById('bg-img');
+    img.src = dataURL;
+    img.style.display = 'block';
+    img.onload = () => {
+      setCanvasSize(Math.max(img.naturalWidth, 800), Math.max(img.naturalHeight, 600));
+      document.getElementById('upload-overlay').classList.remove('visible');
+      setTimeout(zoomFit, 100);
+      if(totalPages > 1)
+        showToast(`PDF page 1 of ${totalPages} loaded`);
+      else
+        showToast('PDF loaded');
+    };
+  } catch(err) {
+    showToast('PDF error: ' + err.message);
+    console.error('PDF render error:', err);
+  }
 }
 function openScalePanel(){
   document.getElementById('scale-panel').classList.add('visible');
