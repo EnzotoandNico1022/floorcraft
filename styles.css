@@ -427,6 +427,6 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 #unsaved-dot{width:7px;height:7px;background:#e67e22;border-radius:50%;display:none;flex-shrink:0}
 #unsaved-dot.show{display:block}
 /* Shape picker */
-.shape-pick-btn{display:block;width:100%;text-align:left;padding:5px 8px;background:none;border:none;color:var(--text);cursor:pointer;font-family:'Karla',sans-serif;font-size:.78rem;border-radius:4px;transition:background .1s}
+.shape-pick-btn{display:block;width:100%;text-align:left;padding:5px 8px;background:none;border:none;color:#ede8df;cursor:pointer;font-family:'Karla',sans-serif;font-size:.78rem;border-radius:4px;transition:background .1s}
 .shape-pick-btn:hover{background:rgba(255,255,255,.09)}
 .shape-pick-btn.active{background:rgba(181,131,42,.22);color:var(--accent)}
