@@ -3263,11 +3263,15 @@ function toggleMultiSelect() {
 
 function toggleShapePicker(){
   const p = document.getElementById('shape-picker');
-  if(p.style.display === 'none'){
+  const hidden = p.style.display === 'none' || p.style.display === '';
+  if(hidden){
     const btn = document.getElementById('btn-shape');
     const r = btn.getBoundingClientRect();
-    p.style.left = r.left + 'px';
-    p.style.top  = (r.bottom + 4) + 'px';
+    // Fallback position if layout hasn't fired yet
+    const top  = r.bottom > 4 ? r.bottom + 4 : 52;
+    const left = r.left   > 0 ? r.left       : 8;
+    p.style.top  = top  + 'px';
+    p.style.left = left + 'px';
     p.style.display = 'block';
   } else {
     p.style.display = 'none';
@@ -6221,10 +6225,20 @@ itemsLayer.addEventListener('touchstart', e => {
 // ── New Project ─────────────────────────────────
 function newProject() {
   if (items.length > 0) {
-    const save = confirm('Save the current project before starting a new one?\n\nOK = open Save dialog first\nCancel = discard and clear now');
-    if (save) { openModal('save-modal'); return; }
-    if (!confirm('Discard current project and start fresh?')) return;
+    document.getElementById('new-project-modal').style.display = 'flex';
+    return;
   }
+  _clearCanvas();
+}
+function newProjectSaveFirst() {
+  document.getElementById('new-project-modal').style.display = 'none';
+  openModal('save-modal');
+}
+function newProjectDiscard() {
+  document.getElementById('new-project-modal').style.display = 'none';
+  _clearCanvas();
+}
+function _clearCanvas() {
   localStorage.removeItem(AUTOSAVE_KEY);
   items = [];
   groups = {};

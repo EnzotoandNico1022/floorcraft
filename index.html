@@ -625,5 +625,19 @@
   <button class="shape-pick-btn"        id="spick-line"     onclick="activateShape('shape-line')">— Line</button>
   <button class="shape-pick-btn"        id="spick-arrow"    onclick="activateShape('shape-arrow')">→ Arrow</button>
 </div>
-<script src="app.js?v=2"></script>
+
+<!-- New-project confirmation (replaces iOS-broken confirm()) -->
+<div id="new-project-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8000;display:none;align-items:center;justify-content:center">
+  <div style="background:#2a2520;border-radius:12px;padding:24px 26px;max-width:320px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1)">
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#ede8df;margin-bottom:8px">Start New Project?</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:20px;line-height:1.5">Your current layout will be lost unless you save it first.</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button onclick="newProjectSaveFirst()" style="padding:9px 0;background:var(--accent);color:#1c1917;border:none;border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">Save first, then start new</button>
+      <button onclick="newProjectDiscard()" style="padding:9px 0;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;cursor:pointer">Discard &amp; start fresh</button>
+      <button onclick="document.getElementById('new-project-modal').style.display='none'" style="padding:7px 0;background:none;color:var(--muted);border:none;font-family:'Karla',sans-serif;font-size:.8rem;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js?v=3"></script>
 </body>
