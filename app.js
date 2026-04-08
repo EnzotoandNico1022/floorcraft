@@ -6225,10 +6225,14 @@ itemsLayer.addEventListener('touchstart', e => {
 // ── New Project ─────────────────────────────────
 function newProject() {
   if (items.length > 0) {
-    document.getElementById('new-project-modal').style.display = 'flex';
+    const m = document.getElementById('new-project-modal');
+    if (m) { m.style.display = 'flex'; return; }
+    // fallback if modal element missing (old cached HTML)
+    if (window.confirm('Discard current project and start fresh?')) _clearCanvas();
     return;
   }
   _clearCanvas();
+  showToast('New project started');
 }
 function newProjectSaveFirst() {
   document.getElementById('new-project-modal').style.display = 'none';
