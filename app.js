@@ -5850,6 +5850,11 @@ function loadLayout(name) {
   groups = save.groups || {};
   pxPerFt = save.pxPerFt || 20;
 
+  // Resync ID counters so new items/groups don't collide with loaded ones
+  idSeq = items.reduce((max, it) => Math.max(max, it.id || 0), 0);
+  const gNums = Object.keys(groups).map(k => parseInt(k.replace('g',''))||0);
+  groupSeq = gNums.length ? Math.max(...gNums) : 0;
+
   // Restore canvas size
   setCanvasSize(save.canvasW || 1200, save.canvasH || 800);
 
@@ -5990,6 +5995,10 @@ function restoreAutosave() {
     items = save.items;
     groups = save.groups || {};
     pxPerFt = save.pxPerFt || 20;
+    // Resync ID counters to prevent collisions with loaded IDs
+    idSeq = items.reduce((max, it) => Math.max(max, it.id || 0), 0);
+    const gNums = Object.keys(groups).map(k => parseInt(k.replace('g',''))||0);
+    groupSeq = gNums.length ? Math.max(...gNums) : 0;
     setCanvasSize(save.canvasW || 1200, save.canvasH || 800);
     const bgImg = document.getElementById('bg-img');
     if (save.bgSrc) { bgImg.src = save.bgSrc; bgImg.style.display = 'block'; }
