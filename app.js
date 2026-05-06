@@ -128,6 +128,10 @@ const CATALOG = [
       <rect x="84%" y="5%" width="12%" height="50%" rx="5%" fill="${darken(c)}" opacity="0.8"/>` },
 
   // TABLES — ROUNDS
+  { cat:'Tables — Round', id:'tbl-r40', name:'Round 40"', w:3.5, h:3.5, unit:'ft',
+    draw: (w,h,c) => `<circle cx="50%" cy="50%" r="48%" fill="${c}" opacity="0.15" stroke="${c}" stroke-width="2"/>
+      <circle cx="50%" cy="50%" r="35%" fill="${c}" opacity="0.1"/>` },
+
   { cat:'Tables — Round', id:'tbl-r48', name:'Round 48"', w:4, h:4, unit:'ft',
     draw: (w,h,c) => `<circle cx="50%" cy="50%" r="48%" fill="${c}" opacity="0.15" stroke="${c}" stroke-width="2"/>
       <circle cx="50%" cy="50%" r="35%" fill="${c}" opacity="0.1"/>` },
@@ -979,6 +983,15 @@ const CATALOG = [
   // ─── TABLE SETS (table + chairs as one droppable group) ───
   // These are special: isTableSet:true, seats = default count, chairType = chair to use
   // The draw fn renders the full set as a preview icon
+
+  { cat:'Table Sets', id:'set-round40-4', name:'Round 40" + 4 Chairs', w:6, h:6, unit:'ft',
+    isTableSet:true, tableType:'tbl-r40', chairType:'chair-banquet', seats:4,
+    draw:(w,h,c)=>{
+      const chairs=[0,90,180,270].map(a=>({x:50+40*Math.cos((a-90)*Math.PI/180),y:50+40*Math.sin((a-90)*Math.PI/180),a}));
+      return `<circle cx="50%" cy="50%" r="27%" fill="${c}" opacity=".18" stroke="${c}" stroke-width="2"/>
+        <circle cx="50%" cy="50%" r="16%" fill="${c}" opacity=".1"/>
+        ${chairs.map(ch=>`<rect x="${ch.x-8}%" y="${ch.y-8}%" width="16%" height="16%" rx="30%" fill="${c}" opacity=".7" transform="rotate(${ch.a},${ch.x}%,${ch.y}%)"/>`).join('')}`;
+    }},
 
   { cat:'Table Sets', id:'set-round48-4', name:'Round 48" + 4 Chairs', w:7, h:7, unit:'ft',
     isTableSet:true, tableType:'tbl-r48', chairType:'chair-banquet', seats:4,
@@ -6579,6 +6592,7 @@ function isRoundTable(tableType) {
   return !tableType ? false :
     tableType.includes('r48') || tableType.includes('r60') || tableType.includes('r72') ||
     tableType === 'tbl-r48' || tableType === 'tbl-r60' || tableType === 'tbl-r72' ||
+    tableType === 'tbl-r40' ||
     tableType === 'tbl-cocktail' || tableType === 'tbl-cocktail-hi' ||
     tableType.includes('r4') || tableType.includes('r6') || tableType.includes('r7');
 }
