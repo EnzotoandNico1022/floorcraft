@@ -5708,125 +5708,145 @@ async function doExport() {
   const prevSel = new Set(selectedIds);
   clearSelection();
 
-  const legendOverlay = document.getElementById('canvas-legend');
-  const legendWasShowing = legendOverlay.classList.contains('show');
-  const includeLegend = document.getElementById('exp-legend')?.checked;
-  if (!includeLegend && legendWasShowing) legendOverlay.classList.remove('show');
-  if (includeLegend && !legendWasShowing) legendOverlay.classList.add('show');
-
-  const prevZoom = zoom;
-  const prevScrollX = viewport.scrollLeft;
-  const prevScrollY = viewport.scrollTop;
-
-  // Reset transform AND zoom var so html2canvas sees the canvas at 1:1
-  zoom = 1;
-  canvasWrap.style.transform = 'scale(1)';
-  canvasWrap.style.transformOrigin = '0 0';
-  // Scroll to top-left so canvas is fully in view
-  viewport.scrollLeft = 0;
-  viewport.scrollTop = 0;
-
-  // Hide overlays that shouldn't appear in export
-  const scaleLineLayer = document.getElementById('scale-line-layer');
-  const measureLayerEl = document.getElementById('measure-layer');
-  if (scaleLineLayer) scaleLineLayer.style.visibility = 'hidden';
-  if (measureLayerEl) measureLayerEl.style.visibility = 'hidden';
-
-  // Wait for browser to repaint at 1:1
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const fmt    = document.getElementById('exp-format').value;
+  const whiteBg = document.getElementById('exp-bg').checked;
+  const scale  = selectedQuality;
+  const W = fpCanvas.offsetWidth;
+  const H = fpCanvas.offsetHeight;
 
   try {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    const off = document.createElement('canvas');
+    off.width  = W * scale;
+    off.height = H * scale;
+    const ctx  = off.getContext('2d');
 
-    const fmt = document.getElementById('exp-format').value;
-    const whiteBg = document.getElementById('exp-bg').checked;
-    const scale = selectedQuality;
+    // Background fill
+    if (whiteBg) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, off.width, off.height); }
 
-    const canvasEl = await html2canvas(fpCanvas, {
-      backgroundColor: whiteBg ? '#ffffff' : null,
-      scale,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      x: 0,
-      y: 0,
-      scrollX: 0,
-      scrollY: 0,
-      width: fpCanvas.offsetWidth,
-      height: fpCanvas.offsetHeight,
-    });
+    // Floor plan image
+    const bgImg = document.getElementById('bg-img');
+    if (bgImg.naturalWidth > 0 && bgImg.style.display !== 'none') {
+      ctx.save();
+      ctx.globalAlpha = parseFloat(bgImg.style.opacity) || 1;
+      ctx.drawImage(bgImg, 0, 0, W * scale, H * scale);
+      ctx.restore();
+    }
 
+    // Items sorted by z-index
+    const sorted = [...items].filter(i => i.visible !== false).sort((a,b) => a.zIndex - b.zIndex);
+
+    for (const item of sorted) {
+      const def = CATALOG.find(c => c.id === item.type);
+      if (!def) continue;
+
+      const iw = ftToPx(item.w), ih = ftToPx(item.h);
+      const color = item.color || COLORS[0];
+
+      ctx.save();
+      ctx.globalAlpha = item.opacity ?? 1;
+
+      if (item.rotation) {
+        ctx.translate((item.x + iw/2) * scale, (item.y + ih/2) * scale);
+        ctx.rotate(item.rotation * Math.PI / 180);
+        ctx.translate(-iw/2 * scale, -ih/2 * scale);
+      } else {
+        ctx.translate(item.x * scale, item.y * scale);
+      }
+
+      if (def.isTextLabel) {
+        const fs = (item.textSize || 24) * scale;
+        ctx.font = `${item.textItalic?'italic ':''} ${item.textBold?'700':'400'} ${fs}px ${item.textFont||'Karla'},sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textAlign = item.textAlign || 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.label || '', iw/2 * scale, ih/2 * scale);
+      } else {
+        // Build SVG string for this item
+        let svgBody, viewBox;
+        if (def.isShape) {
+          const fill = color === 'none' ? 'none' : color;
+          const stroke = item.strokeColor || '#1c1917';
+          const sw = item.strokeWidth ?? 2;
+          const ins = sw / 2;
+          if (item.type === 'shape-rect') {
+            svgBody = `<rect x="${ins}" y="${ins}" width="${Math.max(1,iw-sw)}" height="${Math.max(1,ih-sw)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+          } else if (item.type === 'shape-ellipse') {
+            svgBody = `<ellipse cx="${iw/2}" cy="${ih/2}" rx="${Math.max(1,iw/2-ins)}" ry="${Math.max(1,ih/2-ins)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+          } else if (item.type === 'shape-triangle') {
+            svgBody = `<polygon points="${iw/2},${ins} ${iw-ins},${ih-ins} ${ins},${ih-ins}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+          } else if (item.type === 'shape-line') {
+            svgBody = `<line x1="${sw}" y1="${ih/2}" x2="${iw-sw}" y2="${ih/2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+          } else if (item.type === 'shape-arrow') {
+            svgBody = `<defs><marker id="xah" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 z" fill="${stroke}"/></marker></defs>`+
+              `<line x1="${sw}" y1="${ih/2}" x2="${iw-8}" y2="${ih/2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" marker-end="url(#xah)"/>`;
+          }
+          viewBox = `0 0 ${iw} ${ih}`;
+        } else {
+          svgBody = def.draw(item.w, item.h, color);
+          viewBox = '0 0 100 100';
+        }
+
+        const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${iw*scale}" height="${ih*scale}" viewBox="${viewBox}" preserveAspectRatio="none">${svgBody||''}</svg>`;
+        const imgEl = await _svgToImg(svgStr);
+        if (imgEl) ctx.drawImage(imgEl, 0, 0, iw * scale, ih * scale);
+
+        // Label
+        if (labelsOn && item.label && !def.isShape && !def.isAnnotation) {
+          const fs = Math.max(8, Math.min(11, iw / 6)) * scale;
+          ctx.font = `500 ${fs}px Karla,sans-serif`;
+          ctx.fillStyle = 'rgba(0,0,0,0.65)';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText(item.label, iw/2 * scale, (ih + 2) * scale);
+        }
+      }
+      ctx.restore();
+    }
+
+    // Download
     if (fmt === 'pdf') {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
       const { jsPDF } = window.jspdf;
-      if (!jsPDF) throw new Error('jsPDF failed to load — try PNG export instead');
-
-      const imgW = canvasEl.width;
-      const imgH = canvasEl.height;
       const dpi = 96 * scale;
-      const mmW = Math.max(1, imgW * 25.4 / dpi);
-      const mmH = Math.max(1, imgH * 25.4 / dpi);
-      const orient = mmW >= mmH ? 'landscape' : 'portrait';
-      const pdf = new jsPDF({ orientation: orient, unit: 'mm', format: [mmW, mmH] });
-
-      // Use JPEG inside PDF for smaller file size
-      const imgData = canvasEl.toDataURL('image/jpeg', 0.92);
-      if (!imgData || imgData === 'data:,') throw new Error('Canvas capture failed — try PNG format');
-      pdf.addImage(imgData, 'JPEG', 0, 0, mmW, mmH, undefined, 'FAST');
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(5);
-      pdf.setTextColor(180, 180, 180);
-      pdf.text('Floorcraft · ' + new Date().toLocaleDateString(), 2, mmH - 1.5);
-      pdf.save(`event-layout-${scale}x.pdf`);
-      showToast(`PDF exported at ${scale}× quality`);
-
+      const mmW = off.width * 25.4 / dpi, mmH = off.height * 25.4 / dpi;
+      const pdf = new jsPDF({ orientation: mmW >= mmH ? 'landscape' : 'portrait', unit: 'mm', format: [mmW, mmH] });
+      pdf.addImage(off.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, mmW, mmH, undefined, 'FAST');
+      pdf.save('event-layout.pdf');
+      showToast('PDF exported');
     } else {
-      const mimeType = fmt === 'jpg' ? 'image/jpeg' : 'image/png';
-      const quality = fmt === 'jpg' ? 0.92 : 1.0;
-      const dataUrl = canvasEl.toDataURL(mimeType, quality);
-
-      if (!dataUrl || dataUrl === 'data:,' || dataUrl.length < 100) {
-        throw new Error('Export produced empty file. Try PNG format or check browser permissions.');
-      }
-
-      // Chrome-safe download: create blob URL instead of data URL
-      const byteStr = atob(dataUrl.split(',')[1]);
-      const arr = new Uint8Array(byteStr.length);
-      for (let i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-      const blob = new Blob([arr], { type: mimeType });
-      const blobUrl = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = `event-layout-${scale}x.${fmt}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      // Revoke blob URL after download starts
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-      showToast(`Exported at ${scale}× as ${fmt.toUpperCase()}`);
+      const mime = fmt === 'jpg' ? 'image/jpeg' : 'image/png';
+      off.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `event-layout-${scale}x.${fmt}`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showToast(`Exported as ${fmt.toUpperCase()}`);
+      }, mime, fmt === 'jpg' ? 0.92 : 1.0);
     }
 
     closeModal('export-modal');
 
   } catch(err) {
-    alert('Export failed: ' + err.message + '\n\nTip: If using a local file, try publishing the app first (AI features and some exports require HTTPS).');
+    alert('Export failed: ' + err.message);
     console.error('Export error:', err);
   } finally {
-    zoom = prevZoom;
-    canvasWrap.style.transform = `scale(${prevZoom})`;
-    viewport.scrollLeft = prevScrollX;
-    viewport.scrollTop = prevScrollY;
-    if (scaleLineLayer) scaleLineLayer.style.visibility = '';
-    if (measureLayerEl) measureLayerEl.style.visibility = '';
-    if (!includeLegend && legendWasShowing) legendOverlay.classList.add('show');
-    if (includeLegend && !legendWasShowing) legendOverlay.classList.remove('show');
     prevSel.forEach(id => addToSelection(id));
     btn.disabled = false;
     btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5.5l3 3 3-3M1 10h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="export-btn-label">Export</span>';
     updateExportNote();
   }
+}
+
+function _svgToImg(svgStr) {
+  return new Promise(resolve => {
+    const blob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
+    const url  = URL.createObjectURL(blob);
+    const img  = new Image();
+    img.onload  = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    img.src = url;
+  });
 }
 
 function loadScript(src) {
