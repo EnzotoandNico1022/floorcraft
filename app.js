@@ -3314,30 +3314,51 @@ function setFloorplanOpacity(val){
 function _showOpacitySlider(show){
   const w = document.getElementById('floorplan-opacity-wrap');
   if(w) w.style.display = show ? 'flex' : 'none';
+  const s = document.getElementById('btn-swap-plan');
+  if(s) s.style.display = show ? '' : 'none';
+}
+
+function swapPlan(){
+  document.getElementById('swap-plan-input').click();
+}
+
+async function handleSwapPlan(input){
+  const file = input.files[0]; if(!file) return;
+  input.value = '';
+  if(file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')){
+    await _loadBgFromPDF(file, true);
+  } else {
+    _loadBgFromImage(file, true);
+  }
 }
 function handleFile(input){
   const file=input.files[0];if(!file)return;
   input.value='';
   if(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf')){
-    handlePDF(file); return;
+    _loadBgFromPDF(file, false); return;
   }
+  _loadBgFromImage(file, false);
+}
+
+function _loadBgFromImage(file, swapMode){
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=document.getElementById('bg-img');
     img.src=ev.target.result;img.style.display='block';img.style.opacity=1;
     img.onload=()=>{
-      setCanvasSize(Math.max(img.naturalWidth,800),Math.max(img.naturalHeight,600));
+      if(!swapMode) setCanvasSize(Math.max(img.naturalWidth,800),Math.max(img.naturalHeight,600));
       document.getElementById('upload-overlay').classList.remove('visible');
       const sl=document.getElementById('floorplan-opacity');if(sl){sl.value=100;}
       document.getElementById('floorplan-opacity-label').textContent='100%';
       _showOpacitySlider(true);
       setTimeout(zoomFit,100);
+      if(swapMode) showToast('Floor plan swapped — items preserved');
     };
   };
   reader.readAsDataURL(file);
 }
 
-async function handlePDF(file){
+async function _loadBgFromPDF(file, swapMode){
   showToast('Rendering PDF — please wait…');
   try {
     if(typeof pdfjsLib==='undefined') throw new Error('PDF.js not loaded');
@@ -3349,7 +3370,6 @@ async function handlePDF(file){
     const totalPages = pdf.numPages;
     const page = await pdf.getPage(1);
 
-    // Render at 2x for sharpness; cap width at 3000px to keep it manageable
     const baseVP = page.getViewport({scale: 1});
     const scale  = Math.min(2, 3000 / baseVP.width);
     const vp     = page.getViewport({scale});
@@ -3360,7 +3380,6 @@ async function handlePDF(file){
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     await page.render({canvasContext: ctx, viewport: vp}).promise;
 
     const dataURL = canvas.toDataURL('image/png');
@@ -3369,13 +3388,14 @@ async function handlePDF(file){
     img.style.display = 'block';
     img.style.opacity = 1;
     img.onload = () => {
-      setCanvasSize(Math.max(img.naturalWidth, 800), Math.max(img.naturalHeight, 600));
+      if(!swapMode) setCanvasSize(Math.max(img.naturalWidth, 800), Math.max(img.naturalHeight, 600));
       document.getElementById('upload-overlay').classList.remove('visible');
       const sl=document.getElementById('floorplan-opacity');if(sl){sl.value=100;}
       document.getElementById('floorplan-opacity-label').textContent='100%';
       _showOpacitySlider(true);
       setTimeout(zoomFit, 100);
-      showToast(totalPages > 1 ? `PDF page 1 of ${totalPages} loaded` : 'PDF loaded');
+      if(swapMode) showToast('Floor plan swapped — items preserved');
+      else showToast(totalPages > 1 ? `PDF page 1 of ${totalPages} loaded` : 'PDF loaded');
     };
   } catch(err) {
     showToast('PDF error: ' + err.message);
