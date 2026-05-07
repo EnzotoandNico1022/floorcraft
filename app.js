@@ -1079,6 +1079,36 @@ const CATALOG = [
         ${chairs.map(ch=>`<circle cx="${ch.x}%" cy="${ch.y}%" r="9%" fill="${c}" opacity=".6"/>`).join('')}`;
     }},
 
+  // ─── BARSTOOL ROW SETS ───────────────────────
+  { cat:'Table Sets', id:'set-barstools-4', name:'4 Barstools (Row)', w:7, h:2, unit:'ft',
+    isLoungeSet:true,
+    pieces:[
+      {type:'barstool-round', dx:-2.625, dy:0, label:'Barstool'},
+      {type:'barstool-round', dx:-0.875, dy:0, label:'Barstool'},
+      {type:'barstool-round', dx: 0.875, dy:0, label:'Barstool'},
+      {type:'barstool-round', dx: 2.625, dy:0, label:'Barstool'},
+    ],
+    draw:(w,h,c)=>{
+      const xs=[14,38,62,86];
+      return xs.map(x=>`<circle cx="${x}%" cy="50%" r="11%" fill="${c}" opacity=".75"/>
+        <circle cx="${x}%" cy="50%" r="7%" fill="${c}" opacity=".15" stroke="${c}" stroke-width="1.5"/>`).join('');
+    }},
+
+  { cat:'Table Sets', id:'set-barstools-5', name:'5 Barstools (Row)', w:9, h:2, unit:'ft',
+    isLoungeSet:true,
+    pieces:[
+      {type:'barstool-round', dx:-3.5,  dy:0, label:'Barstool'},
+      {type:'barstool-round', dx:-1.75, dy:0, label:'Barstool'},
+      {type:'barstool-round', dx: 0,    dy:0, label:'Barstool'},
+      {type:'barstool-round', dx: 1.75, dy:0, label:'Barstool'},
+      {type:'barstool-round', dx: 3.5,  dy:0, label:'Barstool'},
+    ],
+    draw:(w,h,c)=>{
+      const xs=[10,28,50,72,90];
+      return xs.map(x=>`<circle cx="${x}%" cy="50%" r="9%" fill="${c}" opacity=".75"/>
+        <circle cx="${x}%" cy="50%" r="5.5%" fill="${c}" opacity=".15" stroke="${c}" stroke-width="1.5"/>`).join('');
+    }},
+
   // ─── LOUNGE SETS ─────────────────────────────
   // Each lounge set defines a list of pieces with relative positions.
   // pieces: [{type, dx, dy, label?}] — dx/dy in feet from the set center
