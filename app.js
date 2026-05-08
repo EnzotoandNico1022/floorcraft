@@ -3235,33 +3235,55 @@ fpCanvas.addEventListener('mousedown', e => {
   e.preventDefault();
   const pos = screenToCanvas(e.clientX, e.clientY);
   shapeDrawStart = pos;
-  shapeDrawPreview = document.createElement('div');
-  shapeDrawPreview.style.cssText = 'position:absolute;box-sizing:border-box;pointer-events:none;z-index:9999;border:2px dashed rgba(255,77,143,.8);background:rgba(255,77,143,.07)';
-  if(currentShapeType === 'shape-ellipse') shapeDrawPreview.style.borderRadius = '50%';
-  if(currentShapeType === 'shape-line' || currentShapeType === 'shape-arrow'){
-    shapeDrawPreview.style.background = 'none';
-    shapeDrawPreview.style.borderWidth = '0 0 2px 0';
+  const isLineLike = currentShapeType==='shape-line'||currentShapeType==='shape-arrow';
+
+  if(isLineLike){
+    // SVG overlay for free-angle line/arrow preview
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;z-index:9999;overflow:visible';
+    svg.setAttribute('width', fpCanvas.offsetWidth);
+    svg.setAttribute('height', fpCanvas.offsetHeight);
+    if(currentShapeType==='shape-arrow'){
+      const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+      defs.innerHTML=`<marker id="pd-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="rgba(255,77,143,.9)"/></marker>`;
+      svg.appendChild(defs);
+    }
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', pos.x); line.setAttribute('y1', pos.y);
+    line.setAttribute('x2', pos.x); line.setAttribute('y2', pos.y);
+    line.setAttribute('stroke','rgba(255,77,143,.85)');
+    line.setAttribute('stroke-width','2.5');
+    line.setAttribute('stroke-dasharray','7,4');
+    line.setAttribute('stroke-linecap','round');
+    if(currentShapeType==='shape-arrow') line.setAttribute('marker-end','url(#pd-arrow)');
+    svg.appendChild(line);
+    itemsLayer.appendChild(svg);
+    shapeDrawPreview = svg;
+    shapeDrawPreview._line = line;
+  } else {
+    shapeDrawPreview = document.createElement('div');
+    shapeDrawPreview.style.cssText='position:absolute;box-sizing:border-box;pointer-events:none;z-index:9999;border:2px dashed rgba(255,77,143,.8);background:rgba(255,77,143,.07)';
+    if(currentShapeType==='shape-ellipse') shapeDrawPreview.style.borderRadius='50%';
+    shapeDrawPreview.style.left=pos.x+'px'; shapeDrawPreview.style.top=pos.y+'px';
+    shapeDrawPreview.style.width='0'; shapeDrawPreview.style.height='0';
+    itemsLayer.appendChild(shapeDrawPreview);
   }
-  shapeDrawPreview.style.left = pos.x + 'px';
-  shapeDrawPreview.style.top  = pos.y + 'px';
-  shapeDrawPreview.style.width = '0';
-  shapeDrawPreview.style.height = '0';
-  itemsLayer.appendChild(shapeDrawPreview);
 });
 
 window.addEventListener('mousemove', e => {
   if(!shapeDrawStart || currentTool !== 'shape') return;
   const pos = screenToCanvas(e.clientX, e.clientY);
   const isLineLike = currentShapeType==='shape-line'||currentShapeType==='shape-arrow';
-  const x = Math.min(shapeDrawStart.x, pos.x);
-  const y = Math.min(shapeDrawStart.y, pos.y);
-  const w = Math.abs(pos.x - shapeDrawStart.x);
-  const h = Math.abs(pos.y - shapeDrawStart.y);
-  if(shapeDrawPreview){
-    shapeDrawPreview.style.left  = x + 'px';
-    shapeDrawPreview.style.top   = (isLineLike ? shapeDrawStart.y : y) + 'px';
-    shapeDrawPreview.style.width  = w + 'px';
-    shapeDrawPreview.style.height = (isLineLike ? 0 : h) + 'px';
+  if(isLineLike){
+    if(shapeDrawPreview?._line){
+      shapeDrawPreview._line.setAttribute('x2', pos.x);
+      shapeDrawPreview._line.setAttribute('y2', pos.y);
+    }
+  } else if(shapeDrawPreview){
+    const x=Math.min(shapeDrawStart.x,pos.x), y=Math.min(shapeDrawStart.y,pos.y);
+    shapeDrawPreview.style.left=x+'px'; shapeDrawPreview.style.top=y+'px';
+    shapeDrawPreview.style.width=Math.abs(pos.x-shapeDrawStart.x)+'px';
+    shapeDrawPreview.style.height=Math.abs(pos.y-shapeDrawStart.y)+'px';
   }
 });
 
@@ -3270,25 +3292,46 @@ window.addEventListener('mouseup', e => {
   if(shapeDrawPreview){ shapeDrawPreview.remove(); shapeDrawPreview = null; }
   const pos = screenToCanvas(e.clientX, e.clientY);
   const isLineLike = currentShapeType==='shape-line'||currentShapeType==='shape-arrow';
-  let pw = Math.abs(pos.x - shapeDrawStart.x);
-  let ph = Math.abs(pos.y - shapeDrawStart.y);
-  const minPx = ftToPx(0.5);
-  if(pw < minPx && ph < minPx){ shapeDrawStart = null; return; }
-  if(pw < minPx) pw = minPx;
-  if(ph < minPx || isLineLike) ph = ftToPx(1);
-  const ix = Math.min(shapeDrawStart.x, pos.x);
-  const iy = isLineLike ? shapeDrawStart.y - ftToPx(0.5) : Math.min(shapeDrawStart.y, pos.y);
   const def = CATALOG.find(c => c.id === currentShapeType);
+  const minPx = ftToPx(0.5);
   pushHistory();
-  const item = {
-    id: ++idSeq, type: currentShapeType,
-    x: Math.max(0, ix), y: Math.max(0, iy),
-    w: pxToFt(pw), h: pxToFt(ph),
-    rotation: 0, color: '#b5832a',
-    strokeColor: '#1c1917', strokeWidth: 2,
-    label: def?.name || 'Shape', opacity: 1,
-    zIndex: items.length + 1, groupId: null, visible: true
-  };
+
+  let item;
+  if(isLineLike){
+    const dx = pos.x - shapeDrawStart.x;
+    const dy = pos.y - shapeDrawStart.y;
+    const length = Math.hypot(dx, dy);
+    if(length < minPx){ shapeDrawStart = null; return; }
+    const angle  = Math.atan2(dy, dx) * 180 / Math.PI;
+    const thinPx = Math.max(ftToPx(0.4), 20);
+    const cx = (shapeDrawStart.x + pos.x) / 2;
+    const cy = (shapeDrawStart.y + pos.y) / 2;
+    item = {
+      id: ++idSeq, type: currentShapeType,
+      x: Math.max(0, cx - length/2), y: Math.max(0, cy - thinPx/2),
+      w: pxToFt(length), h: pxToFt(thinPx),
+      rotation: angle, color: '#b5832a',
+      strokeColor: '#1c1917', strokeWidth: 2,
+      label: def?.name || 'Shape', opacity: 1,
+      zIndex: items.length + 1, groupId: null, visible: true
+    };
+  } else {
+    let pw = Math.abs(pos.x - shapeDrawStart.x);
+    let ph = Math.abs(pos.y - shapeDrawStart.y);
+    if(pw < minPx && ph < minPx){ shapeDrawStart = null; return; }
+    if(pw < minPx) pw = minPx;
+    if(ph < minPx) ph = minPx;
+    item = {
+      id: ++idSeq, type: currentShapeType,
+      x: Math.max(0, Math.min(shapeDrawStart.x, pos.x)),
+      y: Math.max(0, Math.min(shapeDrawStart.y, pos.y)),
+      w: pxToFt(pw), h: pxToFt(ph),
+      rotation: 0, color: '#b5832a',
+      strokeColor: '#1c1917', strokeWidth: 2,
+      label: def?.name || 'Shape', opacity: 1,
+      zIndex: items.length + 1, groupId: null, visible: true
+    };
+  }
   items.push(item);
   renderItem(item);
   clearSelection(); addToSelection(item.id);
