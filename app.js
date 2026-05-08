@@ -2906,7 +2906,7 @@ const CATALOG = [
 // ═══════════════════════════════════════════════
 function darken(hex){if(!hex||hex[0]!=='#')return hex;let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`#${[r,g,b].map(v=>Math.max(0,v-35).toString(16).padStart(2,'0')).join('')}`;}
 
-const COLORS=['#b5832a','#4a6fa5','#5f7a5e','#8B4513','#6B4C9B','#c0392b','#2c7873','#555555','#e8c46a','#a8c0a0'];
+const COLORS=['#d4922e','#3a7fd5','#4e9e5f','#a0400f','#7c52c8','#e03020','#1a9e8f','#6b6b6b','#f0c830','#72b87a'];
 const SNAP_FT=0.5;
 let pxPerFt=20,zoom=1,gridOn=true,snapOn=true,labelsOn=false,currentTool='select';
 let items=[],groups={},selectedIds=new Set(),history=[],maxHistory=50,idSeq=0;
