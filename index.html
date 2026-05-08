@@ -115,6 +115,26 @@
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="margin-right:3px"><path d="M5.5 1v6M3 5l2.5 2.5L8 5M1 9h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Export
     </button>
   </div>
+  <button class="tbtn" onclick="openModal('api-key-modal')" title="Set Anthropic API key for AI features" id="btn-api-key" style="font-size:.65rem;opacity:.7">⚙ API Key</button>
+</div>
+
+<!-- API Key modal -->
+<div class="modal-backdrop" id="api-key-modal">
+  <div class="modal-box" style="max-width:420px">
+    <div class="modal-header">
+      <div><h2>Anthropic API Key</h2><p>Your key is saved only in this browser — never sent to any server or stored in the app code.</p></div>
+      <button class="modal-close" onclick="closeModal('api-key-modal')">×</button>
+    </div>
+    <div style="padding:0 22px 20px">
+      <p style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:14px">Get a key at <strong>console.anthropic.com</strong> → API Keys. Paste it below to enable the AI Layout and AI Item features.</p>
+      <input type="password" id="api-key-input" class="prop-input" placeholder="sk-ant-api03-…" style="width:100%;box-sizing:border-box;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:.78rem">
+      <div style="display:flex;gap:8px">
+        <button onclick="saveApiKey()" class="btn-export" style="flex:1">Save Key</button>
+        <button onclick="clearApiKey()" class="btn-cancel" style="flex:1">Clear Key</button>
+      </div>
+      <div id="api-key-status" style="margin-top:10px;font-size:.75rem;color:var(--muted);text-align:center"></div>
+    </div>
+  </div>
 </div>
 
 <div id="main">
@@ -649,5 +669,5 @@
   </div>
 </div>
 
-<script src="app.js?v=12"></script>
+<script src="app.js?v=13"></script>
 </body>

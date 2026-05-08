@@ -1,5 +1,32 @@
-// ── Anthropic API key (local testing only — never commit a real key) ──
-const ANTHROPIC_API_KEY = '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';
+// ── Anthropic API key — stored in localStorage, never in source code ──
+function getApiKey() { return localStorage.getItem('floorcraft_api_key') || ''; }
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    document.getElementById('api-key-status').textContent = '⚠ That doesn\'t look like a valid key (should start with sk-ant-)';
+    return;
+  }
+  localStorage.setItem('floorcraft_api_key', val);
+  document.getElementById('api-key-status').textContent = '✓ Key saved — AI features are ready';
+  document.getElementById('btn-api-key').style.opacity = '1';
+  document.getElementById('btn-api-key').style.color = 'var(--sage)';
+  setTimeout(() => closeModal('api-key-modal'), 1200);
+}
+function clearApiKey() {
+  localStorage.removeItem('floorcraft_api_key');
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('api-key-status').textContent = 'Key cleared';
+  document.getElementById('btn-api-key').style.opacity = '.7';
+  document.getElementById('btn-api-key').style.color = '';
+}
+function _initApiKeyUI() {
+  const key = getApiKey();
+  if (key) {
+    document.getElementById('api-key-input').value = key;
+    document.getElementById('btn-api-key').style.opacity = '1';
+    document.getElementById('btn-api-key').style.color = 'var(--sage)';
+  }
+}
 
 const CATALOG = [
   // CHAIRS
@@ -5360,7 +5387,10 @@ document.querySelectorAll('.modal-backdrop').forEach(b=>b.addEventListener('clic
 // AI PIECE GENERATOR
 // ═══════════════════════════════════════════════
 let aiPendingItem=null;
-function openAiItemModal(){openModal('ai-item-modal');setTimeout(()=>document.getElementById('ai-prompt').focus(),100);}
+function openAiItemModal(){
+  if(!getApiKey()){ openModal('api-key-modal'); showToast('Enter your Anthropic API key first'); return; }
+  openModal('ai-item-modal');setTimeout(()=>document.getElementById('ai-prompt').focus(),100);
+}
 function setAiPrompt(el){document.getElementById('ai-prompt').value=el.textContent;document.getElementById('ai-prompt').focus();}
 
 async function generateAiPiece(){
@@ -5391,7 +5421,7 @@ svgBody rules:
         signal:controller1.signal,
         headers:{
           'Content-Type':'application/json',
-          'x-api-key':ANTHROPIC_API_KEY,
+          'x-api-key':getApiKey(),
           'anthropic-version':'2023-06-01',
           'anthropic-dangerous-direct-browser-access':'true'
         },
@@ -5453,6 +5483,7 @@ let layoutHistory = [];
 let pendingLayoutActions = [];
 
 function openAiLayoutModal() {
+  if(!getApiKey()){ openModal('api-key-modal'); showToast('Enter your Anthropic API key first'); return; }
   openModal('ai-layout-modal');
   setTimeout(() => document.getElementById('layout-input').focus(), 100);
 }
@@ -7338,4 +7369,5 @@ restoreAutosave();
 setTool('select');
 document.getElementById('btn-grid').classList.add('active');
 document.getElementById('btn-snap').classList.add('active');
+_initApiKeyUI();
 setTimeout(zoomFit,200);
