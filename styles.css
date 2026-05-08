@@ -140,8 +140,8 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 /* Handles */
 .handle{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;opacity:0;transition:opacity .12s;pointer-events:none;z-index:30}
 .fitem.sel .handle{pointer-events:all;opacity:1}
-.rot-handle{width:18px;height:18px;background:var(--accent);color:white;top:-26px;left:50%;transform:translateX(-50%);cursor:grab}
-.rot-handle::after{content:'↻';font-size:11px}
+.rot-handle{width:26px;height:26px;background:var(--accent);color:white;top:-34px;left:50%;transform:translateX(-50%);cursor:grab}
+.rot-handle::after{content:'↻';font-size:16px}
 /* When multiple items selected, hide resize handles on the lead .sel item but keep rotate */
 .fitem.multisel-lead .resize-handle{display:none!important}
 .del-handle{width:16px;height:16px;background:var(--danger);color:white;top:-26px;right:-6px;cursor:pointer;font-size:11px}
