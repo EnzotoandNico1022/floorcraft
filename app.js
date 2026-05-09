@@ -5912,11 +5912,15 @@ async function doExport() {
   }
 }
 
-function _svgToImg(svgStr) {
+function _svgToImg(svgStr, directSrc) {
   return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => { resolve(img); };
+    img.onerror = () => { resolve(null); };
+    if (directSrc) { img.src = directSrc; return; }
     const blob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
     const url  = URL.createObjectURL(blob);
-    const img  = new Image();
+    const orig = img.onload;
     img.onload  = () => { URL.revokeObjectURL(url); resolve(img); };
     img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
     img.src = url;
@@ -7359,6 +7363,230 @@ function removeNote(itemId) {
 // Keep notes attached when items move
 const _origRefreshItemEl_notes = refreshItemEl;
 // (we'll patch this inline in refreshItemEl rather than duplicating)
+
+// ═══════════════════════════════════════════════
+// MOODBOARD
+// ═══════════════════════════════════════════════
+const MB_PHOTOS_KEY = 'floorcraft_mb_photos';
+
+function _mbPhotos() { try { return JSON.parse(localStorage.getItem(MB_PHOTOS_KEY)||'{}'); } catch{ return {}; } }
+function _mbSavePhoto(type, dataUrl) {
+  const p = _mbPhotos(); p[type] = dataUrl;
+  localStorage.setItem(MB_PHOTOS_KEY, JSON.stringify(p));
+}
+function _mbRemovePhoto(type) {
+  const p = _mbPhotos(); delete p[type];
+  localStorage.setItem(MB_PHOTOS_KEY, JSON.stringify(p));
+}
+
+function openMoodboard() {
+  if (!items.length) { showToast('Add some items to the canvas first'); return; }
+  _buildMoodboardManager();
+  openModal('moodboard-modal');
+}
+
+function _mbCounts() {
+  const counts = {};
+  items.forEach(i => { if (i.visible !== false) counts[i.type] = (counts[i.type]||0) + 1; });
+  return counts;
+}
+
+function _buildMoodboardManager() {
+  const counts  = _mbCounts();
+  const photos  = _mbPhotos();
+  const sorted  = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const manager = document.getElementById('mb-manager');
+
+  manager.innerHTML = sorted.map(([type, count]) => {
+    const def   = CATALOG.find(c => c.id === type);
+    const name  = def?.name || type;
+    const photo = photos[type];
+    const tid   = 'mbt-' + type.replace(/[^a-z0-9]/gi,'-');
+    return `<div class="mb-row">
+      <span class="mb-count">${count}×</span>
+      <span class="mb-name" title="${name}">${name}</span>
+      ${photo
+        ? `<img class="mb-thumb" src="${photo}">
+           <button class="mb-remove" onclick="mbRemovePhoto('${type}')" title="Remove photo">✕</button>`
+        : `<label class="mb-upload" title="Upload photo for ${name}">
+             + Photo<input id="${tid}" type="file" accept="image/*" style="display:none" onchange="mbUploadPhoto(this,'${type}')">
+           </label>`}
+    </div>`;
+  }).join('');
+
+  _renderMoodboardPreview(counts, photos, sorted);
+}
+
+function _renderMoodboardPreview(counts, photos, sorted) {
+  const preview = document.getElementById('mb-preview');
+  preview.innerHTML = sorted.map(([type, count]) => {
+    const def   = CATALOG.find(c => c.id === type);
+    const name  = def?.name || type;
+    const photo = photos[type];
+    const color = COLORS[0];
+    const svgContent = def?.draw ? def.draw(def.w||4, def.h||4, color) : '';
+    const svgW = def ? Math.min(ftToPx(def.w||4), 120) : 80;
+    const svgH = def ? Math.min(ftToPx(def.h||4), 120) : 80;
+
+    const imgPart = photo
+      ? `<img class="mb-card-img" src="${photo}" alt="${name}">`
+      : `<div class="mb-card-svg">
+           <svg width="${svgW}" height="${svgH}" viewBox="0 0 100 100" preserveAspectRatio="none">${svgContent}</svg>
+         </div>`;
+
+    return `<div class="mb-card">
+      ${imgPart}
+      <div class="mb-card-foot">
+        <span class="mb-card-name" title="${name}">${name}</span>
+        <span class="mb-card-count">${count}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function mbUploadPhoto(input, type) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    // Resize to max 600px before storing
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 600;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      _mbSavePhoto(type, dataUrl);
+      _buildMoodboardManager();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function mbRemovePhoto(type) {
+  _mbRemovePhoto(type);
+  _buildMoodboardManager();
+}
+
+function clearAllMoodPhotos() {
+  if (!confirm('Clear all uploaded photos?')) return;
+  localStorage.removeItem(MB_PHOTOS_KEY);
+  _buildMoodboardManager();
+}
+
+async function exportMoodboard() {
+  const counts  = _mbCounts();
+  const photos  = _mbPhotos();
+  const sorted  = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const COLS    = Math.min(4, sorted.length);
+  const CELL    = 220;   // px per cell
+  const PAD     = 20;
+  const FOOT    = 52;    // name + count strip height
+  const HEADER  = 48;
+  const W       = COLS * CELL + (COLS + 1) * PAD;
+  const ROWS    = Math.ceil(sorted.length / COLS);
+  const H       = HEADER + ROWS * (CELL + FOOT + PAD) + PAD;
+
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#f5f2ee';
+  ctx.fillRect(0, 0, W, H);
+
+  // Header
+  ctx.fillStyle = '#2a2520';
+  ctx.font = 'bold 20px Karla, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Inventory Summary', PAD, HEADER / 2);
+  ctx.font = '13px JetBrains Mono, monospace';
+  ctx.fillStyle = '#78716c';
+  ctx.textAlign = 'right';
+  ctx.fillText(`${items.length} items · ${sorted.length} types`, W - PAD, HEADER / 2);
+
+  for (let i = 0; i < sorted.length; i++) {
+    const [type, count] = sorted[i];
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    const x = PAD + col * (CELL + PAD);
+    const y = HEADER + PAD + row * (CELL + FOOT + PAD);
+
+    // Card background
+    ctx.fillStyle = '#ffffff';
+    _roundRect(ctx, x, y, CELL, CELL + FOOT, 8);
+    ctx.fill();
+
+    const def  = CATALOG.find(c => c.id === type);
+    const name = def?.name || type;
+    const photo = photos[type];
+
+    if (photo) {
+      const img = await _svgToImg(null, photo);
+      if (img) {
+        ctx.save();
+        ctx.beginPath(); _roundRect(ctx, x, y, CELL, CELL, 8); ctx.clip();
+        ctx.drawImage(img, x, y, CELL, CELL);
+        ctx.restore();
+      }
+    } else if (def?.draw) {
+      // Draw SVG icon centered
+      const svgW = Math.min(ftToPx(def.w||4), CELL * 0.7);
+      const svgH = Math.min(ftToPx(def.h||4), CELL * 0.7);
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" viewBox="0 0 100 100" preserveAspectRatio="none">${def.draw(def.w||4,def.h||4,COLORS[0])}</svg>`;
+      const svgImg = await _svgToImg(svgStr);
+      if (svgImg) ctx.drawImage(svgImg, x + (CELL-svgW)/2, y + (CELL-svgH)/2, svgW, svgH);
+    }
+
+    // Footer strip
+    ctx.fillStyle = '#f9f7f4';
+    ctx.fillRect(x, y + CELL, CELL, FOOT);
+
+    ctx.fillStyle = '#2a2520';
+    ctx.font = '600 12px Karla, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    const maxW = CELL - 55;
+    let label = name;
+    while (ctx.measureText(label).width > maxW && label.length > 4) label = label.slice(0,-1);
+    if (label !== name) label += '…';
+    ctx.fillText(label, x + 10, y + CELL + FOOT/2);
+
+    // Count badge
+    const badge = `${count}×`;
+    const bw = ctx.measureText(badge).width + 14;
+    ctx.fillStyle = '#d4922e';
+    _roundRect(ctx, x + CELL - bw - 8, y + CELL + FOOT/2 - 11, bw, 22, 11);
+    ctx.fill();
+    ctx.fillStyle = '#1c1917';
+    ctx.font = 'bold 11px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(badge, x + CELL - bw/2 - 8, y + CELL + FOOT/2);
+  }
+
+  cv.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'moodboard.png';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast('Moodboard exported');
+  }, 'image/png');
+}
+
+function _roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.arcTo(x+w, y, x+w, y+r, r);
+  ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx.lineTo(x+r, y+h); ctx.arcTo(x, y+h, x, y+h-r, r);
+  ctx.lineTo(x, y+r); ctx.arcTo(x, y, x+r, y, r);
+  ctx.closePath();
+}
 
 // ═══════════════════════════════════════════════
 // INIT
