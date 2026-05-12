@@ -6467,11 +6467,27 @@ function newProject() {
 }
 function newProjectSaveFirst() {
   document.getElementById('new-project-modal').style.display = 'none';
+  _resetNewProjectModal();
   openModal('save-modal');
 }
-function newProjectDiscard() {
+function newProjectShowStep2() {
+  document.getElementById('np-step1').style.display = 'none';
+  document.getElementById('np-step2').style.display = 'block';
+}
+function newProjectBlank() {
   document.getElementById('new-project-modal').style.display = 'none';
+  _resetNewProjectModal();
   _clearCanvas();
+}
+function newProjectUpload() {
+  document.getElementById('new-project-modal').style.display = 'none';
+  _resetNewProjectModal();
+  _clearCanvas();
+  showUpload();
+}
+function _resetNewProjectModal() {
+  document.getElementById('np-step1').style.display = 'block';
+  document.getElementById('np-step2').style.display = 'none';
 }
 function _clearCanvas() {
   localStorage.removeItem(AUTOSAVE_KEY);

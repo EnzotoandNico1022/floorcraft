@@ -689,16 +689,37 @@
 
 <!-- New-project confirmation (replaces iOS-broken confirm()) -->
 <div id="new-project-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:8000;align-items:center;justify-content:center">
-  <div style="background:#2a2520;border-radius:12px;padding:24px 26px;max-width:320px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1)">
-    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#ede8df;margin-bottom:8px">Start New Project?</div>
-    <div style="font-size:.8rem;color:var(--muted);margin-bottom:20px;line-height:1.5">Your current layout will be lost unless you save it first.</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <button onclick="newProjectSaveFirst()" style="padding:9px 0;background:var(--accent);color:#1c1917;border:none;border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">Save first, then start new</button>
-      <button onclick="newProjectDiscard()" style="padding:9px 0;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;cursor:pointer">Discard &amp; start fresh</button>
-      <button onclick="document.getElementById('new-project-modal').style.display='none'" style="padding:7px 0;background:none;color:var(--muted);border:none;font-family:'Karla',sans-serif;font-size:.8rem;cursor:pointer">Cancel</button>
+  <div style="background:#2a2520;border-radius:12px;padding:24px 26px;max-width:340px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1)">
+
+    <!-- Step 1: confirm discard -->
+    <div id="np-step1">
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#ede8df;margin-bottom:8px">Start New Project?</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:20px;line-height:1.5">Your current layout will be lost unless you save it first.</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="newProjectSaveFirst()" style="padding:9px 0;background:var(--accent);color:#1c1917;border:none;border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">Save first, then start new</button>
+        <button onclick="newProjectShowStep2()" style="padding:9px 0;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;cursor:pointer">Discard &amp; start fresh</button>
+        <button onclick="document.getElementById('new-project-modal').style.display='none'" style="padding:7px 0;background:none;color:var(--muted);border:none;font-family:'Karla',sans-serif;font-size:.8rem;cursor:pointer">Cancel</button>
+      </div>
     </div>
+
+    <!-- Step 2: blank or upload -->
+    <div id="np-step2" style="display:none">
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#ede8df;margin-bottom:8px">How would you like to start?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+        <button onclick="newProjectBlank()" style="padding:14px 16px;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:9px;font-family:'Karla',sans-serif;font-size:.88rem;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="flex-shrink:0"><rect x="4" y="3" width="20" height="22" rx="2" stroke="#ede8df" stroke-width="1.5"/><path d="M9 14h10M14 9v10" stroke="#ede8df" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div><div style="font-weight:600;margin-bottom:2px">Blank Canvas</div><div style="font-size:.72rem;color:var(--muted)">Start with an empty artboard</div></div>
+        </button>
+        <button onclick="newProjectUpload()" style="padding:14px 16px;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:9px;font-family:'Karla',sans-serif;font-size:.88rem;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="flex-shrink:0"><rect x="4" y="3" width="20" height="22" rx="2" stroke="#ede8df" stroke-width="1.5"/><path d="M9 10h10M9 14h7" stroke="#ede8df" stroke-width="1.5" stroke-linecap="round"/><path d="M14 20v-5M12 17l2-2 2 2" stroke="#b5832a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><div style="font-weight:600;margin-bottom:2px">Upload Floor Plan</div><div style="font-size:.72rem;color:var(--muted)">Import a PDF or image to trace over</div></div>
+        </button>
+        <button onclick="document.getElementById('np-step2').style.display='none';document.getElementById('np-step1').style.display='block';document.getElementById('new-project-modal').style.display='none'" style="padding:7px 0;background:none;color:var(--muted);border:none;font-family:'Karla',sans-serif;font-size:.8rem;cursor:pointer">Cancel</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<script src="app.js?v=14"></script>
+<script src="app.js?v=15"></script>
 </body>
