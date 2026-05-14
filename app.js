@@ -5969,6 +5969,14 @@ function getSaves() {
 function putSaves(saves) {
   localStorage.setItem(STORE_KEY, JSON.stringify(saves));
 }
+// Background images stored separately so they don't bloat the main saves object
+function _bgKey(name) { return 'floorcraft_bg_' + btoa(unescape(encodeURIComponent(name))).replace(/=/g,''); }
+function _getBg(name) { try { return localStorage.getItem(_bgKey(name)); } catch(e) { return null; } }
+function _setBg(name, src) {
+  try { localStorage.setItem(_bgKey(name), src); return true; }
+  catch(e) { return false; } // quota exceeded for bg
+}
+function _removeBg(name) { try { localStorage.removeItem(_bgKey(name)); } catch(e) {} }
 
 function saveLayout() {
   const input = document.getElementById('save-name-input');
@@ -5976,6 +5984,16 @@ function saveLayout() {
 
   const saves = getSaves();
   const bgImg = document.getElementById('bg-img');
+  const bgSrc = bgImg.src && bgImg.style.display !== 'none' && bgImg.naturalWidth > 0 ? bgImg.src : null;
+
+  // Store background separately to avoid bloating the main saves object
+  let bgNote = '';
+  if (bgSrc) {
+    const ok = _setBg(name, bgSrc);
+    if (!ok) bgNote = ' (background too large to save — items saved OK)';
+  } else {
+    _removeBg(name); // clean up old bg if any
+  }
 
   saves[name] = {
     name,
@@ -5986,14 +6004,20 @@ function saveLayout() {
     items: JSON.parse(JSON.stringify(items)),
     groups: JSON.parse(JSON.stringify(groups)),
     pxPerFt,
-    bgSrc: bgImg.src && bgImg.style.display !== 'none' ? bgImg.src : null,
+    hasBg: !!bgSrc && !bgNote,
   };
 
-  putSaves(saves);
-  markClean(name);
-  input.value = '';
-  renderSavesList();
-  showToast('"' + name + '" saved ✓');
+  try {
+    putSaves(saves);
+    markClean(name);
+    input.value = '';
+    renderSavesList();
+    showToast('"' + name + '" saved ✓' + bgNote);
+  } catch(e) {
+    // Even without bgSrc the saves object is too large — clean up oldest saves
+    showToast('Save failed: storage is full. Delete some old layouts and try again.');
+    console.error('saveLayout quota error:', e);
+  }
 }
 
 function loadLayout(name) {
@@ -6019,14 +6043,17 @@ function loadLayout(name) {
   // Restore canvas size
   setCanvasSize(save.canvasW || 1200, save.canvasH || 800);
 
-  // Restore background image
+  // Restore background image — support new (hasBg + separate key) and old (inline bgSrc) formats
   const bgImg = document.getElementById('bg-img');
-  if (save.bgSrc) {
-    bgImg.src = save.bgSrc;
+  const bgData = save.hasBg ? _getBg(name) : (save.bgSrc || null);
+  if (bgData) {
+    bgImg.src = bgData;
     bgImg.style.display = 'block';
+    _showOpacitySlider(true);
   } else {
     bgImg.src = '';
     bgImg.style.display = 'none';
+    _showOpacitySlider(false);
   }
 
   // Restore scale info
@@ -6051,6 +6078,7 @@ function deleteLayout(name) {
   if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
   const saves = getSaves();
   delete saves[name];
+  _removeBg(name);
   putSaves(saves);
   if (currentLayoutName === name) markClean(null);
   renderSavesList();
@@ -6063,6 +6091,9 @@ function duplicateLayout(name) {
   if (!orig) return;
   const newName = name + ' (copy)';
   saves[newName] = { ...JSON.parse(JSON.stringify(orig)), name: newName, savedAt: Date.now() };
+  // Copy background to the new key if present
+  const bgData = _getBg(name);
+  if (bgData) _setBg(newName, bgData);
   putSaves(saves);
   renderSavesList();
   showToast('Duplicated as "' + newName + '"');
