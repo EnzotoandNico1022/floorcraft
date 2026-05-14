@@ -1346,13 +1346,13 @@ const CATALOG = [
 
   // SNOW BAR — straight, curved, round
   { cat:'Chrome — Bars', id:'chrome-snow-bar-6ft', name:'Snow Bar 6ft', w:6, h:2, unit:'ft',
-    draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="4%" fill="rgba(240,240,248,.5)" stroke="#c0c0d8" stroke-width="2"/><rect x="1%" y="2%" width="98%" height="34%" rx="3%" fill="rgba(200,200,220,.3)"/>` },
+    draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="4%" fill="rgba(200,205,230,.8)" stroke="#8890b8" stroke-width="2"/><rect x="1%" y="2%" width="98%" height="34%" rx="3%" fill="rgba(170,175,210,.35)"/>` },
   { cat:'Chrome — Bars', id:'chrome-snow-bar-8ft', name:'Snow Bar 8ft', w:8, h:2, unit:'ft',
-    draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="4%" fill="rgba(240,240,248,.5)" stroke="#c0c0d8" stroke-width="2"/><rect x="1%" y="2%" width="98%" height="34%" rx="3%" fill="rgba(200,200,220,.3)"/>` },
+    draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="4%" fill="rgba(200,205,230,.8)" stroke="#8890b8" stroke-width="2"/><rect x="1%" y="2%" width="98%" height="34%" rx="3%" fill="rgba(170,175,210,.35)"/>` },
   { cat:'Chrome — Bars', id:'chrome-snow-curved-bar', name:'Snow Curved Bar', w:7.33, h:2.5, unit:'ft',
-    draw:(w,h,c)=>`<path d="M2,50 Q50,5 98,50 L98,90 Q50,95 2,90 Z" fill="rgba(240,240,248,.5)" stroke="#c0c0d8" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<path d="M2,50 Q50,5 98,50 L98,90 Q50,95 2,90 Z" fill="rgba(200,205,230,.8)" stroke="#8890b8" stroke-width="2"/>` },
   { cat:'Chrome — Bars', id:'chrome-snow-round-bar-10ft', name:'Snow Round Bar 10ft', w:10, h:10, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="48%" fill="rgba(240,240,248,.5)" stroke="#c0c0d8" stroke-width="2"/><circle cx="50%" cy="50%" r="30%" fill="white" opacity=".8"/>` },
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="48%" fill="rgba(200,205,230,.8)" stroke="#8890b8" stroke-width="2"/><circle cx="50%" cy="50%" r="30%" fill="#d5d8e8" opacity=".9"/>` },
 
   // REFLECTION BAR — straight, round
   { cat:'Chrome — Bars', id:'chrome-reflection-bar-6ft', name:'Reflection Bar 6ft', w:6, h:2, unit:'ft',
@@ -1400,7 +1400,7 @@ const CATALOG = [
   { cat:'Chrome — Bars', id:'chrome-cimento-bar-6ft', name:'Cimento Bar 6ft', w:6, h:2.25, unit:'ft',
     draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="3%" fill="rgba(140,140,140,.25)" stroke="#999" stroke-width="2"/><rect x="1%" y="2%" width="98%" height="34%" rx="2%" fill="rgba(120,120,120,.2)"/>` },
   { cat:'Chrome — Bars', id:'chrome-carolina-bar-6ft', name:'Carolina Bar 6ft', w:6, h:2.25, unit:'ft',
-    draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="4%" fill="rgba(240,240,248,.5)" stroke="#b0b0c8" stroke-width="2"/><rect x="4%" y="12%" width="92%" height="76%" rx="3%" fill="rgba(220,220,235,.3)"/>` },
+    draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="4%" fill="rgba(200,205,230,.8)" stroke="#8890b8" stroke-width="2"/><rect x="4%" y="12%" width="92%" height="76%" rx="3%" fill="rgba(170,175,210,.35)"/>` },
   { cat:'Chrome — Bars', id:'chrome-hedge-bar-6ft', name:'Hedge Bar 6ft', w:6, h:2.25, unit:'ft',
     draw:(w,h,c)=>`<rect x="1%" y="2%" width="98%" height="96%" rx="3%" fill="rgba(40,90,40,.22)" stroke="rgba(30,70,30,.6)" stroke-width="2"/><rect x="3%" y="10%" width="94%" height="80%" rx="3%" fill="rgba(30,70,30,.12)" stroke="rgba(30,70,30,.3)" stroke-width="1"/>` },
   { cat:'Chrome — Bars', id:'chrome-raw-bar-6ft', name:'Raw Bar 6ft', w:6, h:2, unit:'ft',
@@ -1448,9 +1448,9 @@ const CATALOG = [
     draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="44%" fill="rgba(200,220,255,.35)" stroke="#aac" stroke-width="1.8"/>
       <circle cx="50%" cy="50%" r="14%" fill="rgba(140,140,200,.4)"/>` },
   { cat:'Chrome — Bar Stools', id:'chrome-stool-wired', name:'Wired White Stool', w:1.42, h:1.42, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="44%" fill="rgba(255,255,255,.8)" stroke="#ccc" stroke-width="2"/>
-      <circle cx="50%" cy="50%" r="32%" fill="none" stroke="#ddd" stroke-width="1"/>
-      <circle cx="50%" cy="50%" r="10%" fill="#ddd" opacity=".7"/>` },
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="44%" fill="#e0e0e0" stroke="#aaa" stroke-width="2"/>
+      <circle cx="50%" cy="50%" r="32%" fill="none" stroke="#bbb" stroke-width="1"/>
+      <circle cx="50%" cy="50%" r="10%" fill="#bbb" opacity=".9"/>` },
   { cat:'Chrome — Bar Stools', id:'chrome-stool-adjustable', name:'Adjustable Stool', w:1.42, h:1.42, unit:'ft',
     draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="44%" fill="${c}" opacity=".7" stroke="${darken(c)}" stroke-width="2"/>
       <circle cx="50%" cy="50%" r="20%" fill="none" stroke="${darken(c)}" stroke-width="1.5" stroke-dasharray="3,2"/>
@@ -1482,12 +1482,12 @@ const CATALOG = [
     draw:(w,h,c)=>`<rect x="8%" y="8%" width="84%" height="18%" rx="5%" fill="${darken(c)}" opacity=".85"/>
       <rect x="8%" y="28%" width="84%" height="64%" rx="8%" fill="${c}" opacity=".78" stroke="${darken(c)}" stroke-width="1.5"/>` },
   { cat:'Chrome — Sofas & Lounge', id:'chrome-cloud-sofa', name:'Cloud Sofa', w:6.5, h:2.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="2%" y="20%" width="96%" height="72%" rx="12%" fill="white" opacity=".9" stroke="#ddd" stroke-width="1.5"/>
-      <rect x="8%" y="28%" width="84%" height="55%" rx="10%" fill="rgba(240,240,240,.6)"/>` },
+    draw:(w,h,c)=>`<rect x="2%" y="20%" width="96%" height="72%" rx="12%" fill="#e0e0e0" stroke="#aaa" stroke-width="1.5"/>
+      <rect x="8%" y="28%" width="84%" height="55%" rx="10%" fill="rgba(200,200,200,.6)"/>` },
   { cat:'Chrome — Sofas & Lounge', id:'chrome-cloud-chair', name:'Cloud Chair', w:2.5, h:2.67, unit:'ft',
-    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="74%" rx="14%" fill="white" opacity=".9" stroke="#ddd" stroke-width="1.5"/>` },
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="74%" rx="14%" fill="#e0e0e0" stroke="#aaa" stroke-width="1.5"/>` },
   { cat:'Chrome — Sofas & Lounge', id:'chrome-cloud-ottoman', name:'Cloud Ottoman', w:2.83, h:2.58, unit:'ft',
-    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="48%" ry="45%" fill="white" opacity=".85" stroke="#ddd" stroke-width="1.5"/>` },
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="48%" ry="45%" fill="#e0e0e0" stroke="#aaa" stroke-width="1.5"/>` },
   { cat:'Chrome — Sofas & Lounge', id:'chrome-rattan-armchair', name:'Rattan Armchair', w:2.5, h:2.5, unit:'ft',
     draw:(w,h,c)=>`<rect x="8%" y="8%" width="84%" height="16%" rx="5%" fill="rgba(160,110,50,.6)"/>
       <ellipse cx="50%" cy="60%" rx="42%" ry="38%" fill="rgba(180,130,70,.45)" stroke="rgba(140,90,30,.6)" stroke-width="1.5"/>` },
@@ -1577,11 +1577,11 @@ const CATALOG = [
 
   // VERONA DINING TABLE — 94"×40"
   { cat:'Chrome — Dining Tables', id:'chrome-verona-dining', name:'Verona Dining Table', w:7.83, h:3.33, unit:'ft',
-    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="4%" fill="rgba(248,248,248,.5)" stroke="#ccc" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="4%" fill="#e0e0e0" stroke="#aaa" stroke-width="2"/>` },
 
   // SNOW DINING TABLE — 96"×40"
   { cat:'Chrome — Dining Tables', id:'chrome-snow-dining', name:'Snow Dining Table', w:8, h:3.33, unit:'ft',
-    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="4%" fill="rgba(240,240,248,.5)" stroke="#c0c0d8" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="4%" fill="rgba(200,205,230,.8)" stroke="#8890b8" stroke-width="2"/>` },
 
   // ODYSSEY DINING TABLE — 96"×40"
   { cat:'Chrome — Dining Tables', id:'chrome-odyssey-dining', name:'Odyssey Dining Table', w:8, h:3.33, unit:'ft',
@@ -1737,7 +1737,7 @@ const CATALOG = [
       <line x1="8%" y1="38%" x2="92%" y2="38%" stroke="rgba(140,90,30,.3)" stroke-width="1.5"/>
       <line x1="8%" y1="62%" x2="92%" y2="62%" stroke="rgba(140,90,30,.3)" stroke-width="1.5"/>` },
   { cat:'Chrome — Coffee & End Tables', id:'chrome-end-white-round', name:'White Round End Table', w:1.67, h:1.67, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(255,255,255,.85)" stroke="#ccc" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="#e0e0e0" stroke="#aaa" stroke-width="2"/>` },
   { cat:'Chrome — Coffee & End Tables', id:'chrome-end-brass', name:'Brass End Table', w:1.58, h:1.58, unit:'ft',
     draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(180,140,60,.2)" stroke="rgba(160,120,40,.6)" stroke-width="2"/>` },
   { cat:'Chrome — Coffee & End Tables', id:'chrome-end-concrete', name:'Concrete End Table', w:1.5, h:1.5, unit:'ft',
@@ -1852,9 +1852,9 @@ const CATALOG = [
       <rect x="5%" y="15%" width="90%" height="18%" rx="2%" fill="rgba(180,180,200,.2)"/>
       <rect x="5%" y="45%" width="90%" height="18%" rx="2%" fill="rgba(180,180,200,.2)"/>` },
   { cat:'Chrome — Backbars & Shelving', id:'chrome-backbar-verona', name:'Verona Back Bar', w:5, h:1.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="1%" y="5%" width="98%" height="90%" rx="4%" fill="rgba(255,255,255,.5)" stroke="#ccc" stroke-width="2"/>
-      <rect x="5%" y="15%" width="90%" height="18%" rx="2%" fill="rgba(220,220,220,.4)"/>
-      <rect x="5%" y="45%" width="90%" height="18%" rx="2%" fill="rgba(220,220,220,.4)"/>` },
+    draw:(w,h,c)=>`<rect x="1%" y="5%" width="98%" height="90%" rx="4%" fill="#e0e0e0" stroke="#aaa" stroke-width="2"/>
+      <rect x="5%" y="15%" width="90%" height="18%" rx="2%" fill="rgba(190,190,190,.5)"/>
+      <rect x="5%" y="45%" width="90%" height="18%" rx="2%" fill="rgba(190,190,190,.5)"/>` },
   { cat:'Chrome — Backbars & Shelving', id:'chrome-backbar-rattan-armoire', name:'Rattan Armoire', w:3.92, h:2, unit:'ft',
     draw:(w,h,c)=>`<rect x="2%" y="2%" width="96%" height="96%" rx="5%" fill="rgba(160,110,50,.2)" stroke="rgba(140,90,30,.6)" stroke-width="2"/>
       <line x1="50%" y1="2%" x2="50%" y2="98%" stroke="rgba(140,90,30,.4)" stroke-width="1.5"/>
@@ -2079,10 +2079,10 @@ const CATALOG = [
       <ellipse cx="50%" cy="88%" rx="28%" ry="8%" fill="none" stroke="${darken(c)}" stroke-width="1.5"/>` },
 
   { cat:'CORT Barstools', id:'cort-lucent-barstool', name:'Lucent Barstool (Acrylic)', w:1.83, h:1.96, unit:'ft',
-    draw:(w,h,c)=>`<rect x="15%" y="5%" width="70%" height="50%" rx="5%" fill="rgba(240,248,255,.6)" stroke="rgba(180,220,255,.8)" stroke-width="1.5"/>
-      <line x1="30%" y1="55%" x2="25%" y2="90%" stroke="rgba(180,210,240,.9)" stroke-width="2"/>
-      <line x1="70%" y1="55%" x2="75%" y2="90%" stroke="rgba(180,210,240,.9)" stroke-width="2"/>
-      <line x1="20%" y1="90%" x2="80%" y2="90%" stroke="rgba(180,210,240,.9)" stroke-width="1.5"/>` },
+    draw:(w,h,c)=>`<rect x="15%" y="5%" width="70%" height="50%" rx="5%" fill="rgba(185,220,255,.85)" stroke="rgba(100,170,230,.95)" stroke-width="1.5"/>
+      <line x1="30%" y1="55%" x2="25%" y2="90%" stroke="rgba(100,170,230,.9)" stroke-width="2"/>
+      <line x1="70%" y1="55%" x2="75%" y2="90%" stroke="rgba(100,170,230,.9)" stroke-width="2"/>
+      <line x1="20%" y1="90%" x2="80%" y2="90%" stroke="rgba(100,170,230,.9)" stroke-width="1.5"/>` },
 
   { cat:'CORT Barstools', id:'cort-marina-barstool', name:'Marina Barstool', w:1.75, h:1.71, unit:'ft',
     draw:(w,h,c)=>`<rect x="15%" y="5%" width="70%" height="48%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>
@@ -2143,20 +2143,20 @@ const CATALOG = [
       <circle cx="50%" cy="50%" r="7%" fill="rgba(30,30,30,.7)"/>` },
 
   { cat:'CORT Bar & Cafe Tables', id:'cort-posh-bar-table', name:'Posh Bar Table 29"×26"', w:2.42, h:2.17, unit:'ft',
-    draw:(w,h,c)=>`<rect x="5%" y="5%" width="90%" height="90%" rx="4%" fill="rgba(240,248,255,.4)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="5%" y="5%" width="90%" height="90%" rx="4%" fill="rgba(185,220,255,.8)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>` },
 
   { cat:'CORT Bar & Cafe Tables', id:'cort-posh-round-bar', name:'Posh Round Bar Table 30"', w:2.5, h:2.5, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(240,248,255,.4)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(185,220,255,.8)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>` },
 
   { cat:'CORT Bar & Cafe Tables', id:'cort-rustique-bar-table', name:'Rustique Square Bar Table 24"', w:1.98, h:1.98, unit:'ft',
     draw:(w,h,c)=>`<rect x="5%" y="5%" width="90%" height="90%" rx="3%" fill="rgba(120,115,105,.25)" stroke="rgba(90,85,75,.7)" stroke-width="2" stroke-dasharray="5,3"/>` },
 
   { cat:'CORT Bar & Cafe Tables', id:'cort-sonoma-bar', name:'Sonoma 24" Outdoor Bar Table', w:2, h:2, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(245,245,245,.5)" stroke="rgba(30,30,30,.7)" stroke-width="1.5"/>
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(210,210,210,.75)" stroke="rgba(30,30,30,.7)" stroke-width="1.5"/>
       <circle cx="50%" cy="50%" r="8%" fill="rgba(30,30,30,.6)"/>` },
 
   { cat:'CORT Bar & Cafe Tables', id:'cort-sonoma-cafe', name:'Sonoma 32" Outdoor Cafe Table', w:2.67, h:2.67, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(245,245,245,.5)" stroke="rgba(30,30,30,.7)" stroke-width="1.5"/>
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(210,210,210,.75)" stroke="rgba(30,30,30,.7)" stroke-width="1.5"/>
       <circle cx="50%" cy="50%" r="7%" fill="rgba(30,30,30,.6)"/>` },
 
   // ─── CORT COMMUNAL TABLES ──────────────────────
@@ -2249,8 +2249,8 @@ const CATALOG = [
       <circle cx="50%" cy="50%" r="12%" fill="rgba(100,65,25,.5)"/>` },
 
   { cat:'CORT Accent Tables', id:'cort-posh-cocktail', name:'Posh Cocktail Table 30" (Lighted)', w:2.5, h:2.5, unit:'ft',
-    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(240,248,255,.5)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>
-      <circle cx="50%" cy="50%" r="30%" fill="rgba(220,238,255,.6)" stroke="rgba(180,220,255,.6)" stroke-width="1"/>` },
+    draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(185,220,255,.8)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>
+      <circle cx="50%" cy="50%" r="30%" fill="rgba(160,210,255,.7)" stroke="rgba(100,170,230,.7)" stroke-width="1"/>` },
 
   { cat:'CORT Accent Tables', id:'cort-silverado-cocktail', name:'Silverado Cocktail Table 36"', w:3, h:3, unit:'ft',
     draw:(w,h,c)=>`<circle cx="50%" cy="50%" r="46%" fill="rgba(210,230,240,.4)" stroke="rgba(180,200,215,.8)" stroke-width="1.5"/>
@@ -2419,11 +2419,11 @@ const CATALOG = [
       <line x1="2%" y1="75%" x2="98%" y2="75%" stroke="rgba(80,55,30,.5)" stroke-width="1"/>` },
 
   { cat:'CORT Office & Storage', id:'cort-posh-shelving', name:'Posh Shelving 36"×18"×72"', w:3, h:1.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="2%" y="2%" width="96%" height="96%" rx="2%" fill="rgba(240,248,255,.3)" stroke="rgba(180,220,255,.7)" stroke-width="1.5"/>
-      <line x1="2%" y1="20%" x2="98%" y2="20%" stroke="rgba(180,220,255,.5)" stroke-width="1"/>
-      <line x1="2%" y1="40%" x2="98%" y2="40%" stroke="rgba(180,220,255,.5)" stroke-width="1"/>
-      <line x1="2%" y1="60%" x2="98%" y2="60%" stroke="rgba(180,220,255,.5)" stroke-width="1"/>
-      <line x1="2%" y1="80%" x2="98%" y2="80%" stroke="rgba(180,220,255,.5)" stroke-width="1"/>` },
+    draw:(w,h,c)=>`<rect x="2%" y="2%" width="96%" height="96%" rx="2%" fill="rgba(185,220,255,.8)" stroke="rgba(100,170,230,.95)" stroke-width="1.5"/>
+      <line x1="2%" y1="20%" x2="98%" y2="20%" stroke="rgba(100,170,230,.6)" stroke-width="1"/>
+      <line x1="2%" y1="40%" x2="98%" y2="40%" stroke="rgba(100,170,230,.6)" stroke-width="1"/>
+      <line x1="2%" y1="60%" x2="98%" y2="60%" stroke="rgba(100,170,230,.6)" stroke-width="1"/>
+      <line x1="2%" y1="80%" x2="98%" y2="80%" stroke="rgba(100,170,230,.6)" stroke-width="1"/>` },
 
   { cat:'CORT Office & Storage', id:'cort-3drawer-file', name:'3 Drawer File Cabinet 16"×20"', w:1.33, h:1.67, unit:'ft',
     draw:(w,h,c)=>`<rect x="5%" y="2%" width="90%" height="96%" rx="3%" fill="rgba(30,30,30,.5)" stroke="rgba(20,20,20,.7)" stroke-width="1.5"/>
@@ -2434,9 +2434,9 @@ const CATALOG = [
       <circle cx="50%" cy="84%" r="4%" fill="rgba(150,150,150,.6)"/>` },
 
   { cat:'CORT Office & Storage', id:'cort-whiteboard-divider', name:'Freestanding Whiteboard 39"×72"', w:3.25, h:0.13, unit:'ft',
-    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="2%" fill="rgba(255,255,255,.9)" stroke="rgba(180,180,185,.7)" stroke-width="1.5"/>
-      <line x1="8%" y1="20%" x2="60%" y2="20%" stroke="rgba(74,158,255,.4)" stroke-width="1"/>
-      <line x1="8%" y1="40%" x2="45%" y2="40%" stroke="rgba(74,158,255,.4)" stroke-width="1"/>` },
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="2%" fill="#e8e8e8" stroke="#999" stroke-width="1.5"/>
+      <line x1="8%" y1="20%" x2="60%" y2="20%" stroke="rgba(74,158,255,.6)" stroke-width="1"/>
+      <line x1="8%" y1="40%" x2="45%" y2="40%" stroke="rgba(74,158,255,.6)" stroke-width="1"/>` },
 
   { cat:'CORT Office & Storage', id:'cort-stanchion', name:'Stanchion w/ Retractable Belt', w:0.83, h:0.13, unit:'ft',
     draw:(w,h,c)=>`<circle cx="20%" cy="50%" r="14%" fill="rgba(180,180,185,.7)" stroke="rgba(140,140,145,.8)" stroke-width="1.5"/>
@@ -2449,8 +2449,8 @@ const CATALOG = [
       <rect x="8%" y="8%" width="84%" height="84%" rx="2%" fill="rgba(30,30,35,.5)"/>` },
 
   { cat:'CORT Counters', id:'cort-maxim-counter-white', name:'Maxim Counter White 36"×24"×41"', w:3, h:2, unit:'ft',
-    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(245,245,248,.8)" stroke="rgba(200,200,205,.8)" stroke-width="1.5"/>
-      <rect x="8%" y="8%" width="84%" height="84%" rx="2%" fill="rgba(255,255,255,.6)"/>` },
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+      <rect x="8%" y="8%" width="84%" height="84%" rx="2%" fill="rgba(210,210,210,.6)"/>` },
 
   { cat:'CORT Counters', id:'cort-midtown-counter', name:'Midtown Powered Counter 60"×18"', w:5, h:1.5, unit:'ft',
     draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="3%" fill="rgba(50,45,40,.6)" stroke="rgba(80,70,60,.7)" stroke-width="1.5"/>
@@ -2462,27 +2462,27 @@ const CATALOG = [
       <circle cx="50%" cy="50%" r="30%" fill="rgba(50,45,40,.5)" stroke="rgba(80,70,60,.5)" stroke-width="1"/>` },
 
   { cat:'CORT Counters', id:'cort-posh-pedestal-20', name:'Posh Pedestal 20" (Lighted)', w:1.5, h:1.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="10%" y="10%" width="80%" height="80%" rx="4%" fill="rgba(240,248,255,.6)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="10%" y="10%" width="80%" height="80%" rx="4%" fill="rgba(185,220,255,.85)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>` },
 
   { cat:'CORT Counters', id:'cort-posh-pedestal-42', name:'Posh Pedestal 42" (Lighted)', w:1.5, h:1.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="10%" y="5%" width="80%" height="90%" rx="4%" fill="rgba(240,248,255,.6)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="10%" y="5%" width="80%" height="90%" rx="4%" fill="rgba(185,220,255,.85)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>` },
 
   { cat:'CORT Counters', id:'cort-posh-column-62', name:'Posh Column 62" (Lighted)', w:1.5, h:1.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="15%" y="3%" width="70%" height="94%" rx="4%" fill="rgba(240,248,255,.6)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="15%" y="3%" width="70%" height="94%" rx="4%" fill="rgba(185,220,255,.85)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>` },
 
   { cat:'CORT Counters', id:'cort-posh-column-84', name:'Posh Column 84" (Lighted)', w:1.5, h:1.5, unit:'ft',
-    draw:(w,h,c)=>`<rect x="15%" y="2%" width="70%" height="96%" rx="4%" fill="rgba(240,248,255,.7)" stroke="rgba(180,220,255,.8)" stroke-width="2"/>` },
+    draw:(w,h,c)=>`<rect x="15%" y="2%" width="70%" height="96%" rx="4%" fill="rgba(185,220,255,.85)" stroke="rgba(100,170,230,.95)" stroke-width="2"/>` },
 
   // ─── NUAGE — CHAIRS & STOOLS ─────────────────────
   // Soho Chair/Stool 18.5"×17.5" — wire metal frame
   { cat:'Nuage — Chairs', id:'nuage-soho-chair-white', name:'White Soho Chair', w:1.54, h:1.46, unit:'ft',
-    draw:(w,h,c)=>`<rect x="15%" y="20%" width="70%" height="60%" rx="6%" fill="rgba(240,240,240,.8)" stroke="rgba(180,180,185,.9)" stroke-width="1.5"/>
-      <rect x="15%" y="5%" width="70%" height="22%" rx="5%" fill="none" stroke="rgba(180,180,185,.7)" stroke-width="1"/>` },
+    draw:(w,h,c)=>`<rect x="15%" y="20%" width="70%" height="60%" rx="6%" fill="rgba(210,210,210,.9)" stroke="#aaa" stroke-width="1.5"/>
+      <rect x="15%" y="5%" width="70%" height="22%" rx="5%" fill="none" stroke="#aaa" stroke-width="1"/>` },
   { cat:'Nuage — Chairs', id:'nuage-soho-stool-white', name:'White Soho Stool', w:1.54, h:1.46, unit:'ft',
-    draw:(w,h,c)=>`<ellipse cx="50%" cy="35%" rx="35%" ry="28%" fill="rgba(240,240,240,.8)" stroke="rgba(180,180,185,.9)" stroke-width="1.5"/>
-      <line x1="35%" y1="60%" x2="30%" y2="92%" stroke="rgba(180,180,185,.8)" stroke-width="2"/>
-      <line x1="65%" y1="60%" x2="70%" y2="92%" stroke="rgba(180,180,185,.8)" stroke-width="2"/>
-      <line x1="30%" y1="78%" x2="70%" y2="78%" stroke="rgba(180,180,185,.6)" stroke-width="1"/>` },
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="35%" rx="35%" ry="28%" fill="rgba(210,210,210,.9)" stroke="#aaa" stroke-width="1.5"/>
+      <line x1="35%" y1="60%" x2="30%" y2="92%" stroke="#aaa" stroke-width="2"/>
+      <line x1="65%" y1="60%" x2="70%" y2="92%" stroke="#aaa" stroke-width="2"/>
+      <line x1="30%" y1="78%" x2="70%" y2="78%" stroke="#aaa" stroke-width="1"/>` },
   { cat:'Nuage — Chairs', id:'nuage-soho-chair-gold', name:'Gold Soho Chair', w:1.54, h:1.46, unit:'ft',
     draw:(w,h,c)=>`<rect x="15%" y="20%" width="70%" height="60%" rx="6%" fill="rgba(210,165,60,.35)" stroke="rgba(185,145,40,.8)" stroke-width="1.5"/>
       <rect x="15%" y="5%" width="70%" height="22%" rx="5%" fill="none" stroke="rgba(185,145,40,.6)" stroke-width="1"/>` },
