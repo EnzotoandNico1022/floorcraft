@@ -5128,14 +5128,10 @@ function showMultiPanel(ids){
 
     <div class="prop-group">
       <div class="prop-group-title">Organize</div>
-      <div class="prop-row-2">
-        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="groupSelected()" title="Group (Ctrl+G)">⊞ Group</button>
-        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">⊟ Ungroup</button>
-      </div>
-      <div class="prop-row-2" style="margin-top:5px">
-        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="toggleLockSelected()" title="Lock/Unlock (L)">🔒 Lock</button>
-        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="openRepeatModal()" title="Repeat/Array selection">↻ Repeat</button>
-      </div>
+      <button class="btn-block" style="font-size:.75rem" onclick="groupSelected()">Group selected (Ctrl+G)</button>
+      <button class="btn-block" style="font-size:.75rem" onclick="ungroupSelected()">Ungroup (Ctrl+Shift+G)</button>
+      <button class="btn-block" style="font-size:.75rem" onclick="toggleLockSelected()">Lock / Unlock all (L)</button>
+      <button class="btn-block" style="font-size:.75rem" onclick="openRepeatModal()">Repeat / Array…</button>
     </div>`;
 }
 function showSinglePanel(item){
@@ -5222,11 +5218,9 @@ function showSinglePanel(item){
     <!-- ORGANIZE -->
     <div class="prop-group">
       <div class="prop-group-title">Organize</div>
-      <div class="prop-row-2">
-        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="groupSelected()" title="Group with other selected items (Ctrl+G)">⊞ Group</button>
-        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">⊟ Ungroup</button>
-      </div>
-      <button class="btn-block" style="margin-top:5px;font-size:.75rem" onclick="openRepeatModal()" title="Repeat / array this item">↻ Repeat / Array…</button>
+      <button class="btn-block" style="font-size:.75rem" onclick="groupSelected()" title="Group (Ctrl+G)">Group selected (Ctrl+G)</button>
+      <button class="btn-block" style="font-size:.75rem" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">Ungroup (Ctrl+Shift+G)</button>
+      <button class="btn-block" style="font-size:.75rem" onclick="openRepeatModal()" title="Repeat / array this item">Repeat / Array…</button>
     </div>`;
   // Append text label controls if applicable
   const _def=CATALOG.find(c=>c.id===item.type);
