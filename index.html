@@ -13,6 +13,8 @@
 <div id="topbar">
   <div class="logo">Floor<em>craft</em></div>
   <div class="tsep"></div>
+
+  <!-- File -->
   <button class="tbtn" id="btn-upload" onclick="showUpload()">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3.5 3.5l2.5-2.5 2.5 2.5M1 10v.5a.5.5 0 00.5.5h9a.5.5 0 00.5-.5V10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Import
   </button>
@@ -24,6 +26,8 @@
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="4" height="4" stroke="currentColor" stroke-width="1.2" rx=".5"/><path d="M1 6h3M8 6h3M6 1v3M6 8v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Scale
   </button>
   <div class="tsep"></div>
+
+  <!-- Tools -->
   <button class="tbtn" id="btn-select" onclick="setTool('select')" title="Select (V)">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l3 8 1.8-3.5L10.5 5z" fill="currentColor" opacity=".85"/></svg>Select
   </button>
@@ -40,34 +44,39 @@
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="4" width="5" height="5" rx=".5" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="4" r="2.2" stroke="currentColor" stroke-width="1.1"/><line x1="1" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Shapes
   </button>
   <div class="tsep"></div>
-  <button class="tbtn" id="btn-grid" onclick="toggleGrid()">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M1 8h10M4 1v10M8 1v10" stroke="currentColor" stroke-width="1.1"/></svg>Grid
-  </button>
-  <button class="tbtn" id="btn-snap" onclick="toggleSnap()">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="6" cy="6" r=".7" fill="currentColor"/><path d="M6 1v2.5M6 8.5V11M1 6h2.5M8.5 6H11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Snap
-  </button>
-  <button class="tbtn" id="btn-labels" onclick="toggleLabels()">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="3" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><line x1="3.5" y1="6" x2="8.5" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Labels
-  </button>
-  <button class="tbtn" id="btn-bg" onclick="openBgPicker()" title="Canvas background color">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 1l10 10" stroke="currentColor" stroke-width="1" opacity=".3"/></svg>BG
-  </button>
-  <button class="tbtn" onclick="openCanvasSearch()" title="Search items on canvas (Ctrl+F)">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 8l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Find
-  </button>
+
+  <!-- View dropdown -->
+  <div class="tb-dd-wrap">
+    <button class="tbtn" onclick="toggleTbDropdown('view-dd')" title="View options">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M6 1v1.5M6 9.5V11M1 6h1.5M9.5 6H11M2.5 2.5l1 1M8.5 8.5l1 1M9.5 2.5l-1 1M3.5 8.5l-1 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>View ▾
+    </button>
+    <div class="tb-dropdown" id="view-dd">
+      <div class="tb-dd-item" id="btn-grid" onclick="toggleGrid()">
+        <span class="dd-check">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M1 8h10M4 1v10M8 1v10" stroke="currentColor" stroke-width="1.1"/></svg>Grid
+      </div>
+      <div class="tb-dd-item" id="btn-snap" onclick="toggleSnap()">
+        <span class="dd-check">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="6" cy="6" r=".7" fill="currentColor"/><path d="M6 1v2.5M6 8.5V11M1 6h2.5M8.5 6H11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Snap to Grid
+      </div>
+      <div class="tb-dd-item" id="btn-labels" onclick="toggleLabels()">
+        <span class="dd-check">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="1" y="3" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><line x1="3.5" y1="6" x2="8.5" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Item Labels
+      </div>
+      <div class="tb-dd-sep"></div>
+      <div class="tb-dd-item" id="btn-bg" onclick="openBgPicker();closeTbDropdown('view-dd')" title="Canvas background color">
+        <span class="dd-check" style="opacity:0">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 1l10 10" stroke="currentColor" stroke-width="1" opacity=".3"/></svg>Background…
+      </div>
+      <div class="tb-dd-item" onclick="openCanvasSearch();closeTbDropdown('view-dd')" title="Search items on canvas (Ctrl+F)">
+        <span class="dd-check" style="opacity:0">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 8l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Find on Canvas…
+      </div>
+    </div>
+  </div>
   <div class="tsep"></div>
-  <button class="tbtn" onclick="groupSelected()" title="Group (Ctrl+G)">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="1" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="7" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Group
-  </button>
-  <button class="tbtn" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2" y="2" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2.5,1.5"/><line x1="6" y1="4" x2="6" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4" y1="6" x2="8" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Ungroup
-  </button>
-  <button class="tbtn" id="btn-lock" onclick="toggleLockSelected()" title="Lock/Unlock selected items (L)">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2.5" y="5.5" width="7" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M4 5.5V3.5a2 2 0 114 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Lock
-  </button>
-  <button class="tbtn" onclick="openRepeatModal()" title="Repeat/Array selected item">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="1" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2" opacity=".5"/><rect x="1" y="7" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2" opacity=".5"/><rect x="7" y="7" width="4" height="4" rx=".8" stroke="currentColor" stroke-width="1.2" opacity=".3"/><path d="M5 3h2M3 5v2" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/></svg>Repeat
-  </button>
+
+  <!-- Edit -->
   <button class="tbtn" onclick="undo()" title="Undo (Ctrl+Z)" id="btn-undo" style="position:relative">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4.5H6.5a3.5 3.5 0 010 7H2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M2 2L1 4.5l2.5 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Undo <span id="undo-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;opacity:.5;display:none"></span>
@@ -77,6 +86,8 @@
     <span id="undo-slider-label" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--faint)">0 steps</span>
   </div>
   <div class="tsep"></div>
+
+  <!-- Layouts -->
   <button class="tbtn" onclick="newProject()" title="Clear canvas and start a new project">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1h5.5L10 3.5V11H2V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 1v3h3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M4.5 6.5h3M6 5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>New
   </button>
@@ -86,12 +97,29 @@
     <div id="unsaved-dot"></div>
   </button>
   <div class="tsep"></div>
-  <button class="tbtn tbtn-ai" onclick="openAiItemModal()">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.2 4.5H11L8.1 6.6l1.1 3.5L6 8l-3.2 2.1 1.1-3.5L1 4.5h3.8z" fill="currentColor" opacity=".9"/></svg>AI Piece
-  </button>
-  <button class="tbtn tbtn-ai" onclick="openAiLayoutModal()" style="border-color:rgba(95,122,94,.5);color:#8ab88a!important">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h4v4H7z" stroke="currentColor" stroke-width="1.2" rx="0.5"/></svg>AI Layout
-  </button>
+
+  <!-- AI dropdown -->
+  <div class="tb-dd-wrap">
+    <button class="tbtn tbtn-ai" onclick="toggleTbDropdown('ai-dd')" title="AI tools">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.2 4.5H11L8.1 6.6l1.1 3.5L6 8l-3.2 2.1 1.1-3.5L1 4.5h3.8z" fill="currentColor" opacity=".9"/></svg>AI ▾
+    </button>
+    <div class="tb-dropdown" id="ai-dd">
+      <div class="tb-dd-item" onclick="openAiItemModal();closeTbDropdown('ai-dd')">
+        <span class="dd-check" style="opacity:0">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.2 4.5H11L8.1 6.6l1.1 3.5L6 8l-3.2 2.1 1.1-3.5L1 4.5h3.8z" fill="currentColor" opacity=".9"/></svg>AI Piece
+      </div>
+      <div class="tb-dd-item" onclick="openAiLayoutModal();closeTbDropdown('ai-dd')" style="color:#8ab88a">
+        <span class="dd-check" style="opacity:0">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h4v4H7z" stroke="currentColor" stroke-width="1.2"/></svg>AI Layout
+      </div>
+      <div class="tb-dd-sep"></div>
+      <div class="tb-dd-item" onclick="openMoodboard();closeTbDropdown('ai-dd')">
+        <span class="dd-check" style="opacity:0">✓</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="6.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="6.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Moodboard
+      </div>
+    </div>
+  </div>
+
   <div class="spacer"></div>
   <div id="scale-info">No scale set</div>
   <div id="floorplan-opacity-wrap" style="display:none;align-items:center;gap:5px;font-size:.68rem;color:var(--muted)">
@@ -116,9 +144,6 @@
     </button>
   </div>
   <button class="tbtn" onclick="openModal('api-key-modal')" title="Set Anthropic API key for AI features" id="btn-api-key" style="font-size:.65rem;opacity:.7">⚙ API Key</button>
-  <button class="tbtn" onclick="openMoodboard()" title="Generate moodboard from items on canvas" style="color:var(--accent2)">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="6.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="6.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Moodboard
-  </button>
 </div>
 
 <!-- ── Moodboard modal ───────────────────────────── -->
@@ -721,5 +746,5 @@
   </div>
 </div>
 
-<script src="app.js?v=17"></script>
+<script src="app.js?v=24"></script>
 </body>

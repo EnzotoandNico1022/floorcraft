@@ -621,6 +621,13 @@ const CATALOG = [
   { cat:'Annotations', id:'text-label-lg', name:'Text Label (Large)', w:10, h:2.5, unit:'ft', isAnnotation:true, isTextLabel:true,
     draw:(w,h,c)=>`<rect x="0" y="0" width="100" height="100" fill="transparent"/>` },
 
+  { cat:'Annotations', id:'callout-sm', name:'Callout (Small)', w:3, h:1.5, unit:'ft', isAnnotation:true, isTextLabel:true, isCallout:true,
+    draw:(w,h,c)=>`<rect x="2" y="5" width="74" height="90" rx="5" fill="rgba(255,255,255,.95)" stroke="${c}" stroke-width="2.5"/><line x1="76" y1="50" x2="94" y2="50" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><polygon points="100,50 90,43 90,57" fill="${c}"/>` },
+  { cat:'Annotations', id:'callout-md', name:'Callout (Medium)', w:4.5, h:2, unit:'ft', isAnnotation:true, isTextLabel:true, isCallout:true,
+    draw:(w,h,c)=>`<rect x="2" y="5" width="74" height="90" rx="5" fill="rgba(255,255,255,.95)" stroke="${c}" stroke-width="2.5"/><line x1="76" y1="50" x2="94" y2="50" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><polygon points="100,50 90,43 90,57" fill="${c}"/>` },
+  { cat:'Annotations', id:'callout-lg', name:'Callout (Large)', w:7, h:2.5, unit:'ft', isAnnotation:true, isTextLabel:true, isCallout:true,
+    draw:(w,h,c)=>`<rect x="2" y="5" width="74" height="90" rx="5" fill="rgba(255,255,255,.95)" stroke="${c}" stroke-width="2.5"/><line x1="76" y1="50" x2="94" y2="50" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><polygon points="100,50 90,43 90,57" fill="${c}"/>` },
+
   { cat:'Annotations', id:'note-sm', name:'Note (Small)', w:3, h:1.5, unit:'ft', isAnnotation:true,
     draw:(w,h,c)=>`<rect x="1%" y="1%" width="98%" height="98%" rx="4%" fill="rgba(255,247,180,.9)" stroke="#d4b800" stroke-width="1.2"/>
       <line x1="6%" y1="35%" x2="94%" y2="35%" stroke="#d4b800" stroke-width="0.8" opacity=".4"/>
@@ -2915,6 +2922,263 @@ const CATALOG = [
   { cat:'Nuage — Tables', id:'nuage-corbin-high', name:'Walnut Corbin High Table 71"×31.5"', w:5.92, h:2.63, unit:'ft',
     draw:(w,h,c)=>`<rect x="2%" y="8%" width="96%" height="84%" rx="4%" fill="rgba(120,80,40,.35)" stroke="rgba(90,55,20,.7)" stroke-width="1.5"/>` },
 
+
+  // ─── AFR — Sofas ──────────────────────────────────
+  { cat:'AFR — Sofas', id:'afr-arcadia-sectional', name:'Arcadia Modular Sectional 110"×29"', w:9.17, h:2.42, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-latitude-sofa', name:'Latitude Sofa 91"×42"', w:7.58, h:3.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-aubrey-sofa', name:'Aubrey Sofa 90"×35"', w:7.5, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-annabella-sofa', name:'Annabella Sofa 97"×43"', w:8.08, h:3.58, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-andes-sofa', name:'Andes Sofa 79"×33"', w:6.58, h:2.75, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-lyla-sofa', name:'Lyla Sofa 82"×34"', w:6.83, h:2.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-cromwell-sofa', name:'Cromwell Sofa 78"×32"', w:6.5, h:2.67, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-aurora-sofa', name:'Aurora Sofa 90"×33"', w:7.5, h:2.75, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-mango-sofa', name:'Mango Sofa 95"×36"', w:7.92, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-penelope-sofa', name:'Penelope Sofa 96"×36"', w:8, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-zeppelin-sectional', name:'Zeppelin Sectional 128"×28"', w:10.67, h:2.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="6%" height="62%" rx="4%" fill="${darken(c)}" opacity=".8"/><rect x="92%" y="18%" width="6%" height="62%" rx="4%" fill="${darken(c)}" opacity=".8"/><line x1="25%" y1="18%" x2="25%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="75%" y1="18%" x2="75%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-niko-sofa', name:'Niko Sofa 81"×30"', w:6.75, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-jade-sofa', name:'Jade Sofa 82"×36"', w:6.83, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-oliver-sofa', name:'Oliver Sofa 90"×34"', w:7.5, h:2.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-monaco-sofa', name:'Monaco Sofa 84"×35"', w:7, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-winston-sofa', name:'Winston Sofa 93"×39"', w:7.75, h:3.25, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-suave-sofa', name:'Suave Midnight Sofa 77"×36"', w:6.42, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-grammercy-sofa', name:'Grammercy Sofa 82"×36"', w:6.83, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-chandler-sofa', name:'Chandler Sofa 76"×37"', w:6.33, h:3.08, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-metro-sofa', name:'Metro Sofa 85"×35"', w:7.08, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-jasper-sofa', name:'Jasper Sofa 64"×24"', w:5.33, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-blanc-sofa', name:'Blanc Sofa 75"×35"', w:6.25, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-tulum-sofa', name:'Tulum Sofa 100"×36"', w:8.33, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-catalina-sectional', name:'Catalina Sectional 143"×73"', w:11.92, h:6.08, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="6%" height="62%" rx="4%" fill="${darken(c)}" opacity=".8"/><rect x="92%" y="18%" width="6%" height="62%" rx="4%" fill="${darken(c)}" opacity=".8"/><line x1="25%" y1="18%" x2="25%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="75%" y1="18%" x2="75%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-baja-sofa', name:'Baja Sofa 79"×32"', w:6.58, h:2.67, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+
+  // ─── AFR — Loveseats ──────────────────────────────────
+  { cat:'AFR — Loveseats', id:'afr-niko-loveseat', name:'Niko Loveseat 58"×30"', w:4.83, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-suave-loveseat', name:'Suave Midnight Loveseat 54"×36"', w:4.5, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-metro-loveseat', name:'Metro Loveseat 60"×35"', w:5, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-grammercy-loveseat', name:'Grammercy Loveseat 57"×36"', w:4.75, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-blanc-loveseat', name:'Blanc Loveseat 54"×35"', w:4.5, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-chandler-loveseat', name:'Chandler Loveseat 53"×37"', w:4.42, h:3.08, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="86%" y="18%" width="12%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-tulum-loveseat', name:'Tulum Loveseat 74"×36"', w:6.17, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-continental-loveseat', name:'Continental Curved Loveseat 82"×34"', w:6.83, h:2.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="50%" y1="18%" x2="50%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Loveseats', id:'afr-grammercy-chaise', name:'Grammercy Chaise 28"×63"', w:2.33, h:5.25, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="2%" width="90%" height="96%" rx="8%" fill="${c}" opacity=".85"/><rect x="5%" y="2%" width="90%" height="25%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="2%" width="18%" height="96%" rx="5%" fill="${darken(c)}" opacity=".8"/>` },
+
+  // ─── AFR — Lounge Chairs ──────────────────────────────────
+  { cat:'AFR — Lounge Chairs', id:'afr-latitude-chair', name:'Latitude Chair 42"×36"', w:3.5, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-aubrey-chair', name:'Aubrey Chair 37"×35"', w:3.08, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-annabella-chair', name:'Annabella Chair 39"×37"', w:3.25, h:3.08, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-andes-chair', name:'Andes Chair 33"×33"', w:2.75, h:2.75, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-lyla-chair', name:'Lyla Chair 38"×34"', w:3.17, h:2.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-aurora-chair', name:'Aurora Chair 39"×33"', w:3.25, h:2.75, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-mango-chair', name:'Mango Chair 39"×34"', w:3.25, h:2.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-penelope-chair', name:'Penelope Chair 35"×36"', w:2.92, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-jade-chair', name:'Jade Chair 32"×36"', w:2.67, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-monaco-chair', name:'Monaco Chair 36"×35"', w:3, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-winston-chair', name:'Winston Chair 47"×38"', w:3.92, h:3.17, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-metro-chair', name:'Metro Chair 35"×35"', w:2.92, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-blanc-chair', name:'Blanc Chair 33"×35"', w:2.75, h:2.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-grammercy-chair', name:'Grammercy Chair 28"×36"', w:2.33, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Lounge Chairs', id:'afr-grammercy-corner', name:'Grammercy Corner 36"×36"', w:3, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="5%" y="18%" width="90%" height="62%" rx="10%" fill="${c}" opacity=".85"/><rect x="5%" y="5%" width="90%" height="28%" rx="9%" fill="${darken(c)}" opacity=".8"/><rect x="5%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/><rect x="81%" y="18%" width="14%" height="62%" rx="6%" fill="${darken(c)}" opacity=".8"/>` },
+
+  // ─── AFR — Ottomans ──────────────────────────────────
+  { cat:'AFR — Ottomans', id:'afr-mango-ottoman', name:'Mango Ottoman 28"×25"', w:2.33, h:2.08, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="10%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-penelope-ottoman', name:'Penelope Ottoman 24" Round', w:2, h:2, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-grammercy-bench', name:'Grammercy Bench Ottoman 60"×24"', w:5, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-grammercy-sq-ottoman', name:'Grammercy Square Ottoman 40"×40"', w:3.33, h:3.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-grammercy-round-ottoman', name:'Grammercy Round Ottoman 46"', w:3.83, h:3.83, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-metro-bench', name:'Metro Bench Ottoman 60"×24"', w:5, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-metro-sq-ottoman', name:'Metro Square Ottoman 40"×40"', w:3.33, h:3.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-blanc-bench', name:'Blanc Bench Ottoman 48"×24"', w:4, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-chandler-bench', name:'Chandler Bench Ottoman 60"×24"', w:5, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-monaco-ottoman', name:'Monaco Ottoman 48"×24"', w:4, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-luxe-victory-ottoman', name:'Luxe Victory Blue Ottoman 80"×40"', w:6.67, h:3.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-luxe-almond-ottoman', name:'Luxe Almond Brittle Ottoman 60"×30"', w:5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-luxe-wine-ottoman', name:'Luxe California Wine Ottoman 50" Round', w:4.17, h:4.17, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-element-bench', name:'Element Bench 71"×16"', w:5.92, h:1.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="8%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+  { cat:'AFR — Ottomans', id:'afr-hemingway-ottoman', name:'Hemingway Ottoman 30"×30"', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="4%" y="4%" width="92%" height="92%" rx="10%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="1.5"/>` },
+
+  // ─── AFR — Café Chairs ──────────────────────────────────
+  { cat:'AFR — Café Chairs', id:'afr-ghost-chair', name:'Ghost Chair 21"×21"', w:1.75, h:1.75, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="rgba(200,230,255,.5)" stroke="rgba(150,190,230,.8)" stroke-width="1.5"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="rgba(180,215,245,.4)" stroke="rgba(150,190,230,.7)" stroke-width="1.2"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-vienna-chair', name:'Vienna Chair 21"×21"', w:1.75, h:1.75, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-elio-chair', name:'Elio Chair 17"×17"', w:1.42, h:1.42, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-milo-chair', name:'Milo Chair 20"×22"', w:1.67, h:1.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-arlo-chair', name:'Arlo Chair 24"×23"', w:2, h:1.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-regal-chair', name:'Regal Chair 19"×23"', w:1.58, h:1.92, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-caprice-chair', name:'Caprice Chair 25"×24"', w:2.08, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+  { cat:'AFR — Café Chairs', id:'afr-nexus-chair', name:'Nexus Chair 19"×22"', w:1.58, h:1.83, unit:'ft',
+    draw:(w,h,c)=>`<rect x="10%" y="20%" width="80%" height="60%" rx="8%" fill="${c}" opacity=".85"/><rect x="10%" y="7%" width="80%" height="26%" rx="7%" fill="${darken(c)}" opacity=".8"/>` },
+
+  // ─── AFR — Bar Stools ──────────────────────────────────
+  { cat:'AFR — Bar Stools', id:'afr-ghost-stool', name:'Ghost Stool 18"', w:1.5, h:1.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="rgba(200,230,255,.5)" stroke="rgba(150,190,230,.8)" stroke-width="1.5"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="rgba(180,215,245,.4)" stroke="rgba(150,190,230,.6)" stroke-width="1"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-arlo-stool', name:'Arlo Stool 21"×19"', w:1.75, h:1.58, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-milo-stool', name:'Milo Stool 20"×21"', w:1.67, h:1.75, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-euro-stool', name:'Euro Stool 22"×24"', w:1.83, h:2, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-caprice-stool', name:'Caprice Stool 25"×26"', w:2.08, h:2.17, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-regal-stool', name:'Regal Stool 19"×24"', w:1.58, h:2, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-sonic-stool', name:'Sonic Stool 22"×23"', w:1.83, h:1.92, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-eclipse-stool', name:'Eclipse Stool 18"', w:1.5, h:1.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+  { cat:'AFR — Bar Stools', id:'afr-marcus-stool', name:'Marcus Stool 17"', w:1.42, h:1.42, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="44%" ry="44%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><ellipse cx="50%" cy="50%" rx="26%" ry="26%" fill="${darken(c)}" opacity=".3"/>` },
+
+  // ─── AFR — Dining Tables ──────────────────────────────────
+  { cat:'AFR — Dining Tables', id:'afr-arlo-dining', name:'Arlo Dining Table 30" Round', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-java-dining', name:'Java Dining Table 42" Round', w:3.5, h:3.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-brooklyn-round-dining', name:'Brooklyn Round Dining 42"', w:3.5, h:3.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-kacey-dining', name:'Kacey Dining Table 48" Round', w:4, h:4, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-cora-dining', name:'Cora Dining Table 60" Round', w:5, h:5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-aspen-dining', name:'Aspen Dining Table 72"×30"', w:6, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-brooklyn-rect-dining', name:'Brooklyn Rect Dining 60"×36"', w:5, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-element-dining', name:'Element Dining Table 79"×39"', w:6.58, h:3.25, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-madera-dining', name:'Madera Dining Table 92"×39"', w:7.67, h:3.25, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-brio-dining', name:'Brio Dining Table 96"×48"', w:8, h:4, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Dining Tables', id:'afr-encore-dining', name:'Encore Dining Table 80"×40"', w:6.67, h:3.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+
+  // ─── AFR — Bar Tables ──────────────────────────────────
+  { cat:'AFR — Bar Tables', id:'afr-arlo-bar-table', name:'Arlo Bar Table 30" Round', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-java-bar-table', name:'Java Bar Table 30" Round', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-melina-bar-table', name:'Melina Bar Table 36" Round', w:3, h:3, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-heritage-bar-table', name:'Heritage Square Bar Table 38"×38"', w:3.17, h:3.17, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-aspen-bar-table', name:'Aspen Bar Table 72"×26"', w:6, h:2.17, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-fuze-bar-table', name:'Fuze Bar Table 36"×36"', w:3, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-cylinder-bar-table', name:'Cylinder Bar Table 42" Round', w:3.5, h:3.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Bar Tables', id:'afr-cylinder-buffet', name:'Cylinder Buffet Table 72"×24"', w:6, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(160,120,80,.35)" stroke="rgba(100,70,40,.7)" stroke-width="2"/>` },
+
+  // ─── AFR — Cocktail Tables ──────────────────────────────────
+  { cat:'AFR — Cocktail Tables', id:'afr-brooklyn-round-cocktail', name:'Brooklyn Round Cocktail 30"', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-ava-cocktail', name:'Ava Cocktail Table 40" Round', w:3.33, h:3.33, unit:'ft',
+    draw:(w,h,c)=>`<ellipse cx="50%" cy="50%" rx="47%" ry="47%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-shoreline-cocktail', name:'Shoreline Cocktail Table 42"×24"', w:3.5, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-aria-cocktail', name:'Aria Cocktail Table 44"×20"', w:3.67, h:1.67, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-greystone-cocktail', name:'Greystone Cocktail Table 50"×30"', w:4.17, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-fuze-cocktail', name:'Fuze Cocktail Table 40"×40"', w:3.33, h:3.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-brooklyn-rect-cocktail', name:'Brooklyn Rect Cocktail 42"×24"', w:3.5, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-tulum-cocktail', name:'Tulum Cocktail Table 55"×31"', w:4.58, h:2.58, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-kacey-cocktail', name:'Kacey Cocktail Table 36"×36"', w:3, h:3, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+  { cat:'AFR — Cocktail Tables', id:'afr-hemingway-cocktail', name:'Hemingway Cocktail Table 30"×30"', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>`<rect x="3%" y="3%" width="94%" height="94%" rx="3%" fill="rgba(180,140,100,.4)" stroke="rgba(120,85,50,.7)" stroke-width="2"/>` },
+
+  // ─── AFR — Bars ──────────────────────────────────
+  { cat:'AFR — Bars', id:'afr-agile-bar', name:'Agile Bar 48"×16"', w:4, h:1.33, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="${darken(c)}" opacity=".35"/>` },
+  { cat:'AFR — Bars', id:'afr-umber-bar', name:'Umber Bar 72"×24"', w:6, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="${darken(c)}" opacity=".35"/>` },
+  { cat:'AFR — Bars', id:'afr-meridian-bar', name:'Meridian Bar 88"×24"', w:7.33, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="${darken(c)}" opacity=".35"/>` },
+  { cat:'AFR — Bars', id:'afr-alba-bar', name:'Alba Bar Surround 102"×24"', w:8.5, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="${darken(c)}" opacity=".35"/>` },
+  { cat:'AFR — Bars', id:'afr-vip-glow-bar-6', name:'VIP Glow Bar 6\' 72"×24"', w:6, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="rgba(100,180,255,.7)" stroke="rgba(50,120,220,.9)" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="rgba(200,230,255,.5)"/>` },
+  { cat:'AFR — Bars', id:'afr-vip-glow-bar-8', name:'VIP Glow Bar 8\' 96"×24"', w:8, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="rgba(100,180,255,.7)" stroke="rgba(50,120,220,.9)" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="rgba(200,230,255,.5)"/>` },
+  { cat:'AFR — Bars', id:'afr-vip-glow-curve', name:'VIP Glow Bar Curve 86"×24"', w:7.17, h:2, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="rgba(100,180,255,.7)" stroke="rgba(50,120,220,.9)" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="rgba(200,230,255,.5)"/>` },
+  { cat:'AFR — Bars', id:'afr-vip-ada-bar', name:'VIP ADA Bar 60"×44"', w:5, h:3.67, unit:'ft',
+    draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="${darken(c)}" opacity=".35"/>` },
+
   // ─── SHAPES ─────────────────────────────────────────
   { cat:'Shapes', id:'shape-rect', name:'Rectangle', w:8, h:6, unit:'ft', isShape:true,
     draw:(w,h,c)=>`<rect x="3" y="3" width="94" height="94" fill="${c}" stroke="${darken(c)}" stroke-width="3"/>` },
@@ -3634,11 +3898,44 @@ function applyScale(){
 // ═══════════════════════════════════════════════
 // ITEMS — RENDER & MANAGE
 // ═══════════════════════════════════════════════
+function updateCalloutHandle(item){
+  const handle=document.getElementById('cah-'+item.id);
+  if(!handle)return;
+  const screenAngle_rad=(item.arrowAngle||0)*Math.PI/180;
+  const w_px=ftToPx(item.w),h_px=ftToPx(item.h);
+  const svgAngle_rad=Math.atan2(Math.sin(screenAngle_rad)*w_px,Math.cos(screenAngle_rad)*h_px);
+  const tipX=76+Math.cos(svgAngle_rad)*24;
+  const tipY=50+Math.sin(svgAngle_rad)*24;
+  handle.style.left=tipX+'%';
+  handle.style.top=tipY+'%';
+}
+
+function getCalloutSVGInner(item){
+  const c = item.color||'#1c1917';
+  const a = (item.arrowAngle||0) * Math.PI / 180;
+  const w_px = ftToPx(item.w), h_px = ftToPx(item.h);
+  // Convert screen-space angle to SVG-coordinate angle to compensate for
+  // preserveAspectRatio="none" stretching (avoids any SVG transform)
+  const sa = Math.atan2(Math.sin(a) * w_px, Math.cos(a) * h_px);
+  const cos = Math.cos(sa), sin = Math.sin(sa);
+  // Connector: right edge of text box at midpoint
+  const ox = 76, oy = 50;
+  // Tip (24 SVG units along arrow direction)
+  const tx = ox + 24*cos, ty = oy + 24*sin;
+  // Arrowhead base (14 units from connector) + wing points (7 units perpendicular)
+  const bx = ox + 14*cos, by = oy + 14*sin;
+  const f = n => n.toFixed(2);
+  return `<rect x="2" y="5" width="74" height="90" rx="5" fill="rgba(255,255,255,.95)" stroke="${c}" stroke-width="2.5"/>` +
+    `<line x1="${ox}" y1="${oy}" x2="${f(tx)}" y2="${f(ty)}" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>` +
+    `<polygon points="${f(tx)},${f(ty)} ${f(bx-7*sin)},${f(by+7*cos)} ${f(bx+7*sin)},${f(by-7*cos)}" fill="${c}"/>`;
+}
+
 function getItemSVG(item){
   const def=CATALOG.find(c=>c.id===item.type);if(!def)return'';
   const w=ftToPx(item.w),h=ftToPx(item.h);
   if(def.isShape) return renderShapeSVG(item,w,h);
-  return`<svg width="${w}" height="${h}" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:block;position:absolute;inset:0;pointer-events:none">${def.draw(item.w,item.h,item.color||COLORS[0])}</svg>`;
+  const inner = def.isCallout ? getCalloutSVGInner(item) : def.draw(item.w,item.h,item.color||COLORS[0]);
+  return`<svg width="${w}" height="${h}" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:block;position:absolute;inset:0;pointer-events:none">${inner}</svg>`;
 }
 
 function renderShapeSVG(item,w,h){
@@ -3680,13 +3977,24 @@ function renderItem(item){
   const def=CATALOG.find(c=>c.id===item.type);
   const isAnnotation=def?.isAnnotation||false;
   const isTextLabel=def?.isTextLabel||false;
+  const isCallout=def?.isCallout||false;
   const el=document.createElement('div');
   el.className='fitem'+(item.locked?' locked':'')+(item.link?' has-link':'')+(item.groupId?' grouped':'');el.id='fi-'+item.id;
   el.style.cssText=`left:${item.x}px;top:${item.y}px;width:${w}px;height:${h}px;transform:rotate(${item.rotation}deg);z-index:${item.zIndex};opacity:${item.opacity};display:${item.visible===false?'none':'block'}`;
 
   // Text label items render as pure draggable text — no background box
   let annotationOverlay='';
-  if(isTextLabel){
+  if(isCallout){
+    const fs = item.textSize||18;
+    const ff = item.textFont||'Karla';
+    const fw = item.textBold?'700':'600';
+    const fi = item.textItalic?'italic':'normal';
+    const ta = item.textAlign||'center';
+    const tc = item.color||'#1c1917';
+    annotationOverlay=`<div class="annotation-text text-label-overlay" style="position:absolute;top:5%;left:2%;width:74%;height:90%;display:flex;align-items:center;justify-content:${ta==='left'?'flex-start':ta==='right'?'flex-end':'center'};padding:3px 6px;pointer-events:none;z-index:2;overflow:hidden">
+      <span style="font-family:'${ff}',sans-serif;font-size:${fs}px;font-weight:${fw};font-style:${fi};color:${tc};text-align:${ta};word-break:break-word;line-height:1.2;max-width:100%;white-space:pre-wrap">${item.label||'Label'}</span>
+    </div>`;
+  } else if(isTextLabel){
     const fs = item.textSize||24;
     const ff = item.textFont||'Karla';
     const fw = item.textBold?'700':'400';
@@ -3713,12 +4021,14 @@ function renderItem(item){
     <div class="resize-handle rh-ml" data-dir="ml"></div><div class="resize-handle rh-mr" data-dir="mr"></div>
     <div class="resize-handle rh-tm" data-dir="tm"></div><div class="resize-handle rh-bm" data-dir="bm"></div>
     <div class="dim-tip">${item.w.toFixed(1)}ft × ${item.h.toFixed(1)}ft</div>
-    <div class="dim-badge">${item.w.toFixed(1)}′ × ${item.h.toFixed(1)}′</div>`;
+    <div class="dim-badge">${item.w.toFixed(1)}′ × ${item.h.toFixed(1)}′</div>
+    ${isCallout?`<div class="callout-arrow-handle" id="cah-${item.id}" title="Drag to aim arrow"></div>`:''}`;
   el.addEventListener('mousedown',e=>{
     if(e.button!==0)return;
     if(e.target.classList.contains('resize-handle')){startResize(e,item.id,e.target.dataset.dir);return;}
     if(e.target.classList.contains('del-handle'))return;
     if(e.target.classList.contains('rot-handle')){startRotate(e,item.id);return;}
+    if(e.target.classList.contains('callout-arrow-handle'))return;
     if(e.target.classList.contains('link-badge'))return;
     if(currentTool!=='select')return;
     e.stopPropagation();
@@ -3763,6 +4073,38 @@ function renderItem(item){
   });
   el.querySelectorAll('.resize-handle').forEach(h=>h.addEventListener('mousedown',e=>{e.stopPropagation();startResize(e,item.id,h.dataset.dir);}));
   el.addEventListener('contextmenu',e=>{e.preventDefault();if(!selectedIds.has(item.id)){clearSelection();addToSelection(item.id);}showCtxMenu(e.clientX,e.clientY);});
+  if(isCallout){
+    updateCalloutHandle(item);
+    const cahEl=el.querySelector('.callout-arrow-handle');
+    if(cahEl) cahEl.addEventListener('mousedown',e=>{
+      if(e.button!==0)return;
+      e.stopPropagation();e.preventDefault();
+      const onMove=ev=>{
+        const liveIt=items.find(i=>i.id===item.id);if(!liveIt)return;
+        const canvasRect=fpCanvas.getBoundingClientRect();
+        const mx=(ev.clientX-canvasRect.left)/zoom;
+        const my=(ev.clientY-canvasRect.top)/zoom;
+        const w=ftToPx(liveIt.w),h=ftToPx(liveIt.h);
+        const rot_rad=(liveIt.rotation||0)*Math.PI/180;
+        const cx=liveIt.x+w/2,cy=liveIt.y+h/2;
+        const connX=cx+Math.cos(rot_rad)*0.26*w;
+        const connY=cy+Math.sin(rot_rad)*0.26*w;
+        const screenAngle=Math.atan2(my-connY,mx-connX)*180/Math.PI;
+        liveIt.arrowAngle=screenAngle-(liveIt.rotation||0);
+        const svgEl=document.querySelector('#fi-'+liveIt.id+' svg');
+        if(svgEl)svgEl.innerHTML=getCalloutSVGInner(liveIt);
+        updateCalloutHandle(liveIt);
+        const slider=document.getElementById('arrow-angle-slider');
+        const valEl=document.getElementById('arrow-angle-val');
+        const rounded=Math.round(liveIt.arrowAngle);
+        if(slider)slider.value=rounded;
+        if(valEl)valEl.textContent=rounded+'°';
+      };
+      const onUp=()=>{window.removeEventListener('mousemove',onMove);window.removeEventListener('mouseup',onUp);markDirty();};
+      window.addEventListener('mousemove',onMove);
+      window.addEventListener('mouseup',onUp);
+    });
+  }
   itemsLayer.appendChild(el);
 }
 
@@ -3781,21 +4123,24 @@ function refreshItemEl(item){
   let badge=el.querySelector('.dim-badge');
   if(!badge){badge=document.createElement('div');badge.className='dim-badge';el.appendChild(badge);}
   badge.textContent=`${item.w.toFixed(1)}′ × ${item.h.toFixed(1)}′`;
-  // Update annotation text overlay
-  const annSpan=el.querySelector('.annotation-text span');
-  if(annSpan){
-    annSpan.textContent=item.label;
-    annSpan.style.fontSize=Math.max(10,Math.min(14,w/8))+'px';
+  // Update annotation text overlay (non-textLabel annotations only)
+  const _annDef=CATALOG.find(c=>c.id===item.type);
+  if(!_annDef?.isTextLabel){
+    const annSpan=el.querySelector('.annotation-text span');
+    if(annSpan){
+      annSpan.textContent=item.label;
+      annSpan.style.fontSize=Math.max(10,Math.min(14,w/8))+'px';
+    }
   }
   const svg=el.querySelector('svg');
-  if(svg){const def=CATALOG.find(c=>c.id===item.type);svg.setAttribute('width',w);svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');if(def)svg.innerHTML=def.draw(item.w,item.h,item.color||COLORS[0]);}
+  if(svg){const _svgDef=CATALOG.find(c=>c.id===item.type);svg.setAttribute('width',w);svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');if(_svgDef)svg.innerHTML=_svgDef.isCallout?getCalloutSVGInner(item):_svgDef.draw(item.w,item.h,item.color||COLORS[0]);}
   // Update text label overlay inline
   const def=CATALOG.find(c=>c.id===item.type);
   if(def?.isTextLabel){
     const span=el.querySelector('.text-label-overlay span');
     if(span){
-      span.textContent=item.label||'Text';
-      span.style.fontSize=(item.textSize||24)+'px';
+      span.textContent=item.label||(def?.isCallout?'Label':'Text');
+      span.style.fontSize=(item.textSize||(def?.isCallout?18:24))+'px';
       span.style.fontFamily="'"+(item.textFont||'Karla')+"',sans-serif";
       span.style.fontWeight=item.textBold?'700':'400';
       span.style.fontStyle=item.textItalic?'italic':'normal';
@@ -3805,6 +4150,7 @@ function refreshItemEl(item){
       if(overlay) overlay.style.justifyContent=(item.textAlign==='left')?'flex-start':(item.textAlign==='right')?'flex-end':'center';
     }
   }
+  if(def?.isCallout) updateCalloutHandle(item);
 }
 
 // Drop
@@ -3999,9 +4345,39 @@ function startResize(e,id,dir){
 // ═══════════════════════════════════════════════
 // ROTATE
 // ═══════════════════════════════════════════════
+function startCalloutArrowAim(e,item){
+  pushHistory();
+  const canvasRect=fpCanvas.getBoundingClientRect();
+  const w=ftToPx(item.w),h=ftToPx(item.h);
+  const rot_rad=(item.rotation||0)*Math.PI/180;
+  const cx=item.x+w/2,cy=item.y+h/2;
+  const connCanvasX=cx+Math.cos(rot_rad)*0.26*w;
+  const connCanvasY=cy+Math.sin(rot_rad)*0.26*w;
+  function onMove(ev){
+    const liveIt=items.find(i=>i.id===item.id);if(!liveIt)return;
+    const mx=(ev.clientX-canvasRect.left)/zoom;
+    const my=(ev.clientY-canvasRect.top)/zoom;
+    const screenAngle=Math.atan2(my-connCanvasY,mx-connCanvasX)*180/Math.PI;
+    liveIt.arrowAngle=screenAngle-(liveIt.rotation||0);
+    const svgEl=document.querySelector('#fi-'+liveIt.id+' svg');
+    if(svgEl)svgEl.innerHTML=getCalloutSVGInner(liveIt);
+    updateCalloutHandle(liveIt);
+    const slider=document.getElementById('arrow-angle-slider');
+    const valEl=document.getElementById('arrow-angle-val');
+    const rounded=Math.round(liveIt.arrowAngle);
+    if(slider)slider.value=rounded;
+    if(valEl)valEl.textContent=rounded+'°';
+  }
+  function onUp(){window.removeEventListener('mousemove',onMove);window.removeEventListener('mouseup',onUp);markDirty();}
+  window.addEventListener('mousemove',onMove);
+  window.addEventListener('mouseup',onUp);
+}
 function startRotate(e,id){
   e.preventDefault();e.stopPropagation();
   const leadItem=items.find(i=>i.id===id);if(!leadItem)return;
+  // For callout items, rotation handle aims the arrow instead
+  const _rDef=CATALOG.find(c=>c.id===leadItem.type);
+  if(_rDef?.isCallout){ startCalloutArrowAim(e,leadItem); return; }
   pushHistory();
 
   // Collect all items to rotate — group members take priority
@@ -4081,6 +4457,8 @@ function startRotate(e,id){
 // Rotate a single item and sync all UI controls
 function setRotation(id,deg){
   const item=items.find(i=>i.id===id);if(!item)return;
+  const _rDef2=CATALOG.find(c=>c.id===item.type);
+  if(_rDef2?.isCallout)return; // callouts aim via arrowAngle, not item rotation
   deg=((Math.round(deg)%360)+360)%360;
   item.rotation=deg;
   refreshItemEl(item);
@@ -4252,16 +4630,22 @@ function _buildAlignUnits(sel) {
     if (!unitMap.has(key)) unitMap.set(key, { items:[], minX:Infinity, minY:Infinity, maxX:-Infinity, maxY:-Infinity });
     const u = unitMap.get(key);
     u.items.push(item);
-    u.minX = Math.min(u.minX, item.x);
-    u.minY = Math.min(u.minY, item.y);
-    u.maxX = Math.max(u.maxX, item.x + ftToPx(item.w));
-    u.maxY = Math.max(u.maxY, item.y + ftToPx(item.h));
+    const pw = ftToPx(item.w), ph = ftToPx(item.h);
+    const cx = item.x + pw/2, cy = item.y + ph/2;
+    const rad = (item.rotation || 0) * Math.PI / 180;
+    const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
+    const halfW = (pw * cos + ph * sin) / 2;
+    const halfH = (pw * sin + ph * cos) / 2;
+    u.minX = Math.min(u.minX, cx - halfW);
+    u.minY = Math.min(u.minY, cy - halfH);
+    u.maxX = Math.max(u.maxX, cx + halfW);
+    u.maxY = Math.max(u.maxY, cy + halfH);
   });
   return Array.from(unitMap.values());
 }
 
 function alignItems(mode){
-  const sel=getSelItems();if(sel.length<2)return;
+  const sel=getSelItems();if(sel.length<2){showToast('Select 2 or more items to align');return;}
   pushHistory();
   const units=_buildAlignUnits(sel);
   const minX=Math.min(...units.map(u=>u.minX));
@@ -4740,10 +5124,24 @@ function showMultiPanel(ids){
       <div class="prop-row">
         <input class="prop-slider" type="range" min="10" max="100" value="100" oninput="setOpacityAll(+this.value/100)">
       </div>
+    </div>
+
+    <div class="prop-group">
+      <div class="prop-group-title">Organize</div>
+      <div class="prop-row-2">
+        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="groupSelected()" title="Group (Ctrl+G)">⊞ Group</button>
+        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">⊟ Ungroup</button>
+      </div>
+      <div class="prop-row-2" style="margin-top:5px">
+        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="toggleLockSelected()" title="Lock/Unlock (L)">🔒 Lock</button>
+        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="openRepeatModal()" title="Repeat/Array selection">↻ Repeat</button>
+      </div>
     </div>`;
 }
 function showSinglePanel(item){
   document.getElementById('rp-sub').textContent=item.label;
+  const _spDef=CATALOG.find(c=>c.id===item.type);
+  const _spIsCallout=_spDef?.isCallout||false;
   document.getElementById('rp-body').innerHTML=`
 
     <!-- LABEL — top and prominent -->
@@ -4782,7 +5180,7 @@ function showSinglePanel(item){
         <div><div class="prop-label">W (ft)</div><input class="prop-input" type="number" step=".5" min=".5" value="${item.w.toFixed(1)}" oninput="setPropFt(${item.id},'w',+this.value)"></div>
         <div><div class="prop-label">H (ft)</div><input class="prop-input" type="number" step=".5" min=".5" value="${item.h.toFixed(1)}" oninput="setPropFt(${item.id},'h',+this.value)"></div>
       </div>
-      <div class="prop-row">
+      ${_spIsCallout?'':`<div class="prop-row">
         <div class="prop-row-label"><div class="prop-label">Rotation</div><div class="prop-val-badge" id="rot-val">${item.rotation}°</div></div>
         <input class="prop-slider" type="range" min="0" max="359" value="${item.rotation}" id="rot-slider"
           oninput="setRotation(${item.id},+this.value)">
@@ -4798,7 +5196,7 @@ function showSinglePanel(item){
             onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
             onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↺ 0</button>
         </div>
-      </div>
+      </div>`}
       <div class="prop-row">
         <div class="prop-row-label"><div class="prop-label">Opacity</div><div class="prop-val-badge" id="op-val">${Math.round(item.opacity*100)}%</div></div>
         <input class="prop-slider" type="range" min="10" max="100" value="${Math.round(item.opacity*100)}" oninput="setProp(${item.id},'opacity',+this.value/100);document.getElementById('op-val').textContent=this.value+'%'">
@@ -4819,10 +5217,21 @@ function showSinglePanel(item){
       <button class="btn-block" style="margin-top:5px;font-size:.75rem;${item.locked?'background:rgba(230,126,34,.1);border-color:#e67e22;color:#e67e22':''}" onclick="toggleLockSelected()">
         ${item.locked ? '🔒 Locked — click to unlock' : '🔓 Lock this item (L)'}
       </button>
+    </div>
+
+    <!-- ORGANIZE -->
+    <div class="prop-group">
+      <div class="prop-group-title">Organize</div>
+      <div class="prop-row-2">
+        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="groupSelected()" title="Group with other selected items (Ctrl+G)">⊞ Group</button>
+        <button class="btn-block" style="margin:0;font-size:.7rem" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">⊟ Ungroup</button>
+      </div>
+      <button class="btn-block" style="margin-top:5px;font-size:.75rem" onclick="openRepeatModal()" title="Repeat / array this item">↻ Repeat / Array…</button>
     </div>`;
   // Append text label controls if applicable
   const _def=CATALOG.find(c=>c.id===item.type);
   if(_def?.isTextLabel) document.getElementById('rp-body').innerHTML += buildTextLabelControls(item);
+  if(_def?.isCallout) document.getElementById('rp-body').innerHTML += buildCalloutControls(item);
   if(_def?.isShape) document.getElementById('rp-body').innerHTML += buildShapeControls(item);
 }
 
@@ -4881,6 +5290,14 @@ function setTextProp(id,prop,val){
   markDirty();
   updateRightPanel();
 }
+function setCalloutArrowAngle(id,angle){
+  const item=items.find(i=>i.id===id);if(!item)return;
+  item.arrowAngle=angle;
+  const svgEl=document.querySelector('#fi-'+id+' svg');
+  if(svgEl)svgEl.innerHTML=getCalloutSVGInner(item);
+  updateCalloutHandle(item);
+  markDirty();
+}
 
 function buildTextLabelControls(item){
   const id=item.id;
@@ -4921,6 +5338,25 @@ function buildTextLabelControls(item){
     +'<span style="font-size:.6rem;color:var(--muted)">+</span>'
     +'<input type="color" value="'+tc+'" style="width:0;height:0;opacity:0;position:absolute" oninput="setTextProp('+id+',\'color\',this.value)">'
     +'</label></div></div>';
+}
+function buildCalloutControls(item){
+  const id=item.id;
+  const angle=Math.round(item.arrowAngle||0);
+  const presets=[['→',0],['↗',-45],['↑',-90],['↖',-135],['←',180],['↙',135],['↓',90],['↘',45]];
+  return `<div class="prop-group" style="background:var(--panel);border-radius:7px;padding:10px 11px;margin-bottom:10px">
+    <div class="prop-group-title" style="margin-bottom:8px">Arrow Direction</div>
+    <div class="prop-row">
+      <div class="prop-row-label"><div class="prop-label">Angle</div><div class="prop-val-badge" id="arrow-angle-val">${angle}°</div></div>
+      <input class="prop-slider" type="range" min="-180" max="180" value="${angle}" id="arrow-angle-slider"
+        oninput="setCalloutArrowAngle(${id},+this.value);document.getElementById('arrow-angle-val').textContent=Math.round(this.value)+'°'">
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:7px">
+      ${presets.map(([lbl,a])=>`<button onclick="setCalloutArrowAngle(${id},${a});document.getElementById('arrow-angle-slider').value=${a};document.getElementById('arrow-angle-val').textContent='${a}°'"
+        style="padding:5px 2px;border:1.5px solid var(--border);border-radius:4px;background:white;font-size:.85rem;cursor:pointer;transition:all .12s"
+        onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">${lbl}</button>`).join('')}
+    </div>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:6px">Or drag the gold dot on the canvas to aim the arrow.</div>
+  </div>`;
 }
 function setPropPx(id,prop,ftVal){const item=items.find(i=>i.id===id);if(!item)return;item[prop]=ftToPx(ftVal);refreshItemEl(item);}
 function setPropFt(id,prop,ftVal){const item=items.find(i=>i.id===id);if(!item)return;item[prop]=Math.max(.5,ftVal);refreshItemEl(item);updateStatusBar();}
@@ -5262,6 +5698,19 @@ function showCtxMenu(x,y){
   m.classList.add('visible');
 }
 document.addEventListener('click',()=>document.getElementById('ctx-menu').classList.remove('visible'));
+
+// ── Toolbar dropdowns ──────────────────────────────────────────────────────
+function toggleTbDropdown(id){
+  const dd=document.getElementById(id);
+  const wasOpen=dd.classList.contains('open');
+  document.querySelectorAll('.tb-dropdown').forEach(el=>el.classList.remove('open'));
+  if(!wasOpen)dd.classList.add('open');
+}
+function closeTbDropdown(id){document.getElementById(id)?.classList.remove('open');}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.tb-dd-wrap'))
+    document.querySelectorAll('.tb-dropdown').forEach(el=>el.classList.remove('open'));
+});
 
 // ═══════════════════════════════════════════════
 // KEYBOARD
@@ -6937,9 +7386,15 @@ function startAnnotationEdit(id) {
 
   // Replace span with a contenteditable
   const origText = item.label;
+  const isCalloutItem = def?.isCallout;
   const editor = document.createElement('div');
   editor.contentEditable = 'true';
-  editor.style.cssText = `position:absolute;inset:4px;font-family:'Karla',sans-serif;font-size:${Math.max(10,Math.min(14,ftToPx(item.w)/8))}px;font-weight:600;color:#5a4a00;text-align:center;word-break:break-word;line-height:1.3;outline:none;background:rgba(255,255,220,.9);border-radius:3px;padding:4px;z-index:100;cursor:text;display:flex;align-items:center;justify-content:center`;
+  const editorFs = def?.isTextLabel ? (item.textSize||18) : Math.max(10,Math.min(14,ftToPx(item.w)/8));
+  const editorColor = def?.isTextLabel ? (item.color||'#1c1917') : '#5a4a00';
+  const editorPos = isCalloutItem
+    ? `top:5%;left:2%;width:74%;bottom:10%;`
+    : `inset:4px;`;
+  editor.style.cssText = `position:absolute;${editorPos}font-family:'${item.textFont||'Karla'}',sans-serif;font-size:${editorFs}px;font-weight:${item.textBold?'700':'600'};font-style:${item.textItalic?'italic':'normal'};color:${editorColor};text-align:${item.textAlign||'center'};word-break:break-word;line-height:1.2;outline:none;background:rgba(255,255,220,.9);border-radius:3px;padding:4px;z-index:100;cursor:text;display:flex;align-items:center;justify-content:center`;
   editor.textContent = origText === item.type.replace(/-/g,' ') ? '' : origText;
   editor.setAttribute('data-editing', id);
 

@@ -23,6 +23,16 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 .tbtn-primary{background:var(--accent);color:#fff;border:none;border-radius:4px;font-family:'Karla',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:6px 12px;cursor:pointer;transition:background .12s;white-space:nowrap;flex-shrink:0}
 .tbtn-primary:hover{background:var(--accent2)}
 .spacer{flex:1;min-width:8px}
+/* Toolbar dropdowns */
+.tb-dd-wrap{position:relative;display:inline-flex;flex-shrink:0}
+.tb-dropdown{position:absolute;top:calc(100% + 5px);left:0;background:#2a211b;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px;min-width:155px;z-index:2000;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;flex-direction:column;gap:1px}
+.tb-dropdown.open{display:flex}
+.tb-dd-item{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:.75rem;font-family:'Karla',sans-serif;letter-spacing:.04em;border-radius:5px;cursor:pointer;color:#a8a29e;white-space:nowrap;transition:background .1s;user-select:none}
+.tb-dd-item:hover{background:rgba(255,255,255,.08);color:#ede8df}
+.tb-dd-item.active{color:var(--accent2)}
+.tb-dd-item .dd-check{width:12px;flex-shrink:0;font-size:.7rem;color:var(--accent);opacity:0}
+.tb-dd-item.active .dd-check{opacity:1}
+.tb-dd-sep{height:1px;background:rgba(255,255,255,.1);margin:3px 4px}
 #zoom-display{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--faint);padding:3px 7px;background:rgba(255,255,255,.05);border-radius:3px;white-space:nowrap}
 #scale-info{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);padding:3px 7px;background:rgba(181,131,42,.1);border-radius:3px;white-space:nowrap}
 
@@ -140,6 +150,9 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 /* Handles */
 .handle{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;opacity:0;transition:opacity .12s;pointer-events:none;z-index:30}
 .fitem.sel .handle{pointer-events:all;opacity:1}
+/* Callout arrow aim handle */
+.callout-arrow-handle{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);cursor:crosshair;z-index:31;transform:translate(-50%,-50%);opacity:0;transition:opacity .12s;pointer-events:none}
+.fitem.sel .callout-arrow-handle{opacity:1;pointer-events:all}
 .rot-handle{width:26px;height:26px;background:var(--accent);color:white;top:-34px;left:50%;transform:translateX(-50%);cursor:grab}
 .rot-handle::after{content:'↻';font-size:16px}
 /* When multiple items selected, hide resize handles on the lead .sel item but keep rotate */
