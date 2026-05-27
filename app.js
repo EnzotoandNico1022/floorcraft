@@ -6796,7 +6796,9 @@ function saveLayout() {
 
   const saves = getSaves();
   const bgImg = document.getElementById('bg-img');
-  const bgSrc = bgImg.src && bgImg.style.display !== 'none' && bgImg.naturalWidth > 0 ? bgImg.src : null;
+  // naturalWidth guard removed — data URLs are valid even before the browser has decoded them;
+  // relying on it caused the bg to be silently dropped when saving right after a page-load restore.
+  const bgSrc = bgImg.src && bgImg.style.display !== 'none' ? bgImg.src : null;
 
   // Store background separately to avoid bloating the main saves object
   let bgNote = '';
@@ -6916,7 +6918,7 @@ function duplicateLayout(name) {
 // ── Fork: snapshot current live canvas + switch to copy ──────────────
 function forkLayout() {
   const bgImg = document.getElementById('bg-img');
-  const bgSrc = bgImg.src && bgImg.style.display !== 'none' && bgImg.naturalWidth > 0 ? bgImg.src : null;
+  const bgSrc = bgImg.src && bgImg.style.display !== 'none' ? bgImg.src : null;
   const saves = getSaves();
 
   // Decide source name: use current saved name or auto-generate
@@ -6933,7 +6935,7 @@ function forkLayout() {
     items: JSON.parse(JSON.stringify(items)),
     groups: JSON.parse(JSON.stringify(groups)),
     pxPerFt,
-    hasBg: !!bgSrc && false, // bg saved separately
+    hasBg: false, // updated below after _setBg attempt
   };
   if (bgSrc) { const ok = _setBg(srcName, bgSrc); origEntry.hasBg = ok; }
   saves[srcName] = origEntry;
@@ -6943,8 +6945,9 @@ function forkLayout() {
   let n = 2;
   while (saves[forkName]) { forkName = srcName + ' (copy ' + n + ')'; n++; }
 
-  saves[forkName] = { ...JSON.parse(JSON.stringify(origEntry)), name: forkName, savedAt: Date.now() };
-  if (bgSrc) _setBg(forkName, bgSrc);
+  const forkEntry = { ...JSON.parse(JSON.stringify(origEntry)), name: forkName, savedAt: Date.now() };
+  if (bgSrc) { const forkOk = _setBg(forkName, bgSrc); forkEntry.hasBg = forkOk; }
+  saves[forkName] = forkEntry;
 
   try {
     putSaves(saves);
@@ -7063,11 +7066,22 @@ document.addEventListener('keydown', e => {
 
 // ── Autosave ────────────────────────────────────
 const AUTOSAVE_KEY = 'floorcraft_autosave';
+const AUTOSAVE_BG_KEY = 'floorcraft_autosave_bg'; // bg stored separately so large images don't blow up the autosave JSON
 let _autoSaveTimer = null;
 
 function autoSave() {
   try {
     const bgImg = document.getElementById('bg-img');
+    const bgSrc = bgImg.src && bgImg.style.display !== 'none' ? bgImg.src : null;
+    // Store bg separately — a high-res floor plan can be several MB which would
+    // cause the whole autosave setItem to throw a quota error and save nothing.
+    if (bgSrc) {
+      try { localStorage.setItem(AUTOSAVE_BG_KEY, bgSrc); } catch(e) {
+        try { localStorage.removeItem(AUTOSAVE_BG_KEY); } catch(_) {}
+      }
+    } else {
+      try { localStorage.removeItem(AUTOSAVE_BG_KEY); } catch(_) {}
+    }
     localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({
       savedAt: Date.now(),
       canvasW: fpCanvas.offsetWidth,
@@ -7075,7 +7089,7 @@ function autoSave() {
       items: JSON.parse(JSON.stringify(items)),
       groups: JSON.parse(JSON.stringify(groups)),
       pxPerFt,
-      bgSrc: bgImg.src && bgImg.style.display !== 'none' ? bgImg.src : null,
+      hasBg: !!bgSrc,
     }));
   } catch(e) {}
 }
@@ -7095,7 +7109,9 @@ function restoreAutosave() {
     groupSeq = gNums.length ? Math.max(...gNums) : 0;
     setCanvasSize(save.canvasW || 1200, save.canvasH || 800);
     const bgImg = document.getElementById('bg-img');
-    if (save.bgSrc) { bgImg.src = save.bgSrc; bgImg.style.display = 'block'; }
+    // Support new format (hasBg flag + separate key) and legacy inline format (bgSrc)
+    const bgData = save.hasBg ? localStorage.getItem(AUTOSAVE_BG_KEY) : (save.bgSrc || null);
+    if (bgData) { bgImg.src = bgData; bgImg.style.display = 'block'; _showOpacitySlider(true); }
     if (save.pxPerFt && save.pxPerFt !== 20) {
       document.getElementById('scale-info').textContent = `Scale: 1ft=${save.pxPerFt.toFixed(1)}px`;
     }
