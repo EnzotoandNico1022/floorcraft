@@ -2939,8 +2939,26 @@ const CATALOG = [
 
 
   // ─── AFR — Sofas ──────────────────────────────────
-  { cat:'AFR — Sofas', id:'afr-arcadia-sectional', name:'Arcadia Modular Sectional 110"×29"', w:9.17, h:2.42, unit:'ft',
-    draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
+  { cat:'AFR — Sofas', id:'afr-arcadia-sectional', name:'Arcadia Curved Sectional 110"', w:9.17, h:4.5, unit:'ft',
+    // Curved C-sectional: top-down view. Circle center (50,50).
+    // Outer arc R=45 (back of sofa, arcs through top at y=5), seat inner R=28 (seat front curves through y=78).
+    // Back cushion strip: R 36→45. Tufting lines radiate at 30/60/90/120/150° (standard math, y-up).
+    draw:(w,h,col)=>{
+      const dk=darken(col);
+      const t=[30,60,90,120,150].map(d=>{
+        const r=d*Math.PI/180,cs=Math.cos(r),sn=Math.sin(r);
+        return`<line x1="${(50+28*cs).toFixed(1)}" y1="${(50-28*sn).toFixed(1)}" x2="${(50+45*cs).toFixed(1)}" y2="${(50-45*sn).toFixed(1)}" stroke="rgba(0,0,0,.13)" stroke-width="1.5"/>`;
+      }).join('');
+      // Body: outer arc (CCW, through top) + left arm + seat-front arc (CW, through bottom) + right arm
+      // Back cushion: outer arc strip R 45→36, through top
+      // End caps: rounded rects at each arm tip
+      return `<path d="M95,50 A45,45 0 0,0 5,50 L22,50 A28,28 0 0,1 78,50 Z" fill="${col}" opacity=".88"/>` +
+             `<path d="M95,50 A45,45 0 0,0 5,50 L14,50 A36,36 0 0,0 86,50 L95,50 Z" fill="${dk}" opacity=".82"/>` +
+             t +
+             `<rect x="2" y="43" width="11" height="14" rx="4" fill="${dk}" opacity=".88"/>` +
+             `<rect x="87" y="43" width="11" height="14" rx="4" fill="${dk}" opacity=".88"/>`;
+    }
+  },
   { cat:'AFR — Sofas', id:'afr-latitude-sofa', name:'Latitude Sofa 91"×42"', w:7.58, h:3.5, unit:'ft',
     draw:(w,h,c)=>`<rect x="2%" y="18%" width="96%" height="62%" rx="8%" fill="${c}" opacity=".85"/><rect x="2%" y="5%" width="96%" height="28%" rx="7%" fill="${darken(c)}" opacity=".8"/><rect x="2%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><rect x="88%" y="18%" width="10%" height="62%" rx="5%" fill="${darken(c)}" opacity=".8"/><line x1="34%" y1="18%" x2="34%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/><line x1="66%" y1="18%" x2="66%" y2="80%" stroke="rgba(0,0,0,.1)" stroke-width="1.2"/>` },
   { cat:'AFR — Sofas', id:'afr-aubrey-sofa', name:'Aubrey Sofa 90"×35"', w:7.5, h:2.92, unit:'ft',
