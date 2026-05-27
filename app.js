@@ -5826,7 +5826,14 @@ function toggleTbDropdown(id){
   const dd=document.getElementById(id);
   const wasOpen=dd.classList.contains('open');
   document.querySelectorAll('.tb-dropdown').forEach(el=>el.classList.remove('open'));
-  if(!wasOpen)dd.classList.add('open');
+  if(!wasOpen){
+    // Position using fixed coords so the dropdown escapes overflow:auto on #topbar
+    const wrap=dd.closest('.tb-dd-wrap')||dd.parentElement;
+    const r=wrap.getBoundingClientRect();
+    dd.style.top=(r.bottom+5)+'px';
+    dd.style.left=r.left+'px';
+    dd.classList.add('open');
+  }
 }
 function closeTbDropdown(id){document.getElementById(id)?.classList.remove('open');}
 document.addEventListener('click',e=>{
@@ -6739,6 +6746,9 @@ function toggleLayoutSwitcher() {
   // Close other dropdowns
   document.querySelectorAll('.tb-dropdown').forEach(el => el.classList.remove('open'));
   if (wasOpen) { dd.classList.remove('open'); return; }
+  // Position using fixed coords to escape topbar overflow container
+  const pill = document.getElementById('layout-switcher-pill');
+  if (pill) { const r=pill.getBoundingClientRect(); dd.style.top=(r.bottom+5)+'px'; dd.style.left=r.left+'px'; }
 
   // Build entries
   const saves = getSaves();

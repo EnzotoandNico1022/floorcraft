@@ -25,7 +25,7 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 .spacer{flex:1;min-width:8px}
 /* Toolbar dropdowns */
 .tb-dd-wrap{position:relative;display:inline-flex;flex-shrink:0}
-.tb-dropdown{position:absolute;top:calc(100% + 5px);left:0;background:#2a211b;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px;min-width:155px;z-index:2000;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;flex-direction:column;gap:1px}
+.tb-dropdown{position:fixed;top:0;left:0;background:#2a211b;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px;min-width:155px;z-index:9000;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;flex-direction:column;gap:1px}
 .tb-dropdown.open{display:flex}
 .tb-dd-item{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:.75rem;font-family:'Karla',sans-serif;letter-spacing:.04em;border-radius:5px;cursor:pointer;color:#a8a29e;white-space:nowrap;transition:background .1s;user-select:none}
 .tb-dd-item:hover{background:rgba(255,255,255,.08);color:#ede8df}
