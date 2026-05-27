@@ -6700,9 +6700,9 @@ function forkLayout() {
     markClean(forkName);
     renderSavesList();
     updateLayoutSwitcher();
-    showToast('Forked → "' + forkName + '" — original preserved as "' + srcName + '"');
+    showToast('Duplicated → "' + forkName + '" — original preserved as "' + srcName + '"');
   } catch(e) {
-    showToast('Fork failed: storage full. Delete old layouts and try again.');
+    showToast('Duplicate failed: storage full. Delete old layouts and try again.');
   }
 }
 
