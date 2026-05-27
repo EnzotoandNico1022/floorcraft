@@ -297,6 +297,9 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 /* DIM BADGE — live size shown on selected item */
 .dim-badge{position:absolute;background:rgba(28,25,23,.82);color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;pointer-events:none;white-space:nowrap;z-index:40;display:none;left:50%;transform:translateX(-50%);top:calc(100% + 5px)}
 .fitem.sel .dim-badge,.fitem.multisel .dim-badge{display:block}
+/* While dragging, hide dimension badges and name labels so item edges are fully visible for alignment */
+#items-layer.items-moving .dim-badge,
+#items-layer.items-moving .fitem-label{opacity:0!important;transition:none!important}
 
 /* MEASURE TOOL */
 #measure-layer{pointer-events:none}

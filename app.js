@@ -4609,6 +4609,7 @@ function startMove(e,leadId){
   if(!e.altKey) pushHistory();
 
   function onMove(ev){
+    if(!_itemMoving){_itemMoving=true;itemsLayer.classList.add('items-moving');}
     const dx=(ev.clientX-startMX)/zoom, dy=(ev.clientY-startMY)/zoom;
     startPositions.forEach(({x,y},id)=>{
       const it=items.find(i=>i.id===id);if(!it)return;
@@ -4622,6 +4623,8 @@ function startMove(e,leadId){
   function onUp(){
     window.removeEventListener('mousemove',onMove);
     window.removeEventListener('mouseup',onUp);
+    _itemMoving=false;
+    itemsLayer.classList.remove('items-moving');
     clearSpacingGuides();
     markDirty();
     updateRightPanel();
@@ -7446,6 +7449,7 @@ itemsLayer.addEventListener('touchstart', e => {
       clearTimeout(longPress);
       moveStarted = true;
       pushHistory();
+      itemsLayer.classList.add('items-moving');
     }
     const cdx = (t.clientX - startX) / zoom;
     const cdy = (t.clientY - startY) / zoom;
@@ -7463,6 +7467,7 @@ itemsLayer.addEventListener('touchstart', e => {
     clearTimeout(longPress);
     window.removeEventListener('touchmove', onMove);
     window.removeEventListener('touchend', onEnd);
+    itemsLayer.classList.remove('items-moving');
     clearSpacingGuides();
     if (moveStarted) { markDirty(); updateRightPanel(); }
   }
