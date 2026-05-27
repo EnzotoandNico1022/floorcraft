@@ -3471,6 +3471,7 @@ window.addEventListener('mouseup',()=>{
 // MARQUEE MULTI-SELECT
 // ═══════════════════════════════════════════════
 let marqueeStart=null;
+let _touchMarqueeStart=null;
 let _itemMoving=false; // true while startMove onMove is active
 const marqueeEl=document.getElementById('marquee');
 
@@ -3489,8 +3490,17 @@ function screenToCanvas(clientX, clientY){
 fpCanvas.addEventListener('touchstart',e=>{
   if(e.target.closest('.fitem'))return;
   if(multiSelectMode){ multiSelectMode=false; document.getElementById('btn-multiselect').classList.remove('active'); }
-  clearSelection();
-},{passive:true});
+  if(currentTool==='select' && e.touches.length===1){
+    e.preventDefault(); // suppress synthetic click so marquee tap doesn't re-fire
+    const t=e.touches[0];
+    const pos=screenToCanvas(t.clientX,t.clientY);
+    _touchMarqueeStart={pos};
+    clearSelection();
+  } else if(currentTool!=='draw-room'){
+    clearSelection();
+  }
+  // draw-room: don't prevent default — let synthesised click events place vertices
+},{passive:false});
 fpCanvas.addEventListener('mousedown',e=>{
   if(currentTool!=='select')return;
   if(e.button!==0)return;
@@ -3814,6 +3824,15 @@ window.addEventListener('mousemove', e => {
   const pos = screenToCanvas(e.clientX, e.clientY);
   _updatePolyDrawOverlay(pos.x, pos.y);
 });
+
+// Touch: live segment preview while drawing polygon
+fpCanvas.addEventListener('touchmove', e => {
+  if(currentTool !== 'draw-room' || !polyDrawVerts.length) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  const pos = screenToCanvas(t.clientX, t.clientY);
+  _updatePolyDrawOverlay(pos.x, pos.y);
+}, {passive:false});
 
 let multiSelectMode = false;
 function toggleMultiSelect() {
@@ -4260,39 +4279,33 @@ function renderItem(item){
     const liveDef = liveItem ? CATALOG.find(c => c.id === liveItem.type) : null;
     if(liveDef?.isAnnotation){ e.stopPropagation(); startAnnotationEdit(item.id); }
   });
-  el.querySelectorAll('.resize-handle').forEach(h=>h.addEventListener('mousedown',e=>{e.stopPropagation();startResize(e,item.id,h.dataset.dir);}));
+  // Resize handles — mouse + touch
+  el.querySelectorAll('.resize-handle').forEach(h=>{
+    h.addEventListener('mousedown',e=>{e.stopPropagation();startResize(e,item.id,h.dataset.dir);});
+    h.addEventListener('touchstart',e=>{
+      e.stopPropagation();e.preventDefault();
+      startResize({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY,preventDefault:()=>{}},item.id,h.dataset.dir);
+    },{passive:false});
+  });
+  // Rotate handle — touch (mouse is caught by the item mousedown handler above)
+  const rotHandle=el.querySelector('.rot-handle');
+  if(rotHandle) rotHandle.addEventListener('touchstart',e=>{
+    e.stopPropagation();e.preventDefault();
+    startRotate({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY,preventDefault:()=>{},stopPropagation:()=>{}},item.id);
+  },{passive:false});
   el.addEventListener('contextmenu',e=>{e.preventDefault();if(!selectedIds.has(item.id)){clearSelection();addToSelection(item.id);}showCtxMenu(e.clientX,e.clientY);});
   if(isCallout){
     updateCalloutHandle(item);
     const cahEl=el.querySelector('.callout-arrow-handle');
-    if(cahEl) cahEl.addEventListener('mousedown',e=>{
-      if(e.button!==0)return;
-      e.stopPropagation();e.preventDefault();
-      const onMove=ev=>{
-        const liveIt=items.find(i=>i.id===item.id);if(!liveIt)return;
-        const canvasRect=fpCanvas.getBoundingClientRect();
-        const mx=(ev.clientX-canvasRect.left)/zoom;
-        const my=(ev.clientY-canvasRect.top)/zoom;
-        const w=ftToPx(liveIt.w),h=ftToPx(liveIt.h);
-        const rot_rad=(liveIt.rotation||0)*Math.PI/180;
-        const cx=liveIt.x+w/2,cy=liveIt.y+h/2;
-        const connX=cx+Math.cos(rot_rad)*0.26*w;
-        const connY=cy+Math.sin(rot_rad)*0.26*w;
-        const screenAngle=Math.atan2(my-connY,mx-connX)*180/Math.PI;
-        liveIt.arrowAngle=screenAngle-(liveIt.rotation||0);
-        const svgEl=document.querySelector('#fi-'+liveIt.id+' svg');
-        if(svgEl)svgEl.innerHTML=getCalloutSVGInner(liveIt);
-        updateCalloutHandle(liveIt);
-        const slider=document.getElementById('arrow-angle-slider');
-        const valEl=document.getElementById('arrow-angle-val');
-        const rounded=Math.round(liveIt.arrowAngle);
-        if(slider)slider.value=rounded;
-        if(valEl)valEl.textContent=rounded+'°';
-      };
-      const onUp=()=>{window.removeEventListener('mousemove',onMove);window.removeEventListener('mouseup',onUp);markDirty();};
-      window.addEventListener('mousemove',onMove);
-      window.addEventListener('mouseup',onUp);
-    });
+    if(cahEl){
+      // Callout arrow handle — mouse
+      cahEl.addEventListener('mousedown',e=>{if(e.button!==0)return;e.stopPropagation();startCalloutArrowAim(e,item);});
+      // Callout arrow handle — touch
+      cahEl.addEventListener('touchstart',e=>{
+        e.stopPropagation();e.preventDefault();
+        startCalloutArrowAim({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY},item);
+      },{passive:false});
+    }
   }
   itemsLayer.appendChild(el);
 }
@@ -4504,6 +4517,27 @@ function startMove(e,leadId){
 }
 
 // ═══════════════════════════════════════════════
+// POINTER HELPERS (mouse + touch unified)
+// ═══════════════════════════════════════════════
+// Registers move+end listeners for both mouse and touch so resize/rotate/drag
+// handles work identically with a finger or Apple Pencil on iPad.
+function _addMoveEnd(onMove, onUp) {
+  const mMove = e => onMove({clientX:e.clientX, clientY:e.clientY});
+  const tMove = e => { e.preventDefault(); const t=e.touches[0]; if(t) onMove({clientX:t.clientX, clientY:t.clientY}); };
+  const end   = () => {
+    window.removeEventListener('mousemove', mMove);
+    window.removeEventListener('mouseup',   end);
+    window.removeEventListener('touchmove', tMove);
+    window.removeEventListener('touchend',  end);
+    onUp();
+  };
+  window.addEventListener('mousemove', mMove);
+  window.addEventListener('mouseup',   end);
+  window.addEventListener('touchmove', tMove, {passive:false});
+  window.addEventListener('touchend',  end);
+}
+
+// ═══════════════════════════════════════════════
 // RESIZE
 // ═══════════════════════════════════════════════
 function startResize(e,id,dir){
@@ -4527,8 +4561,8 @@ function startResize(e,id,dir){
     item.w=Math.max(.5,pxToFt(nW));item.h=Math.max(.5,pxToFt(nH));item.x=nX;item.y=nY;
     refreshItemEl(item);updateStatusBar();
   }
-  function onUp(){el.classList.remove('resizing');window.removeEventListener('mousemove',onMove);window.removeEventListener('mouseup',onUp);markDirty();updateRightPanel();}
-  window.addEventListener('mousemove',onMove);window.addEventListener('mouseup',onUp);
+  function onUp(){el.classList.remove('resizing');markDirty();updateRightPanel();}
+  _addMoveEnd(onMove,onUp);
 }
 
 // ═══════════════════════════════════════════════
@@ -4557,9 +4591,8 @@ function startCalloutArrowAim(e,item){
     if(slider)slider.value=rounded;
     if(valEl)valEl.textContent=rounded+'°';
   }
-  function onUp(){window.removeEventListener('mousemove',onMove);window.removeEventListener('mouseup',onUp);markDirty();}
-  window.addEventListener('mousemove',onMove);
-  window.addEventListener('mouseup',onUp);
+  function onUp(){markDirty();}
+  _addMoveEnd(onMove,onUp);
 }
 function startRotate(e,id){
   e.preventDefault();e.stopPropagation();
@@ -4634,13 +4667,8 @@ function startRotate(e,id){
     if(rotInput)rotInput.value=r;
     if(rotVal)rotVal.textContent=r+'°';
   }
-  function onUp(){
-    window.removeEventListener('mousemove',onMove);
-    window.removeEventListener('mouseup',onUp);
-    markDirty();updateRightPanel();
-  }
-  window.addEventListener('mousemove',onMove);
-  window.addEventListener('mouseup',onUp);
+  function onUp(){markDirty();updateRightPanel();}
+  _addMoveEnd(onMove,onUp);
 }
 
 // Rotate a single item and sync all UI controls
@@ -7170,6 +7198,52 @@ viewport.addEventListener('touchmove', e => {
 viewport.addEventListener('touchend', e => {
   if (e.touches.length < 2) { _pinchDist = null; _pinchMid = null; }
 }, {passive:false});
+
+// ── Touch marquee selection ──────────────────────
+// Single-finger drag on empty canvas in select mode → rubber-band select
+window.addEventListener('touchmove', e => {
+  if (!_touchMarqueeStart) return;
+  const t = e.touches[0]; if (!t) return;
+  e.preventDefault();
+  const pos = screenToCanvas(t.clientX, t.clientY);
+  const x = Math.min(_touchMarqueeStart.pos.x, pos.x);
+  const y = Math.min(_touchMarqueeStart.pos.y, pos.y);
+  const w = Math.abs(pos.x - _touchMarqueeStart.pos.x);
+  const h = Math.abs(pos.y - _touchMarqueeStart.pos.y);
+  if (w > 3 || h > 3) {
+    marqueeEl.style.display = 'block';
+    marqueeEl.style.left = x + 'px'; marqueeEl.style.top = y + 'px';
+    marqueeEl.style.width = w + 'px'; marqueeEl.style.height = h + 'px';
+  } else {
+    marqueeEl.style.display = 'none';
+  }
+}, {passive: false});
+
+window.addEventListener('touchend', e => {
+  if (!_touchMarqueeStart) return;
+  const t = e.changedTouches[0]; if (!t) return;
+  const pos = screenToCanvas(t.clientX, t.clientY);
+  const mw = Math.abs(pos.x - _touchMarqueeStart.pos.x);
+  const mh = Math.abs(pos.y - _touchMarqueeStart.pos.y);
+  if (mw > 6 || mh > 6) {
+    const mx = Math.min(_touchMarqueeStart.pos.x, pos.x);
+    const my = Math.min(_touchMarqueeStart.pos.y, pos.y);
+    const hits = items
+      .filter(item => item.x+ftToPx(item.w)>mx && item.x<mx+mw && item.y+ftToPx(item.h)>my && item.y<my+mh)
+      .map(i => i.id);
+    if (hits.length > 0) {
+      const expanded = new Set(hits);
+      hits.forEach(id => {
+        const item = items.find(i => i.id === id);
+        if (item?.groupId && groups[item.groupId])
+          groups[item.groupId].forEach(gid => expanded.add(gid));
+      });
+      addManyToSelection(Array.from(expanded));
+    }
+  }
+  marqueeEl.style.display = 'none';
+  _touchMarqueeStart = null;
+});
 
 // ── Item touch: tap = select, drag = move, long-press = menu ──
 itemsLayer.addEventListener('touchstart', e => {
