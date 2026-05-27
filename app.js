@@ -182,6 +182,12 @@ const CATALOG = [
       <line x1="50%" y1="20%" x2="50%" y2="80%" stroke="${c}" stroke-width="1" opacity="0.4"/>
       <line x1="20%" y1="50%" x2="80%" y2="50%" stroke="${c}" stroke-width="1" opacity="0.4"/>` },
 
+  { cat:'Tables — Round', id:'tbl-hightop-32', name:'Hi-Top 32"', w:2.67, h:2.67, unit:'ft',
+    draw: (w,h,c) => `<circle cx="50%" cy="50%" r="46%" fill="${c}" opacity="0.15" stroke="${c}" stroke-width="2" stroke-dasharray="6,3"/>
+      <circle cx="50%" cy="50%" r="23%" fill="${c}" opacity="0.4"/>
+      <line x1="50%" y1="18%" x2="50%" y2="82%" stroke="${c}" stroke-width="1" opacity="0.4"/>
+      <line x1="18%" y1="50%" x2="82%" y2="50%" stroke="${c}" stroke-width="1" opacity="0.4"/>` },
+
   // TABLES — RECTANGULAR
   { cat:'Tables — Rect', id:'tbl-6ft', name:'Rect 6ft', w:6, h:2.5, unit:'ft',
     draw: (w,h,c) => `<rect x="2%" y="5%" width="96%" height="90%" rx="4%" fill="${c}" opacity="0.15" stroke="${c}" stroke-width="2"/>
@@ -1111,6 +1117,15 @@ const CATALOG = [
       const chairs=[0,90,180,270].map(a=>({x:50+36*Math.cos((a-90)*Math.PI/180),y:50+36*Math.sin((a-90)*Math.PI/180)}));
       return `<circle cx="50%" cy="50%" r="20%" fill="${c}" opacity=".22" stroke="${c}" stroke-width="1.8" stroke-dasharray="5,2"/>
         ${chairs.map(ch=>`<circle cx="${ch.x}%" cy="${ch.y}%" r="9%" fill="${c}" opacity=".6"/>`).join('')}`;
+    }},
+
+  { cat:'Table Sets', id:'set-hightop-32-sq-4', name:'Round Hi-Top 32" + 4 Sq Stools', w:6, h:6, unit:'ft',
+    isTableSet:true, tableType:'tbl-hightop-32', chairType:'barstool-square', seats:4,
+    draw:(w,h,c)=>{
+      const stools=[0,90,180,270].map(a=>({x:50+37*Math.cos((a-90)*Math.PI/180),y:50+37*Math.sin((a-90)*Math.PI/180)}));
+      return `<circle cx="50%" cy="50%" r="21%" fill="${c}" opacity=".22" stroke="${c}" stroke-width="1.8" stroke-dasharray="5,2"/>
+        <circle cx="50%" cy="50%" r="8%" fill="${c}" opacity=".4"/>
+        ${stools.map(s=>`<rect x="${s.x-9}%" y="${s.y-9}%" width="18%" height="18%" rx="3%" fill="${c}" opacity=".65"/>`).join('')}`;
     }},
 
   // ─── BARSTOOL ROW SETS ───────────────────────
