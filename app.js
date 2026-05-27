@@ -3684,6 +3684,32 @@ function cancelPolyDraw(){
   setTool('select');
 }
 
+// Dimension pill for a segment while drawing
+function _polyDimLabel(x1,y1,x2,y2,isLive){
+  const dx=x2-x1, dy=y2-y1;
+  const len=Math.hypot(dx,dy);
+  if(len<8) return '';
+  const ft=pxToFt(len);
+  const whole=Math.floor(ft);
+  const inches=Math.round((ft-whole)*12);
+  const label = inches===0 ? whole+"'" : inches===12 ? (whole+1)+"'" : whole+"' "+inches+'"';
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  const ang=Math.atan2(dy,dx);
+  // Offset perpendicular to segment
+  const px=-Math.sin(ang)*17, py=Math.cos(ang)*17;
+  const lx=(mx+px).toFixed(1), ly=(my+py).toFixed(1);
+  // Keep text right-side-up
+  let deg=ang*180/Math.PI;
+  if(deg>90||deg<-90) deg+=180;
+  const bg=isLive?'rgba(255,77,143,.8)':'rgba(28,25,23,.85)';
+  const fg=isLive?'#fff':'#e8c97a';
+  const w=label.length*6.5+14;
+  return `<g transform="translate(${lx},${ly}) rotate(${deg.toFixed(1)})">
+    <rect x="${(-w/2).toFixed(0)}" y="-8" width="${w.toFixed(0)}" height="15" rx="3" fill="${bg}" stroke="rgba(255,255,255,.18)" stroke-width="0.5"/>
+    <text x="0" y="4" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="${fg}" font-weight="500">${label}</text>
+  </g>`;
+}
+
 function _updatePolyDrawOverlay(mx, my){
   if(!polyDrawSVG) return;
   const verts = polyDrawVerts;
@@ -3698,10 +3724,25 @@ function _updatePolyDrawOverlay(mx, my){
   const ptStr = verts.map(v=>`${v.x},${v.y}`).join(' ');
   const dots = verts.map((v,i)=>`<circle cx="${v.x}" cy="${v.y}" r="${i===0&&verts.length>=3?7:4}" fill="${i===0&&verts.length>=3?'rgba(255,77,143,.9)':'rgba(255,255,255,.9)'}" stroke="rgba(255,77,143,.9)" stroke-width="2"/>`).join('');
   const snapRing = nearFirst ? `<circle cx="${first.x}" cy="${first.y}" r="12" fill="none" stroke="rgba(255,77,143,.65)" stroke-width="2" stroke-dasharray="3,2"/>` : '';
+
+  // Dimension labels for placed segments
+  let dimLabels = '';
+  for(let i=0;i<verts.length-1;i++){
+    dimLabels+=_polyDimLabel(verts[i].x,verts[i].y,verts[i+1].x,verts[i+1].y,false);
+  }
+  // Live label: current segment to cursor (or closing segment)
+  if(verts.length>=1){
+    const last=verts[verts.length-1];
+    dimLabels+=_polyDimLabel(last.x,last.y,curX,curY,!nearFirst);
+  }
+  // Vertex index badges (①②③…)
+  const nums='①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮';
+  const vtxNums=verts.map((v,i)=>`<text x="${v.x}" y="${v.y-12}" text-anchor="middle" font-family="'Karla',sans-serif" font-size="11" fill="rgba(255,77,143,.9)" font-weight="700">${nums[i]||''}</text>`).join('');
+
   polyDrawSVG.innerHTML=`
-    <polygon points="${ptStr} ${curX},${curY}" fill="rgba(181,131,42,.12)" stroke="none"/>
+    <polygon points="${ptStr} ${curX},${curY}" fill="rgba(181,131,42,.1)" stroke="none"/>
     <path d="${d}" fill="none" stroke="rgba(255,77,143,.9)" stroke-width="2.2" stroke-dasharray="8,4" stroke-linecap="round" stroke-linejoin="round"/>
-    ${dots}${snapRing}`;
+    ${dimLabels}${dots}${snapRing}${vtxNums}`;
 }
 
 function finishPolyDraw(){
@@ -3714,24 +3755,37 @@ function finishPolyDraw(){
   const bw=maxX-minX, bh=maxY-minY;
   if(bw<4||bh<4){ setTool('select'); return; }
   const normalizedPts=verts.map(v=>({x:(v.x-minX)/bw, y:(v.y-minY)/bh}));
+  // Compute perimeter for the toast
+  let perimPx=0;
+  for(let i=0;i<verts.length;i++){
+    const n=(i+1)%verts.length;
+    perimPx+=Math.hypot(verts[n].x-verts[i].x,verts[n].y-verts[i].y);
+  }
+  const perimFt=pxToFt(perimPx).toFixed(1);
+
   pushHistory();
   const item={
     id:++idSeq, type:'shape-polygon',
     x:minX, y:minY,
     w:pxToFt(bw), h:pxToFt(bh),
-    rotation:0, color:'none',
-    strokeColor:'#1c1917', strokeWidth:2.5,
-    opacity:1, zIndex:items.length+1,
+    rotation:0,
+    color:'rgba(248,246,242,0.55)',   // subtle room-interior tint
+    strokeColor:'#2c3a4a',            // dark architectural wall colour
+    strokeWidth:3,
+    opacity:1,
+    zIndex:1,                          // always behind furniture
     groupId:null, visible:true,
-    label:'Room', polygonPoints:normalizedPts
+    locked:true,                       // locked so furniture drags don't move the room
+    label:'Room',
+    polygonPoints:normalizedPts
   };
   items.push(item);
   renderItem(item);
   updateCount(); updateLayers(); buildLegend();
-  clearSelection(); addToSelection(item.id);
+  clearSelection();
   markDirty();
   setTool('select');
-  showToast('Room shape placed — drag furniture inside!');
+  showToast(`Room placed (${perimFt} ft perimeter) — locked as background. Select to unlock.`);
 }
 
 // Canvas events for draw-room tool
@@ -7240,17 +7294,19 @@ function newProjectRectRoom() {
     id:++idSeq, type:'shape-rect',
     x:cx-pw/2, y:cy-ph/2,
     w:wFt, h:hFt,
-    rotation:0, color:'none',
-    strokeColor:'#1c1917', strokeWidth:2.5,
+    rotation:0,
+    color:'rgba(248,246,242,0.55)',
+    strokeColor:'#2c3a4a', strokeWidth:3,
     opacity:1, zIndex:1,
-    groupId:null, visible:true, label:'Room'
+    groupId:null, visible:true,
+    locked:true, label:'Room'
   };
   items.push(item);
   renderItem(item);
   updateCount(); updateLayers(); buildLegend();
-  clearSelection(); addToSelection(item.id);
+  clearSelection();
   markDirty();
-  showToast(wFt+'×'+hFt+' ft room added — drag furniture in!');
+  showToast(wFt+'×'+hFt+' ft room placed — locked as background. Select to unlock.');
 }
 function newProjectPolyDraw() {
   document.getElementById('new-project-modal').style.display = 'none';

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit -m 'Fix lounge set chair orientations — chairs now face inward *)",
+      "Bash(git commit -m 'Add Round Hi-Top 32\" table + 4 Square Stools set *)",
+      "Bash(git commit -m 'Fix toolbar dropdowns appearing behind artboard *)",
+      "Bash(git commit -m 'Fix alignment to treat groups as single units *)",
+      "Bash(git commit -m 'Polygon tool: live dimension labels, vertex badges, auto-lock as room boundary *)"
+    ]
+  }
+}
