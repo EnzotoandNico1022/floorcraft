@@ -3522,7 +3522,16 @@ window.addEventListener('mouseup',e=>{
     const hits=items
       .filter(item=>item.x+ftToPx(item.w)>mx&&item.x<mx+mw&&item.y+ftToPx(item.h)>my&&item.y<my+mh)
       .map(i=>i.id);
-    if(hits.length>0) addManyToSelection(hits);
+    if(hits.length>0){
+      // Expand to include all members of any group that was hit
+      const expanded=new Set(hits);
+      hits.forEach(id=>{
+        const item=items.find(i=>i.id===id);
+        if(item?.groupId&&groups[item.groupId])
+          groups[item.groupId].forEach(gid=>expanded.add(gid));
+      });
+      addManyToSelection(Array.from(expanded));
+    }
   }
   marqueeEl.style.display='none';
   marqueeStart=null;
@@ -4748,26 +4757,47 @@ function sendBackward(){getSelItems().forEach(item=>{item.zIndex=Math.max(1,(ite
 // ALIGN & DISTRIBUTE & TIDY GRID
 // ═══════════════════════════════════════════════
 // Build group-aware alignment units from the current selection.
-// Each unit represents one group (or one ungrouped item) with a combined bounding box.
+// Each unit = one group (all its members) OR one ungrouped item.
+// Uses the groups registry so the bounding box and move includes ALL group members
+// even if some weren't in the original selection (e.g. after a marquee).
 function _buildAlignUnits(sel) {
   const unitMap = new Map();
+  const seenGroups = new Set();
+
   sel.forEach(item => {
-    const key = item.groupId || ('i' + item.id);
-    if (!unitMap.has(key)) unitMap.set(key, { items:[], minX:Infinity, minY:Infinity, maxX:-Infinity, maxY:-Infinity });
-    const u = unitMap.get(key);
-    u.items.push(item);
-    const pw = ftToPx(item.w), ph = ftToPx(item.h);
-    const cx = item.x + pw/2, cy = item.y + ph/2;
-    const rad = (item.rotation || 0) * Math.PI / 180;
-    const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
-    const halfW = (pw * cos + ph * sin) / 2;
-    const halfH = (pw * sin + ph * cos) / 2;
-    u.minX = Math.min(u.minX, cx - halfW);
-    u.minY = Math.min(u.minY, cy - halfH);
-    u.maxX = Math.max(u.maxX, cx + halfW);
-    u.maxY = Math.max(u.maxY, cy + halfH);
+    if (item.groupId && groups[item.groupId]) {
+      // Grouped item — use the full group membership, not just selected items
+      if (seenGroups.has(item.groupId)) return; // already added this group
+      seenGroups.add(item.groupId);
+      const key = item.groupId;
+      const memberItems = (groups[item.groupId] || [])
+        .map(id => items.find(i => i.id === id))
+        .filter(Boolean);
+      const u = { items: memberItems, minX:Infinity, minY:Infinity, maxX:-Infinity, maxY:-Infinity };
+      memberItems.forEach(mi => _expandBounds(u, mi));
+      unitMap.set(key, u);
+    } else {
+      // Ungrouped item — its own unit
+      const key = 'i' + item.id;
+      if (unitMap.has(key)) return;
+      const u = { items: [item], minX:Infinity, minY:Infinity, maxX:-Infinity, maxY:-Infinity };
+      _expandBounds(u, item);
+      unitMap.set(key, u);
+    }
   });
   return Array.from(unitMap.values());
+}
+function _expandBounds(u, item) {
+  const pw = ftToPx(item.w), ph = ftToPx(item.h);
+  const cx = item.x + pw/2, cy = item.y + ph/2;
+  const rad = (item.rotation || 0) * Math.PI / 180;
+  const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
+  const halfW = (pw * cos + ph * sin) / 2;
+  const halfH = (pw * sin + ph * cos) / 2;
+  u.minX = Math.min(u.minX, cx - halfW);
+  u.minY = Math.min(u.minY, cy - halfH);
+  u.maxX = Math.max(u.maxX, cx + halfW);
+  u.maxY = Math.max(u.maxY, cy + halfH);
 }
 
 function alignItems(mode){
@@ -4823,98 +4853,102 @@ function distributeAlongAngle(){
   const sel=getSelItems();
   if(sel.length<2){showToast('Select 2+ items to distribute along angle');return;}
   pushHistory();
+  const units=_buildAlignUnits(sel);
+  if(units.length<2){showToast('Select 2+ groups/items to distribute');return;}
 
-  // Detect angle from first selected item's rotation
   const angleDeg=sel[0].rotation||0;
   const rad=angleDeg*Math.PI/180;
   const cosA=Math.cos(rad), sinA=Math.sin(rad);
 
-  // Get each item's center in canvas coords
-  const centers=sel.map(item=>({
-    item,
-    cx:item.x+ftToPx(item.w)/2,
-    cy:item.y+ftToPx(item.h)/2
+  // Use each unit's center for projection
+  const uCenters=units.map(u=>({
+    u,
+    cx:(u.minX+u.maxX)/2, cy:(u.minY+u.maxY)/2
   }));
-
-  // Project each center onto the angle axis (dot product with direction vector)
-  // Direction along the angle: (cosA, sinA)
-  centers.forEach(c=>{
-    c.proj = c.cx*cosA + c.cy*sinA; // position along the rail
-    c.perp = -c.cx*sinA + c.cy*cosA; // position perpendicular to the rail
+  uCenters.forEach(c=>{
+    c.proj=c.cx*cosA+c.cy*sinA;
+    c.perp=-c.cx*sinA+c.cy*cosA;
   });
+  uCenters.sort((a,b)=>a.proj-b.proj);
 
-  // Sort by position along the rail
-  centers.sort((a,b)=>a.proj-b.proj);
-
-  // Calculate total span and even spacing
-  const first=centers[0], last=centers[centers.length-1];
+  const first=uCenters[0], last=uCenters[uCenters.length-1];
   const span=last.proj-first.proj;
-  const step=span/(centers.length-1);
+  const step=span/(uCenters.length-1);
 
-  // Move each item to evenly-spaced positions along the rail,
-  // keeping each item's perpendicular position (perp) unchanged
-  centers.forEach((c,i)=>{
+  uCenters.forEach((c,i)=>{
     const targetProj=first.proj+i*step;
-    // Convert back from (proj, perp) to (cx, cy)
     const newCx=targetProj*cosA - c.perp*sinA;
     const newCy=targetProj*sinA + c.perp*cosA;
-    c.item.x=Math.max(0, newCx-ftToPx(c.item.w)/2);
-    c.item.y=Math.max(0, newCy-ftToPx(c.item.h)/2);
-    refreshItemEl(c.item);
+    const dx=newCx-c.cx, dy=newCy-c.cy;
+    c.u.items.forEach(item=>{
+      item.x=Math.max(0,item.x+dx);
+      item.y=Math.max(0,item.y+dy);
+      refreshItemEl(item);
+    });
   });
-
-  showToast(`Distributed ${sel.length} items along ${angleDeg}° axis`);
+  showToast(`Distributed ${units.length} groups/items along ${angleDeg}° axis`);
 }
 
 function alignToAngle(){
   const sel=getSelItems();
   if(sel.length<2){showToast('Select 2+ items to align along angle');return;}
   pushHistory();
+  const units=_buildAlignUnits(sel);
 
   const angleDeg=sel[0].rotation||0;
   const rad=angleDeg*Math.PI/180;
   const cosA=Math.cos(rad), sinA=Math.sin(rad);
 
-  // Find average perpendicular position (the "rail line" to snap to)
-  const centers=sel.map(item=>({
-    item,
-    cx:item.x+ftToPx(item.w)/2,
-    cy:item.y+ftToPx(item.h)/2
+  const uCenters=units.map(u=>({
+    u,
+    cx:(u.minX+u.maxX)/2, cy:(u.minY+u.maxY)/2
   }));
-  centers.forEach(c=>{
-    c.proj = c.cx*cosA + c.cy*sinA;
-    c.perp = -c.cx*sinA + c.cy*cosA;
+  uCenters.forEach(c=>{
+    c.proj=c.cx*cosA+c.cy*sinA;
+    c.perp=-c.cx*sinA+c.cy*cosA;
   });
 
-  const avgPerp=centers.reduce((s,c)=>s+c.perp,0)/centers.length;
+  const avgPerp=uCenters.reduce((s,c)=>s+c.perp,0)/uCenters.length;
 
-  // Snap all items to the same perpendicular position (same line along the angle)
-  centers.forEach(c=>{
+  uCenters.forEach(c=>{
     const newCx=c.proj*cosA - avgPerp*sinA;
     const newCy=c.proj*sinA + avgPerp*cosA;
-    c.item.x=Math.max(0, newCx-ftToPx(c.item.w)/2);
-    c.item.y=Math.max(0, newCy-ftToPx(c.item.h)/2);
-    refreshItemEl(c.item);
+    const dx=newCx-c.cx, dy=newCy-c.cy;
+    c.u.items.forEach(item=>{
+      item.x=Math.max(0,item.x+dx);
+      item.y=Math.max(0,item.y+dy);
+      refreshItemEl(item);
+    });
   });
-
-  showToast(`Aligned ${sel.length} items along ${angleDeg}° axis`);
+  showToast(`Aligned ${units.length} groups/items along ${angleDeg}° axis`);
 }
 
 function tidyGrid(){
-  // Snaps ALL selected items to nearest grid point and evenly spaces them
+  // Snaps selected groups/items to nearest 1ft grid by their top-left corner
   const sel=getSelItems();
   const targets=sel.length>0?sel:items;
   if(targets.length===0)return;
   pushHistory();
-  const snapPx=ftToPx(1); // snap to 1ft grid for tidy
-  targets.forEach(item=>{
-    item.x=Math.round(item.x/snapPx)*snapPx;
-    item.y=Math.round(item.y/snapPx)*snapPx;
-    item.w=Math.round(item.w*2)/2; // round to 0.5ft
-    item.h=Math.round(item.h*2)/2;
-    refreshItemEl(item);
-  });
-  showToast('Snapped '+targets.length+' items to 1ft grid');
+  const snapPx=ftToPx(1);
+  if(sel.length>0){
+    // Group-aware: snap each unit's top-left, then move all members by same delta
+    const units=_buildAlignUnits(targets);
+    units.forEach(u=>{
+      const snappedX=Math.round(u.minX/snapPx)*snapPx;
+      const snappedY=Math.round(u.minY/snapPx)*snapPx;
+      const dx=snappedX-u.minX, dy=snappedY-u.minY;
+      u.items.forEach(item=>{ item.x+=dx; item.y+=dy; refreshItemEl(item); });
+    });
+    showToast('Snapped '+units.length+' groups/items to 1ft grid');
+  } else {
+    // No selection — snap all individual items
+    targets.forEach(item=>{
+      item.x=Math.round(item.x/snapPx)*snapPx;
+      item.y=Math.round(item.y/snapPx)*snapPx;
+      refreshItemEl(item);
+    });
+    showToast('Snapped all items to 1ft grid');
+  }
 }
 
 // Toast
