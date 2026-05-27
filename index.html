@@ -739,12 +739,43 @@
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="flex-shrink:0"><rect x="4" y="3" width="20" height="22" rx="2" stroke="#ede8df" stroke-width="1.5"/><path d="M9 10h10M9 14h7" stroke="#ede8df" stroke-width="1.5" stroke-linecap="round"/><path d="M14 20v-5M12 17l2-2 2 2" stroke="#b5832a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div><div style="font-weight:600;margin-bottom:2px">Upload Floor Plan</div><div style="font-size:.72rem;color:var(--muted)">Import a PDF or image to trace over</div></div>
         </button>
+        <button onclick="newProjectShowStep3()" style="padding:14px 16px;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:9px;font-family:'Karla',sans-serif;font-size:.88rem;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="flex-shrink:0"><polygon points="14,4 24,12 20,24 8,24 4,12" stroke="#ede8df" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="14" cy="4" r="2" fill="#b5832a"/><circle cx="24" cy="12" r="2" fill="#b5832a"/><circle cx="20" cy="24" r="2" fill="#b5832a"/><circle cx="8" cy="24" r="2" fill="#b5832a"/><circle cx="4" cy="12" r="2" fill="#b5832a"/></svg>
+          <div><div style="font-weight:600;margin-bottom:2px">Draw Room Shape</div><div style="font-size:.72rem;color:var(--muted)">Click vertices to define a custom room polygon</div></div>
+        </button>
         <button onclick="document.getElementById('np-step2').style.display='none';document.getElementById('np-step1').style.display='block';document.getElementById('new-project-modal').style.display='none'" style="padding:7px 0;background:none;color:var(--muted);border:none;font-family:'Karla',sans-serif;font-size:.8rem;cursor:pointer">Cancel</button>
       </div>
+    </div>
+
+    <!-- Step 3: room setup -->
+    <div id="np-step3" style="display:none">
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#ede8df;margin-bottom:6px">Set Up Your Room</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:16px;line-height:1.5">Enter dimensions for a rectangular room, or draw a custom polygon shape on the canvas.</div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+        <div style="display:flex;gap:10px;align-items:center">
+          <label style="font-size:.78rem;color:var(--muted);width:70px;flex-shrink:0">Width (ft)</label>
+          <input id="np-room-w" type="number" min="1" max="200" value="12" style="flex:1;padding:7px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#ede8df;font-family:'Karla',sans-serif;font-size:.85rem;outline:none"/>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <label style="font-size:.78rem;color:var(--muted);width:70px;flex-shrink:0">Length (ft)</label>
+          <input id="np-room-h" type="number" min="1" max="200" value="14" style="flex:1;padding:7px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#ede8df;font-family:'Karla',sans-serif;font-size:.85rem;outline:none"/>
+        </div>
+      </div>
+      <button onclick="newProjectRectRoom()" style="width:100%;padding:10px 0;background:var(--accent);color:#1c1917;border:none;border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;margin-bottom:10px">Add Rectangular Room</button>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+        <span style="font-size:.72rem;color:var(--muted)">or</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+      </div>
+
+      <button onclick="newProjectPolyDraw()" style="width:100%;padding:10px 0;background:rgba(255,255,255,.07);color:#ede8df;border:1px solid rgba(255,255,255,.12);border-radius:7px;font-family:'Karla',sans-serif;font-size:.85rem;cursor:pointer;margin-bottom:8px">✏️ Draw Custom Shape</button>
+      <button onclick="_resetNewProjectModal();document.getElementById('new-project-modal').style.display='none'" style="width:100%;padding:7px 0;background:none;color:var(--muted);border:none;font-family:'Karla',sans-serif;font-size:.8rem;cursor:pointer">Cancel</button>
     </div>
 
   </div>
 </div>
 
-<script src="app.js?v=24"></script>
+<script src="app.js?v=25"></script>
 </body>

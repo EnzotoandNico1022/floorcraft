@@ -3631,6 +3631,112 @@ window.addEventListener('mouseup', e => {
   shapeDrawStart = null;
 });
 
+// ═══════════════════════════════════════════════
+// ROOM POLYGON DRAW TOOL
+// ═══════════════════════════════════════════════
+let polyDrawVerts = [];   // [{x,y}] in canvas px coords
+let polyDrawSVG   = null; // SVG overlay element
+const POLY_SNAP_PX = 18;  // px radius to close the shape
+
+function startPolyDraw(){
+  polyDrawVerts = [];
+  if(polyDrawSVG){ polyDrawSVG.remove(); polyDrawSVG=null; }
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.id = 'poly-draw-overlay';
+  svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;z-index:9999;overflow:visible';
+  svg.setAttribute('width', fpCanvas.offsetWidth);
+  svg.setAttribute('height', fpCanvas.offsetHeight);
+  itemsLayer.appendChild(svg);
+  polyDrawSVG = svg;
+}
+
+function _cancelPolyDrawInternal(){
+  if(polyDrawSVG){ polyDrawSVG.remove(); polyDrawSVG=null; }
+  polyDrawVerts = [];
+}
+
+function cancelPolyDraw(){
+  _cancelPolyDrawInternal();
+  setTool('select');
+}
+
+function _updatePolyDrawOverlay(mx, my){
+  if(!polyDrawSVG) return;
+  const verts = polyDrawVerts;
+  if(!verts.length){ polyDrawSVG.innerHTML=''; return; }
+  const first = verts[0];
+  const nearFirst = verts.length>=3 && Math.hypot(mx-first.x, my-first.y)<POLY_SNAP_PX;
+  const curX = nearFirst ? first.x : mx;
+  const curY = nearFirst ? first.y : my;
+  let d = `M${verts[0].x},${verts[0].y}`;
+  for(let i=1;i<verts.length;i++) d+=`L${verts[i].x},${verts[i].y}`;
+  d+=`L${curX},${curY}`;
+  const ptStr = verts.map(v=>`${v.x},${v.y}`).join(' ');
+  const dots = verts.map((v,i)=>`<circle cx="${v.x}" cy="${v.y}" r="${i===0&&verts.length>=3?7:4}" fill="${i===0&&verts.length>=3?'rgba(255,77,143,.9)':'rgba(255,255,255,.9)'}" stroke="rgba(255,77,143,.9)" stroke-width="2"/>`).join('');
+  const snapRing = nearFirst ? `<circle cx="${first.x}" cy="${first.y}" r="12" fill="none" stroke="rgba(255,77,143,.65)" stroke-width="2" stroke-dasharray="3,2"/>` : '';
+  polyDrawSVG.innerHTML=`
+    <polygon points="${ptStr} ${curX},${curY}" fill="rgba(181,131,42,.12)" stroke="none"/>
+    <path d="${d}" fill="none" stroke="rgba(255,77,143,.9)" stroke-width="2.2" stroke-dasharray="8,4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${snapRing}`;
+}
+
+function finishPolyDraw(){
+  const verts = polyDrawVerts.slice(); // capture before clearing
+  _cancelPolyDrawInternal();
+  if(verts.length < 3){ setTool('select'); return; }
+  const xs=verts.map(v=>v.x), ys=verts.map(v=>v.y);
+  const minX=Math.min(...xs), maxX=Math.max(...xs);
+  const minY=Math.min(...ys), maxY=Math.max(...ys);
+  const bw=maxX-minX, bh=maxY-minY;
+  if(bw<4||bh<4){ setTool('select'); return; }
+  const normalizedPts=verts.map(v=>({x:(v.x-minX)/bw, y:(v.y-minY)/bh}));
+  pushHistory();
+  const item={
+    id:++idSeq, type:'shape-polygon',
+    x:minX, y:minY,
+    w:pxToFt(bw), h:pxToFt(bh),
+    rotation:0, color:'none',
+    strokeColor:'#1c1917', strokeWidth:2.5,
+    opacity:1, zIndex:items.length+1,
+    groupId:null, visible:true,
+    label:'Room', polygonPoints:normalizedPts
+  };
+  items.push(item);
+  renderItem(item);
+  updateCount(); updateLayers(); buildLegend();
+  clearSelection(); addToSelection(item.id);
+  markDirty();
+  setTool('select');
+  showToast('Room shape placed — drag furniture inside!');
+}
+
+// Canvas events for draw-room tool
+fpCanvas.addEventListener('click', e => {
+  if(currentTool !== 'draw-room') return;
+  e.preventDefault(); e.stopPropagation();
+  const pos = screenToCanvas(e.clientX, e.clientY);
+  if(polyDrawVerts.length >= 3){
+    const first = polyDrawVerts[0];
+    if(Math.hypot(pos.x-first.x, pos.y-first.y) < POLY_SNAP_PX){ finishPolyDraw(); return; }
+  }
+  polyDrawVerts.push({x:pos.x, y:pos.y});
+  _updatePolyDrawOverlay(pos.x, pos.y);
+});
+
+fpCanvas.addEventListener('dblclick', e => {
+  if(currentTool !== 'draw-room') return;
+  e.preventDefault(); e.stopPropagation();
+  // Remove the duplicate point added by the second click of the dblclick
+  if(polyDrawVerts.length > 1) polyDrawVerts.pop();
+  finishPolyDraw();
+});
+
+window.addEventListener('mousemove', e => {
+  if(currentTool !== 'draw-room' || !polyDrawVerts.length) return;
+  const pos = screenToCanvas(e.clientX, e.clientY);
+  _updatePolyDrawOverlay(pos.x, pos.y);
+});
+
 let multiSelectMode = false;
 function toggleMultiSelect() {
   multiSelectMode = !multiSelectMode;
@@ -3957,6 +4063,11 @@ function renderShapeSVG(item,w,h){
     const hs=Math.max(sw*3,8);
     inner=`<defs><marker id="${uid}" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 z" fill="${stroke}"/></marker></defs>`+
       `<line x1="${sw}" y1="${h/2}" x2="${w-hs}" y2="${h/2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" marker-end="url(#${uid})"/>`;
+  } else if(item.type==='shape-polygon'){
+    if(item.polygonPoints && item.polygonPoints.length>=3){
+      const pts=item.polygonPoints.map(p=>`${(p.x*w).toFixed(2)},${(p.y*h).toFixed(2)}`).join(' ');
+      inner=`<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    }
   }
   return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;position:absolute;inset:0;pointer-events:none;overflow:visible">${inner}</svg>`;
 }
@@ -5400,16 +5511,18 @@ function undo(){
 function setTool(t){
   // Clear measure tool if switching away
   if(currentTool==='measure'&&t!=='measure') clearMeasure();
+  // Cancel polygon draw if switching away
+  if(currentTool==='draw-room'&&t!=='draw-room') _cancelPolyDrawInternal();
   currentTool=t;
-  ['select','pan','measure','shape'].forEach(n=>document.getElementById('btn-'+n)?.classList.remove('active'));
+  ['select','pan','measure','shape','draw-room'].forEach(n=>document.getElementById('btn-'+n)?.classList.remove('active'));
   document.getElementById('btn-'+t)?.classList.add('active');
   viewport.classList.toggle('panning',t==='pan');
-  document.getElementById('st-tool').textContent=t==='pan'?'Pan':t==='measure'?'Measure':t==='shape'?'Shape':'Select';
+  document.getElementById('st-tool').textContent=t==='pan'?'Pan':t==='measure'?'Measure':t==='shape'?'Shape':t==='draw-room'?'Draw Room':'Select';
   // Cursor
   if(t==='measure'){
     fpCanvas.style.cursor='crosshair';
     document.getElementById('measure-layer').style.pointerEvents='all';
-  } else if(t==='shape'){
+  } else if(t==='shape'||t==='draw-room'){
     fpCanvas.style.cursor='crosshair';
     document.getElementById('measure-layer').style.pointerEvents='none';
   } else {
@@ -5794,7 +5907,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='-'&&!e.ctrlKey&&!e.metaKey)zoomTo(zoom*0.8);
   if(e.key==='0'&&(e.ctrlKey||e.metaKey)){e.preventDefault();zoomFit();}
   if(e.key==='1'&&(e.ctrlKey||e.metaKey)){e.preventDefault();zoomTo(1);}
-  if(e.key==='Escape')clearSelection();
+  if(e.key==='Escape'){ if(currentTool==='draw-room'){ cancelPolyDraw(); } else { clearSelection(); } }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undo();}
   if((e.ctrlKey||e.metaKey)&&e.key==='d'){e.preventDefault();duplicateSelected();}
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='g'){e.preventDefault();groupSelected();}
@@ -6948,6 +7061,10 @@ function newProjectShowStep2() {
   document.getElementById('np-step1').style.display = 'none';
   document.getElementById('np-step2').style.display = 'block';
 }
+function newProjectShowStep3() {
+  document.getElementById('np-step2').style.display = 'none';
+  document.getElementById('np-step3').style.display = 'block';
+}
 function newProjectBlank() {
   document.getElementById('new-project-modal').style.display = 'none';
   _resetNewProjectModal();
@@ -6959,9 +7076,43 @@ function newProjectUpload() {
   _clearCanvas();
   showUpload();
 }
+function newProjectRectRoom() {
+  const wFt = Math.max(1, parseFloat(document.getElementById('np-room-w').value)||12);
+  const hFt = Math.max(1, parseFloat(document.getElementById('np-room-h').value)||14);
+  document.getElementById('new-project-modal').style.display = 'none';
+  _resetNewProjectModal();
+  _clearCanvas();
+  const pw=ftToPx(wFt), ph=ftToPx(hFt);
+  const cx=600, cy=400; // center of default 1200×800 canvas
+  pushHistory();
+  const item={
+    id:++idSeq, type:'shape-rect',
+    x:cx-pw/2, y:cy-ph/2,
+    w:wFt, h:hFt,
+    rotation:0, color:'none',
+    strokeColor:'#1c1917', strokeWidth:2.5,
+    opacity:1, zIndex:1,
+    groupId:null, visible:true, label:'Room'
+  };
+  items.push(item);
+  renderItem(item);
+  updateCount(); updateLayers(); buildLegend();
+  clearSelection(); addToSelection(item.id);
+  markDirty();
+  showToast(wFt+'×'+hFt+' ft room added — drag furniture in!');
+}
+function newProjectPolyDraw() {
+  document.getElementById('new-project-modal').style.display = 'none';
+  _resetNewProjectModal();
+  _clearCanvas();
+  setTool('draw-room');
+  startPolyDraw();
+  showToast('Click to place vertices — double-click or click near ① to close shape');
+}
 function _resetNewProjectModal() {
   document.getElementById('np-step1').style.display = 'block';
   document.getElementById('np-step2').style.display = 'none';
+  document.getElementById('np-step3').style.display = 'none';
 }
 function _clearCanvas() {
   localStorage.removeItem(AUTOSAVE_KEY);
