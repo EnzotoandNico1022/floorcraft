@@ -5909,6 +5909,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='1'&&(e.ctrlKey||e.metaKey)){e.preventDefault();zoomTo(1);}
   if(e.key==='Escape'){ if(currentTool==='draw-room'){ cancelPolyDraw(); } else { clearSelection(); } }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undo();}
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key==='D'){e.preventDefault();forkLayout();return;}
   if((e.ctrlKey||e.metaKey)&&e.key==='d'){e.preventDefault();duplicateSelected();}
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='g'){e.preventDefault();groupSelected();}
   if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key==='G'){e.preventDefault();ungroupSelected();}
@@ -6506,16 +6507,20 @@ function markDirty() {
   if (!isDirty) {
     isDirty = true;
     document.getElementById('unsaved-dot').classList.add('show');
+    const pill = document.getElementById('layout-switcher-pill');
+    if (pill) pill.style.opacity = '.65';
   }
   clearTimeout(_autoSaveTimer);
   _autoSaveTimer = setTimeout(autoSave, 2000);
 }
 function markClean(name) {
   isDirty = false;
-  currentLayoutName = name;
+  currentLayoutName = name || null;
   document.getElementById('unsaved-dot').classList.remove('show');
-  // Update topbar logo tooltip
   document.querySelector('#topbar .logo').title = name ? 'Current: '+name : '';
+  const pill = document.getElementById('layout-switcher-pill');
+  if (pill) pill.style.opacity = '1';
+  updateLayoutSwitcher();
 }
 
 function getSaves() {
@@ -6645,17 +6650,104 @@ function duplicateLayout(name) {
   const saves = getSaves();
   const orig = saves[name];
   if (!orig) return;
-  const newName = name + ' (copy)';
+  let newName = name + ' (copy)';
+  let n = 2;
+  while (saves[newName]) { newName = name + ' (copy ' + n + ')'; n++; }
   saves[newName] = { ...JSON.parse(JSON.stringify(orig)), name: newName, savedAt: Date.now() };
-  // Copy background to the new key if present
   const bgData = _getBg(name);
   if (bgData) _setBg(newName, bgData);
   putSaves(saves);
   renderSavesList();
+  updateLayoutSwitcher();
   showToast('Duplicated as "' + newName + '"');
 }
 
+// ── Fork: snapshot current live canvas + switch to copy ──────────────
+function forkLayout() {
+  const bgImg = document.getElementById('bg-img');
+  const bgSrc = bgImg.src && bgImg.style.display !== 'none' && bgImg.naturalWidth > 0 ? bgImg.src : null;
+  const saves = getSaves();
+
+  // Decide source name: use current saved name or auto-generate
+  const srcName = currentLayoutName ||
+    ('Layout ' + new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}));
+
+  // Always persist the original first so it's recoverable
+  const origEntry = {
+    name: srcName,
+    savedAt: Date.now(),
+    itemCount: items.length,
+    canvasW: fpCanvas.offsetWidth,
+    canvasH: fpCanvas.offsetHeight,
+    items: JSON.parse(JSON.stringify(items)),
+    groups: JSON.parse(JSON.stringify(groups)),
+    pxPerFt,
+    hasBg: !!bgSrc && false, // bg saved separately
+  };
+  if (bgSrc) { const ok = _setBg(srcName, bgSrc); origEntry.hasBg = ok; }
+  saves[srcName] = origEntry;
+
+  // Create unique fork name
+  let forkName = srcName + ' (copy)';
+  let n = 2;
+  while (saves[forkName]) { forkName = srcName + ' (copy ' + n + ')'; n++; }
+
+  saves[forkName] = { ...JSON.parse(JSON.stringify(origEntry)), name: forkName, savedAt: Date.now() };
+  if (bgSrc) _setBg(forkName, bgSrc);
+
+  try {
+    putSaves(saves);
+    markClean(forkName);
+    renderSavesList();
+    updateLayoutSwitcher();
+    showToast('Forked → "' + forkName + '" — original preserved as "' + srcName + '"');
+  } catch(e) {
+    showToast('Fork failed: storage full. Delete old layouts and try again.');
+  }
+}
+
+// ── Layout switcher pill in topbar ───────────────────────────────────
+function updateLayoutSwitcher() {
+  const pill = document.getElementById('layout-switcher-pill');
+  if (!pill) return;
+  const name = currentLayoutName || 'Unsaved';
+  // Truncate long names
+  const display = name.length > 22 ? name.slice(0, 20) + '…' : name;
+  pill.textContent = display;
+  pill.title = name;
+}
+
+function toggleLayoutSwitcher() {
+  const dd = document.getElementById('layout-switcher-dd');
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  // Close other dropdowns
+  document.querySelectorAll('.tb-dropdown').forEach(el => el.classList.remove('open'));
+  if (wasOpen) { dd.classList.remove('open'); return; }
+
+  // Build entries
+  const saves = getSaves();
+  const entries = Object.values(saves).sort((a, b) => b.savedAt - a.savedAt);
+  const list = document.getElementById('layout-switcher-list');
+  if (!list) return;
+  if (entries.length === 0) {
+    list.innerHTML = `<div style="padding:8px 12px;font-size:.75rem;color:var(--muted)">No saved layouts yet</div>`;
+  } else {
+    list.innerHTML = entries.map(s => {
+      const isActive = s.name === currentLayoutName;
+      return `<div class="tb-dd-item${isActive ? ' active' : ''}" onclick="loadLayout('${escAttr(s.name)}');document.getElementById('layout-switcher-dd').classList.remove('open')" style="${isActive ? 'color:var(--accent2)' : ''}">
+        <span class="dd-check">${isActive ? '✓' : ''}</span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(s.name)}</span>
+        <span style="font-size:.65rem;color:var(--faint);flex-shrink:0;margin-left:6px">${s.itemCount||0} items</span>
+      </div>`;
+    }).join('');
+  }
+  dd.classList.add('open');
+}
+
+
 function renderSavesList() {
+  updateLayoutSwitcher();
   const saves = getSaves();
   const list = document.getElementById('saves-list');
   const entries = Object.values(saves).sort((a, b) => b.savedAt - a.savedAt);
@@ -8245,4 +8337,5 @@ setTool('select');
 document.getElementById('btn-grid').classList.add('active');
 document.getElementById('btn-snap').classList.add('active');
 _initApiKeyUI();
+updateLayoutSwitcher();
 setTimeout(zoomFit,200);
