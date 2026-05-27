@@ -280,9 +280,9 @@
         <div id="floorplan-canvas" style="width:1200px;height:800px">
           <div id="bg-layer"><img id="bg-img" alt=""></div>
           <canvas id="grid-layer"></canvas>
-          <div id="items-layer">
-            <div id="marquee"></div>
-          </div>
+          <div id="items-layer"></div>
+          <!-- Marquee lives outside items-layer so item z-index wars can't hide it -->
+          <div id="marquee"></div>
           <!-- Edge snap guides -->
           <div class="align-guide align-guide-v" id="guide-v" style="position:absolute;top:0;bottom:0"></div>
           <div class="align-guide align-guide-h" id="guide-h" style="position:absolute;left:0;right:0"></div>
@@ -408,7 +408,8 @@
   <div class="ctx-sep"></div>
   <div class="ctx-item" onclick="rotateSelected(-90)">Rotate 90° CCW</div>
   <div class="ctx-item" onclick="rotateSelected(90)">Rotate 90° CW</div>
-  <div class="ctx-item" onclick="flipH()">Flip</div>
+  <div class="ctx-item" onclick="flipItemsH()">↔ Flip Horizontal</div>
+  <div class="ctx-item" onclick="flipItemsV()">↕ Flip Vertical</div>
   <div class="ctx-sep"></div>
   <div class="ctx-item danger" onclick="deleteSelected()">Delete <span class="kbadge">Del</span></div>
 </div>
@@ -801,5 +802,5 @@
   </div>
 </div>
 
-<script src="app.js?v=36"></script>
+<script src="app.js?v=37"></script>
 </body>

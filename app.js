@@ -4301,7 +4301,8 @@ function renderItem(item){
   const isCallout=def?.isCallout||false;
   const el=document.createElement('div');
   el.className='fitem'+(item.locked?' locked':'')+(item.link?' has-link':'')+(item.groupId?' grouped':'');el.id='fi-'+item.id;
-  el.style.cssText=`left:${item.x}px;top:${item.y}px;width:${w}px;height:${h}px;transform:rotate(${item.rotation}deg);z-index:${item.zIndex};opacity:${item.opacity};display:${item.visible===false?'none':'block'}`;
+  const _flipTx=(item.flipH?'scaleX(-1) ':'')+(item.flipV?'scaleY(-1) ':'');
+  el.style.cssText=`left:${item.x}px;top:${item.y}px;width:${w}px;height:${h}px;transform:rotate(${item.rotation}deg) ${_flipTx};z-index:${item.zIndex};opacity:${item.opacity};display:${item.visible===false?'none':'block'}`;
 
   // Text label items render as pure draggable text — no background box
   let annotationOverlay='';
@@ -4428,7 +4429,8 @@ function refreshItemEl(item){
   const w=ftToPx(item.w),h=ftToPx(item.h);
   el.style.left=item.x+'px';el.style.top=item.y+'px';
   el.style.width=w+'px';el.style.height=h+'px';
-  el.style.transform=`rotate(${item.rotation}deg)`;
+  const _ft=(item.flipH?'scaleX(-1) ':'')+(item.flipV?'scaleY(-1) ':'');
+  el.style.transform=`rotate(${item.rotation}deg) ${_ft}`.trimEnd();
   el.style.zIndex=item.zIndex;el.style.opacity=item.opacity;
   el.style.display=item.visible===false?'none':'block';
   el.classList.toggle('locked',!!item.locked);
@@ -5154,7 +5156,16 @@ function showToast(msg){
   clearTimeout(t._to);t._to=setTimeout(()=>{t.style.opacity='0';},2200);
 }
 
-function flipH(){selectedIds.forEach(id=>{const item=items.find(i=>i.id===id);if(item){item.rotation=(360-item.rotation)%360;refreshItemEl(item);}});}
+function flipItemsH(){
+  pushHistory();
+  selectedIds.forEach(id=>{const item=items.find(i=>i.id===id);if(item){item.flipH=!item.flipH;refreshItemEl(item);}});
+  markDirty();updateRightPanel();
+}
+function flipItemsV(){
+  pushHistory();
+  selectedIds.forEach(id=>{const item=items.find(i=>i.id===id);if(item){item.flipV=!item.flipV;refreshItemEl(item);}});
+  markDirty();updateRightPanel();
+}
 
 // ═══════════════════════════════════════════════
 // DELETE / DUPLICATE
@@ -5465,6 +5476,14 @@ function showMultiPanel(ids){
     </div>
 
     <div class="prop-group" style="background:var(--panel);border-radius:7px;padding:10px 11px;margin-bottom:10px">
+      <div class="prop-group-title" style="margin-bottom:8px">Flip</div>
+      <div class="prop-row-2">
+        <button class="btn-block" style="margin:0;font-size:.72rem" onclick="flipItemsH()">↔ Flip Horizontal</button>
+        <button class="btn-block" style="margin:0;font-size:.72rem" onclick="flipItemsV()">↕ Flip Vertical</button>
+      </div>
+    </div>
+
+    <div class="prop-group" style="background:var(--panel);border-radius:7px;padding:10px 11px;margin-bottom:10px">
       <div class="prop-group-title" style="margin-bottom:8px">Color</div>
       <div class="color-row">${COLORS.map(c=>`<div class="color-swatch" style="background:${c};width:26px;height:26px;border-radius:5px" onclick="setColorAll('${c}',this)"></div>`).join('')}
         <label title="Pick any color" style="cursor:pointer;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border:1.5px dashed var(--border);border-radius:5px">
@@ -5551,6 +5570,10 @@ function showSinglePanel(item){
       <div class="prop-row">
         <div class="prop-row-label"><div class="prop-label">Opacity</div><div class="prop-val-badge" id="op-val">${Math.round(item.opacity*100)}%</div></div>
         <input class="prop-slider" type="range" min="10" max="100" value="${Math.round(item.opacity*100)}" oninput="setProp(${item.id},'opacity',+this.value/100);document.getElementById('op-val').textContent=this.value+'%'">
+      </div>
+      <div class="prop-row-2" style="margin-top:8px">
+        <button class="btn-block" style="margin:0;font-size:.72rem" onclick="flipItemsH()">↔ Flip H</button>
+        <button class="btn-block" style="margin:0;font-size:.72rem" onclick="flipItemsV()">↕ Flip V</button>
       </div>
     </div>
 
@@ -5740,7 +5763,7 @@ function updateUndoCount(){
 function undo(){
   if(!history.length)return;
   const prev=history.pop();
-  itemsLayer.innerHTML='<div id="marquee"></div>';
+  itemsLayer.innerHTML='';
   items=prev.items;groups=prev.groups||{};
   items.forEach(item=>renderItem(item));
   clearSelection();updateCount();updateLayers();
@@ -6844,7 +6867,7 @@ function loadLayout(name) {
   }
 
   // Clear canvas
-  itemsLayer.innerHTML = '<div id="marquee"></div>';
+  itemsLayer.innerHTML = '';
   items = save.items || [];
   groups = save.groups || {};
   pxPerFt = save.pxPerFt || 20;
@@ -7115,7 +7138,7 @@ function restoreAutosave() {
     if (save.pxPerFt && save.pxPerFt !== 20) {
       document.getElementById('scale-info').textContent = `Scale: 1ft=${save.pxPerFt.toFixed(1)}px`;
     }
-    itemsLayer.innerHTML = '<div id="marquee"></div>';
+    itemsLayer.innerHTML = '';
     items.forEach(item => renderItem(item));
     clearSelection();
     updateCount();
@@ -7530,7 +7553,7 @@ function _clearCanvas() {
   groups = {};
   pxPerFt = 20;
   setCanvasSize(1200, 800);
-  itemsLayer.innerHTML = '<div id="marquee"></div>';
+  itemsLayer.innerHTML = '';
   const bgImg = document.getElementById('bg-img');
   bgImg.src = '';
   bgImg.style.display = 'none';
@@ -7915,7 +7938,7 @@ function undoToStep(step) {
   const target = parseInt(step);
   while (history.length > target) {
     const prev = history.pop();
-    itemsLayer.innerHTML = '<div id="marquee"></div>';
+    itemsLayer.innerHTML = '';
     items = prev.items; groups = prev.groups || {};
     items.forEach(item => renderItem(item));
   }
