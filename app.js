@@ -3212,6 +3212,101 @@ const CATALOG = [
   { cat:'AFR — Bars', id:'afr-vip-ada-bar', name:'VIP ADA Bar 60"×44"', w:5, h:3.67, unit:'ft',
     draw:(w,h,c)=>`<rect x="2%" y="5%" width="96%" height="90%" rx="5%" fill="${c}" opacity=".85" stroke="${darken(c)}" stroke-width="2"/><rect x="2%" y="5%" width="96%" height="38%" rx="5%" fill="${darken(c)}" opacity=".35"/>` },
 
+  // ─── CURVED BARS ─────────────────────────────────────────────────────────────
+  // Modular arc bar sections — snap together to make curved / serpentine bar layouts.
+  // 90° corners: center at SVG corner (2,98), outer R=90 SVG units.
+  // Half-rounds: center (50,98), outer R=48 (endpoints land at x=2 and x=98).
+  // Serpentine: S-curve bezier, bar ~20 units deep in 100-unit viewBox.
+  // ── 90° bar corners ──
+  { cat:'Curved Bars', id:'cb-corner-sm', name:'90° Bar Corner 30"R', w:2.5, h:2.5, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M92,98 A90,90 0 0,0 2,8 L2,80 A18,18 0 0,1 20,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M92,98 A90,90 0 0,0 2,8 L2,18 A80,80 0 0,1 82,98 Z" fill="${dk}" opacity=".8"/>`;} },
+  { cat:'Curved Bars', id:'cb-corner-md', name:'90° Bar Corner 48"R', w:4, h:4, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M92,98 A90,90 0 0,0 2,8 L2,53 A45,45 0 0,1 47,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M92,98 A90,90 0 0,0 2,8 L2,18 A80,80 0 0,1 82,98 Z" fill="${dk}" opacity=".8"/>`;} },
+  { cat:'Curved Bars', id:'cb-corner-lg', name:'90° Bar Corner 60"R', w:5, h:5, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M92,98 A90,90 0 0,0 2,8 L2,44 A54,54 0 0,1 56,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M92,98 A90,90 0 0,0 2,8 L2,18 A80,80 0 0,1 82,98 Z" fill="${dk}" opacity=".8"/>`;} },
+  // ── half-round bars ──
+  { cat:'Curved Bars', id:'cb-half-6', name:'Half-Round Bar 6ft', w:6, h:3, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M2,98 A48,48 0 0,1 98,98 L66,98 A16,16 0 0,0 34,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M2,98 A48,48 0 0,1 98,98 L91,98 A41,41 0 0,0 9,98 Z" fill="${dk}" opacity=".8"/>`;} },
+  { cat:'Curved Bars', id:'cb-half-8', name:'Half-Round Bar 8ft', w:8, h:4, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M2,98 A48,48 0 0,1 98,98 L74,98 A24,24 0 0,0 26,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M2,98 A48,48 0 0,1 98,98 L91,98 A41,41 0 0,0 9,98 Z" fill="${dk}" opacity=".8"/>`;} },
+  { cat:'Curved Bars', id:'cb-half-12', name:'Half-Round Bar 12ft', w:12, h:6, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M2,98 A48,48 0 0,1 98,98 L82,98 A32,32 0 0,0 18,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M2,98 A48,48 0 0,1 98,98 L91,98 A41,41 0 0,0 9,98 Z" fill="${dk}" opacity=".8"/>`;} },
+  // ── serpentine bars (S-curve) ──
+  { cat:'Curved Bars', id:'cb-serp-6', name:'Serpentine Bar 6ft', w:6, h:2.5, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M5,40 C25,8 75,72 95,40 L95,60 C75,92 25,28 5,60 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M5,40 C25,8 75,72 95,40 L95,47 C75,79 25,15 5,47 Z" fill="${dk}" opacity=".8"/>`;} },
+  { cat:'Curved Bars', id:'cb-serp-8', name:'Serpentine Bar 8ft', w:8, h:2.5, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M5,40 C25,8 75,72 95,40 L95,60 C75,92 25,28 5,60 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M5,40 C25,8 75,72 95,40 L95,47 C75,79 25,15 5,47 Z" fill="${dk}" opacity=".8"/>`;} },
+
+  // ─── CURVED SEATING ──────────────────────────────────────────────────────────
+  // Modular arc seating — assemble curved sofas, banquettes, serpentine layouts.
+  // 90° corners snap at right angles; half-rounds make semi-circular bays; serpentine = S-shape.
+  // ── 90° corner seating ──
+  { cat:'Curved Seating', id:'cs-corner-4', name:'90° Corner Banquette 4ft R', w:4, h:4, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      const t=`<line x1="31" y1="81" x2="80" y2="53" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="19" y1="69" x2="47" y2="20" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>`;
+      return`<path d="M92,98 A90,90 0 0,0 2,8 L2,64 A34,34 0 0,1 36,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M92,98 A90,90 0 0,0 2,8 L2,18 A80,80 0 0,1 82,98 Z" fill="${dk}" opacity=".82"/>`+t;} },
+  { cat:'Curved Seating', id:'cs-corner-5', name:'90° Corner Banquette 5ft R', w:5, h:5, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      const t=`<line x1="41" y1="76" x2="80" y2="53" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="25" y1="59" x2="47" y2="20" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>`;
+      return`<path d="M92,98 A90,90 0 0,0 2,8 L2,53 A45,45 0 0,1 47,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M92,98 A90,90 0 0,0 2,8 L2,18 A80,80 0 0,1 82,98 Z" fill="${dk}" opacity=".82"/>`+t;} },
+  { cat:'Curved Seating', id:'cs-corner-6', name:'90° Corner Sofa 6ft R', w:6, h:6, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      const t=`<line x1="41" y1="76" x2="80" y2="53" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="25" y1="59" x2="47" y2="20" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>`;
+      return`<path d="M92,98 A90,90 0 0,0 2,8 L2,53 A45,45 0 0,1 47,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M92,98 A90,90 0 0,0 2,8 L2,18 A80,80 0 0,1 82,98 Z" fill="${dk}" opacity=".82"/>`+t;} },
+  // ── half-round seating ──
+  { cat:'Curved Seating', id:'cs-half-8', name:'Half-Round Banquette 8ft', w:8, h:4, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      const t=`<line x1="59" y1="82" x2="74" y2="57" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="50" y1="80" x2="50" y2="50" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="41" y1="82" x2="26" y2="57" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>`;
+      return`<path d="M2,98 A48,48 0 0,1 98,98 L68,98 A18,18 0 0,0 32,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M2,98 A48,48 0 0,1 98,98 L91,98 A41,41 0 0,0 9,98 Z" fill="${dk}" opacity=".82"/>`+t;} },
+  { cat:'Curved Seating', id:'cs-half-10', name:'Half-Round Sofa 10ft', w:10, h:5, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      const t=`<line x1="59" y1="82" x2="74" y2="57" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="50" y1="79" x2="50" y2="50" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="41" y1="82" x2="26" y2="57" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>`;
+      return`<path d="M2,98 A48,48 0 0,1 98,98 L69,98 A19,19 0 0,0 31,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M2,98 A48,48 0 0,1 98,98 L91,98 A41,41 0 0,0 9,98 Z" fill="${dk}" opacity=".82"/>`+t;} },
+  { cat:'Curved Seating', id:'cs-half-12', name:'Half-Round Banquette 12ft', w:12, h:6, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      const t=`<line x1="59" y1="82" x2="74" y2="57" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="50" y1="70" x2="50" y2="50" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>` +
+               `<line x1="41" y1="82" x2="26" y2="57" stroke="rgba(0,0,0,.12)" stroke-width="1.4"/>`;
+      return`<path d="M2,98 A48,48 0 0,1 98,98 L78,98 A28,28 0 0,0 22,98 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M2,98 A48,48 0 0,1 98,98 L91,98 A41,41 0 0,0 9,98 Z" fill="${dk}" opacity=".82"/>`+t;} },
+  // ── serpentine seating (S-curve) ──
+  { cat:'Curved Seating', id:'cs-serp-6', name:'Serpentine Sofa/Banq 6ft', w:6, h:3, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M5,35 C25,5 75,65 95,35 L95,65 C75,95 25,35 5,65 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M5,35 C25,5 75,65 95,35 L95,44 C75,74 25,14 5,44 Z" fill="${dk}" opacity=".82"/>`;} },
+  { cat:'Curved Seating', id:'cs-serp-8', name:'Serpentine Sofa/Banq 8ft', w:8, h:3, unit:'ft',
+    draw:(w,h,c)=>{const dk=darken(c);
+      return`<path d="M5,35 C25,5 75,65 95,35 L95,65 C75,95 25,35 5,65 Z" fill="${c}" opacity=".88"/>` +
+             `<path d="M5,35 C25,5 75,65 95,35 L95,44 C75,74 25,14 5,44 Z" fill="${dk}" opacity=".82"/>`;} },
+
   // ─── SHAPES ─────────────────────────────────────────
   { cat:'Shapes', id:'shape-rect', name:'Rectangle', w:8, h:6, unit:'ft', isShape:true,
     draw:(w,h,c)=>`<rect x="3" y="3" width="94" height="94" fill="${c}" stroke="${darken(c)}" stroke-width="3"/>` },
