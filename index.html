@@ -411,7 +411,23 @@
   <div class="ctx-item" onclick="flipItemsH()">↔ Flip Horizontal</div>
   <div class="ctx-item" onclick="flipItemsV()">↕ Flip Vertical</div>
   <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="openSwapModal()">🔄 Swap piece…</div>
+  <div class="ctx-sep"></div>
   <div class="ctx-item danger" onclick="deleteSelected()">Delete <span class="kbadge">Del</span></div>
+</div>
+
+<!-- SWAP PIECE MODAL -->
+<div class="modal-backdrop" id="swap-modal">
+  <div class="modal-box" style="width:540px;max-width:95vw">
+    <div class="modal-head">
+      <div><h2>🔄 Swap Piece</h2><p id="swap-subtitle">Position &amp; rotation are preserved — size resets to catalog default</p></div>
+      <button class="modal-close" onclick="closeModal('swap-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding-top:8px">
+      <input id="swap-search" type="text" class="prop-input" placeholder="Filter catalog…" oninput="renderSwapGrid(this.value)" style="margin-bottom:10px;font-size:.82rem">
+      <div id="swap-grid" style="max-height:460px;overflow-y:auto;padding-right:4px"></div>
+    </div>
+  </div>
 </div>
 
 <!-- AI PIECE MODAL -->
@@ -802,5 +818,5 @@
   </div>
 </div>
 
-<script src="app.js?v=38"></script>
+<script src="app.js?v=39"></script>
 </body>

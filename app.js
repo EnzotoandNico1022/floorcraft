@@ -4610,10 +4610,18 @@ function startMove(e,leadId){
 
   function onMove(ev){
     if(!_itemMoving){_itemMoving=true;itemsLayer.classList.add('items-moving');}
-    const dx=(ev.clientX-startMX)/zoom, dy=(ev.clientY-startMY)/zoom;
+    const rawDx=(ev.clientX-startMX)/zoom, rawDy=(ev.clientY-startMY)/zoom;
+    // Edge-snap the lead item; apply the resulting delta to all dragged items
+    const leadStart=startPositions.get(leadId);
+    let dxFinal=rawDx, dyFinal=rawDy;
+    if(leadStart){
+      const rawLX=Math.max(0,leadStart.x+rawDx), rawLY=Math.max(0,leadStart.y+rawDy);
+      const snapped=edgeSnap(selectedIds,rawLX,rawLY,leadItem);
+      dxFinal=snapped.x-leadStart.x; dyFinal=snapped.y-leadStart.y;
+    }
     startPositions.forEach(({x,y},id)=>{
       const it=items.find(i=>i.id===id);if(!it)return;
-      it.x=Math.max(0,x+dx); it.y=Math.max(0,y+dy);
+      it.x=Math.max(0,x+dxFinal); it.y=Math.max(0,y+dyFinal);
       const el=document.getElementById('fi-'+id);
       if(el){ el.style.left=it.x+'px'; el.style.top=it.y+'px'; }
     });
@@ -4625,6 +4633,7 @@ function startMove(e,leadId){
     window.removeEventListener('mouseup',onUp);
     _itemMoving=false;
     itemsLayer.classList.remove('items-moving');
+    hideGuides();
     clearSpacingGuides();
     markDirty();
     updateRightPanel();
@@ -5505,6 +5514,7 @@ function showMultiPanel(ids){
 
     <div class="prop-group">
       <div class="prop-group-title">Organize</div>
+      <button class="btn-block" style="font-size:.75rem" onclick="openSwapModal()">🔄 Swap all selected…</button>
       <button class="btn-block" style="font-size:.75rem" onclick="groupSelected()">Group selected (Ctrl+G)</button>
       <button class="btn-block" style="font-size:.75rem" onclick="ungroupSelected()">Ungroup (Ctrl+Shift+G)</button>
       <button class="btn-block" style="font-size:.75rem" onclick="toggleLockSelected()">Lock / Unlock all (L)</button>
@@ -5599,6 +5609,7 @@ function showSinglePanel(item){
     <!-- ORGANIZE -->
     <div class="prop-group">
       <div class="prop-group-title">Organize</div>
+      <button class="btn-block" style="font-size:.75rem" onclick="openSwapModal()">🔄 Swap piece…</button>
       <button class="btn-block" style="font-size:.75rem" onclick="groupSelected()" title="Group (Ctrl+G)">Group selected (Ctrl+G)</button>
       <button class="btn-block" style="font-size:.75rem" onclick="ungroupSelected()" title="Ungroup (Ctrl+Shift+G)">Ungroup (Ctrl+Shift+G)</button>
       <button class="btn-block" style="font-size:.75rem" onclick="openRepeatModal()" title="Repeat / array this item">Repeat / Array…</button>
@@ -7451,12 +7462,19 @@ itemsLayer.addEventListener('touchstart', e => {
       pushHistory();
       itemsLayer.classList.add('items-moving');
     }
-    const cdx = (t.clientX - startX) / zoom;
-    const cdy = (t.clientY - startY) / zoom;
+    const rawDx = (t.clientX - startX) / zoom;
+    const rawDy = (t.clientY - startY) / zoom;
+    const leadStart = startPositions.get(itemId);
+    let dxFinal = rawDx, dyFinal = rawDy;
+    if (leadStart) {
+      const rawLX = Math.max(0, leadStart.x + rawDx), rawLY = Math.max(0, leadStart.y + rawDy);
+      const snapped = edgeSnap(selectedIds, rawLX, rawLY, liveItem);
+      dxFinal = snapped.x - leadStart.x; dyFinal = snapped.y - leadStart.y;
+    }
     startPositions.forEach(({x, y}, id) => {
       const it = items.find(i => i.id === id); if (!it) return;
-      it.x = Math.max(0, x + cdx);
-      it.y = Math.max(0, y + cdy);
+      it.x = Math.max(0, x + dxFinal);
+      it.y = Math.max(0, y + dyFinal);
       const el = document.getElementById('fi-' + id);
       if (el) { el.style.left = it.x + 'px'; el.style.top = it.y + 'px'; }
     });
@@ -7468,6 +7486,7 @@ itemsLayer.addEventListener('touchstart', e => {
     window.removeEventListener('touchmove', onMove);
     window.removeEventListener('touchend', onEnd);
     itemsLayer.classList.remove('items-moving');
+    hideGuides();
     clearSpacingGuides();
     if (moveStarted) { markDirty(); updateRightPanel(); }
   }
@@ -8335,6 +8354,82 @@ function addNoteToSelected() {
 
   createNoteEl(id, item, text.trim());
   showToast('Note added — double-click to edit, right-click to remove');
+}
+
+// ─── SWAP PIECE ───────────────────────────────────
+let _swapCurrentType = null; // catalog id of the item being swapped
+
+function openSwapModal() {
+  if(selectedIds.size === 0){ showToast('Select an item first'); return; }
+  const first = items.find(i => selectedIds.has(i.id));
+  if(!first) return;
+  _swapCurrentType = first.type;
+  const count = selectedIds.size;
+  document.getElementById('swap-subtitle').textContent =
+    count > 1
+      ? `Replacing ${count} items — position & rotation preserved, size resets to catalog default`
+      : `Replacing "${first.label}" — position & rotation preserved, size resets to catalog default`;
+  document.getElementById('swap-search').value = '';
+  renderSwapGrid('');
+  openModal('swap-modal');
+}
+
+function renderSwapGrid(filter) {
+  const q = (filter || '').toLowerCase();
+  const pool = CATALOG.filter(c =>
+    !c.isTextLabel && !c.isCallout &&
+    (!q || c.name.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q))
+  );
+  // Group by category, current category first
+  const currentCat = CATALOG.find(c => c.id === _swapCurrentType)?.cat || '';
+  const byCategory = {};
+  pool.forEach(def => {
+    (byCategory[def.cat] || (byCategory[def.cat] = [])).push(def);
+  });
+  const catKeys = Object.keys(byCategory).sort((a, b) => {
+    if(a === currentCat) return -1;
+    if(b === currentCat) return 1;
+    return a.localeCompare(b);
+  });
+  document.getElementById('swap-grid').innerHTML = catKeys.map(cat => {
+    const defs = byCategory[cat];
+    const tiles = defs.map(def => {
+      const isCurrent = def.id === _swapCurrentType;
+      let svgInner = '';
+      try { svgInner = def.draw ? def.draw(100, 100, '#b5832a') : ''; } catch(e) {}
+      return `<div class="swap-tile${isCurrent?' swap-current':''}" onclick="doSwapItem('${def.id}')" title="${def.name} — ${def.w}′×${def.h}′">
+        <svg viewBox="0 0 100 100" width="46" height="46" preserveAspectRatio="none">${svgInner}</svg>
+        <div class="swap-tile-label">${def.name}</div>
+        <div class="swap-tile-dims">${def.w}′×${def.h}′</div>
+      </div>`;
+    }).join('');
+    return `<div class="swap-section-title">${cat}${cat===currentCat?' <span style="opacity:.5;font-weight:400;text-transform:none">(current)</span>':''}</div>
+            <div class="swap-item-grid">${tiles}</div>`;
+  }).join('');
+}
+
+function doSwapItem(newType) {
+  const newDef = CATALOG.find(c => c.id === newType);
+  if(!newDef) return;
+  pushHistory();
+  let count = 0;
+  selectedIds.forEach(id => {
+    const item = items.find(i => i.id === id);
+    if(!item) return;
+    item.type  = newType;
+    item.w     = newDef.w;
+    item.h     = newDef.h;
+    // Keep label if user customised it vs original catalog name; else update to new name
+    const oldDef = CATALOG.find(c => c.id === _swapCurrentType);
+    if(!oldDef || item.label === oldDef.name) item.label = newDef.name;
+    const el = document.getElementById('fi-' + id);
+    if(el) el.remove();
+    renderItem(item);
+    count++;
+  });
+  markDirty(); updateRightPanel(); updateLayers(); buildLegend();
+  closeModal('swap-modal');
+  showToast(`Swapped ${count} item${count>1?'s':''} → ${newDef.name}`);
 }
 
 // ─── ITEM LINKS ───────────────────────────────────

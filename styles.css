@@ -301,6 +301,15 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);displ
 #items-layer.items-moving .dim-badge,
 #items-layer.items-moving .fitem-label{opacity:0!important;transition:none!important}
 
+/* SWAP MODAL GRID */
+.swap-section-title{font-size:.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.swap-item-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.swap-tile{width:70px;border:2px solid var(--border);border-radius:6px;padding:5px 3px 4px;cursor:pointer;background:white;display:flex;flex-direction:column;align-items:center;gap:2px;transition:border-color .12s,background .12s;flex-shrink:0}
+.swap-tile:hover,.swap-tile:active{border-color:var(--accent);background:rgba(181,131,42,.05)}
+.swap-tile.swap-current{border-color:var(--accent);background:rgba(181,131,42,.08)}
+.swap-tile-label{font-size:7.5px;color:var(--text);text-align:center;line-height:1.2;width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.swap-tile-dims{font-size:6.5px;color:var(--muted);text-align:center}
+
 /* MEASURE TOOL */
 #measure-layer{pointer-events:none}
 .measure-active *{cursor:crosshair!important}
