@@ -5030,10 +5030,19 @@ function alignItems(mode){
   });
 }
 function distributeItems(axis){
-  const sel=getSelItems();if(sel.length<3)return;
+  const sel=getSelItems();
+  if(sel.length<3){showToast('Select 3 or more items to distribute');return;}
   pushHistory();
-  const units=_buildAlignUnits(sel);
-  if(units.length<3)return;
+  let units=_buildAlignUnits(sel);
+  // Groups can collapse many items into 1 unit — if that leaves < 3 units,
+  // distribute the individual selected items instead (ignore group boundaries).
+  if(units.length<3){
+    units=sel.map(item=>{
+      const u={items:[item],minX:Infinity,minY:Infinity,maxX:-Infinity,maxY:-Infinity};
+      _expandBounds(u,item);return u;
+    });
+  }
+  if(units.length<3){showToast('Select 3 or more items to distribute');return;}
   if(axis==='h'){
     units.sort((a,b)=>a.minX-b.minX);
     const total=units[units.length-1].maxX-units[0].minX;
@@ -5057,6 +5066,9 @@ function distributeItems(axis){
       cy=u.minY+dy+(u.maxY-u.minY);
     });
   }
+  markDirty();
+  updateRightPanel();
+  showToast(`Distributed ${units.length} items with equal spacing`);
 }
 function distributeAlongAngle(){
   const sel=getSelItems();
